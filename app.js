@@ -3,8 +3,6 @@
 const SUPABASE_URL = 'https://pqjbknytplwrefzqbser.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_ZVwztV1ApJpNChl3r0vIpQ_Ux9ko-Lh';
 
-const { createClient } = supabase;
-const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ── STATE ───────────────────────────────────────────────────────────────────
 let currentUser = null;
@@ -268,6 +266,8 @@ function makeBarChart(canvasId, labels, datasets) {
 }
 
 // ── EXPORT ───────────────────────────────────────────────────────────────────
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 window.APP = {
   db, PROGRAMME, GATE_CRITERIA, EXERCISES, CARDIO_TYPES,
   checkAuth, login, logout, loadProfile, loadAllData,
