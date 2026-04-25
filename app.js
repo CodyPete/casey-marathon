@@ -1,8 +1,6 @@
 // ── SUPABASE CONFIG ─────────────────────────────────────────────────────────
-// Replace these with your own Supabase project values after setup
 const SUPABASE_URL = 'https://pqjbknytplwrefzqbser.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_ZVwztV1ApJpNChl3r0vIpQ_Ux9ko-Lh';
-
 
 // ── STATE ───────────────────────────────────────────────────────────────────
 let currentUser = null;
@@ -20,18 +18,18 @@ const PROGRAMME = [
   { meso:2, week:6,  type:'normal', km:34, lr:'16 km easy', key:'4x strides + easy', strength:'Strength A+B', cardio:'Running', nut:'-250 kcal' },
   { meso:2, week:7,  type:'normal', km:38, lr:'18 km easy', key:'25 min easy tempo', strength:'Strength A+B', cardio:'Running', nut:'-250 kcal' },
   { meso:2, week:8,  type:'deload', km:24, lr:'12 km easy', key:'DELOAD + RETEST', strength:'Deload — rehab', cardio:'Running', nut:'-250 kcal' },
-  { meso:3, week:9,  type:'normal', km:46, lr:'23 km',     key:'5 km tempo @ 5:20/km', strength:'Strength C', cardio:'Running', nut:'Maintenance' },
-  { meso:3, week:10, type:'normal', km:52, lr:'26 km',     key:'6x800m intervals', strength:'Strength C', cardio:'Running', nut:'Maintenance' },
-  { meso:3, week:11, type:'normal', km:58, lr:'29 km',     key:'8 km @ MP 5:41/km', strength:'Strength C', cardio:'Running', nut:'Maint +50' },
-  { meso:3, week:12, type:'deload', km:36, lr:'18 km',     key:'DELOAD + RETEST', strength:'Deload', cardio:'Running', nut:'Maintenance' },
-  { meso:3, week:13, type:'normal', km:62, lr:'32 km',     key:'10 km tempo', strength:'Strength C light', cardio:'Running', nut:'Maint +100' },
-  { meso:4, week:14, type:'gate',   km:66, lr:'34 km',     key:'2x6km @ MP', strength:'Maintenance', cardio:'Running', nut:'Maint +100' },
-  { meso:4, week:15, type:'normal', km:70, lr:'36 km',     key:'14 km @ MP', strength:'Maintenance', cardio:'Running', nut:'Maint +100' },
+  { meso:3, week:9,  type:'normal', km:46, lr:'23 km',      key:'5 km tempo @ 5:20/km', strength:'Strength C', cardio:'Running', nut:'Maintenance' },
+  { meso:3, week:10, type:'normal', km:52, lr:'26 km',      key:'6x800m intervals', strength:'Strength C', cardio:'Running', nut:'Maintenance' },
+  { meso:3, week:11, type:'normal', km:58, lr:'29 km',      key:'8 km @ MP 5:41/km', strength:'Strength C', cardio:'Running', nut:'Maint +50' },
+  { meso:3, week:12, type:'deload', km:36, lr:'18 km',      key:'DELOAD + RETEST', strength:'Deload', cardio:'Running', nut:'Maintenance' },
+  { meso:3, week:13, type:'normal', km:62, lr:'32 km',      key:'10 km tempo', strength:'Strength C light', cardio:'Running', nut:'Maint +100' },
+  { meso:4, week:14, type:'gate',   km:66, lr:'34 km',      key:'2x6km @ MP', strength:'Maintenance', cardio:'Running', nut:'Maint +100' },
+  { meso:4, week:15, type:'normal', km:70, lr:'36 km',      key:'14 km @ MP', strength:'Maintenance', cardio:'Running', nut:'Maint +100' },
   { meso:4, week:16, type:'normal', km:72, lr:'38 km PEAK', key:'3x5km @ MP', strength:'Maintenance', cardio:'Running', nut:'Maint +100' },
-  { meso:4, week:17, type:'deload', km:46, lr:'22 km',     key:'DELOAD + FINAL RETEST', strength:'Rest', cardio:'Running', nut:'Maintenance' },
+  { meso:4, week:17, type:'deload', km:46, lr:'22 km',      key:'DELOAD + FINAL RETEST', strength:'Rest', cardio:'Running', nut:'Maintenance' },
   { meso:5, week:18, type:'normal', km:42, lr:'20 km easy', key:'10 km @ MP', strength:'None', cardio:'Running', nut:'Maintenance' },
   { meso:5, week:19, type:'normal', km:26, lr:'12 km easy', key:'5 km @ MP + strides', strength:'None', cardio:'Running', nut:'Carb load begins' },
-  { meso:5, week:20, type:'race',   km:0,  lr:'—',         key:'NY MARATHON — Target 3:59:59', strength:'None', cardio:'RACE', nut:'Race fuelling' },
+  { meso:5, week:20, type:'race',   km:0,  lr:'—',          key:'NY MARATHON — Target 3:59:59', strength:'None', cardio:'RACE', nut:'Race fuelling' },
 ];
 
 const GATE_CRITERIA = {
@@ -41,18 +39,18 @@ const GATE_CRITERIA = {
     { test:'Split Squat Hold L',  baseline:18, target:25, unit:'sec', field:'split_squat_l_sec' },
     { test:'Split Squat Hold R',  baseline:8,  target:20, unit:'sec', field:'split_squat_r_sec' },
     { test:'SL Calf Raise L',     baseline:10, target:15, unit:'reps', field:'calf_raise_l_reps' },
-    { test:'Lateral Knee VAS',    baseline:null, target:1, unit:'/10', field:'vas_knee', lowerIsBetter:true },
+    { test:'Lateral Knee VAS',    baseline:4,  target:1,  unit:'/10', field:'vas_knee', lowerIsBetter:true },
   ],
   2: [
     { test:'Glute Bridge Hold L', baseline:45, target:55, unit:'sec', field:'glute_bridge_l_sec' },
     { test:'Split Squat Hold R',  baseline:20, target:30, unit:'sec', field:'split_squat_r_sec' },
     { test:'SL Calf Raise L',     baseline:15, target:20, unit:'reps', field:'calf_raise_l_reps' },
-    { test:'Lateral Knee VAS during run', baseline:null, target:2, unit:'/10', field:'vas_knee', lowerIsBetter:true },
+    { test:'Lateral Knee VAS',    baseline:4,  target:2,  unit:'/10', field:'vas_knee', lowerIsBetter:true },
   ],
   3: [
     { test:'SL Calf Raise L',     baseline:20, target:22, unit:'reps', field:'calf_raise_l_reps' },
     { test:'Split Squat Hold R',  baseline:30, target:40, unit:'sec', field:'split_squat_r_sec' },
-    { test:'Lateral Knee VAS 30km+', baseline:null, target:2, unit:'/10', field:'vas_knee', lowerIsBetter:true },
+    { test:'Lateral Knee VAS',    baseline:4,  target:2,  unit:'/10', field:'vas_knee', lowerIsBetter:true },
   ],
 };
 
@@ -100,7 +98,7 @@ const CARDIO_TYPES = [
 
 // ── AUTH ─────────────────────────────────────────────────────────────────────
 async function checkAuth() {
-  const { data: { session } } = await db.auth.getSession();
+  const { data: { session } } = await window._db.auth.getSession();
   if (session) {
     currentUser = session.user;
     await loadProfile();
@@ -110,19 +108,19 @@ async function checkAuth() {
 }
 
 async function loadProfile() {
-  const { data } = await db.from('profiles').select('*').eq('id', currentUser.id).single();
+  const { data } = await window._db.from('profiles').select('*').eq('id', currentUser.id).single();
   if (data) currentProfile = data;
 }
 
 async function login(email, password) {
-  const { data, error } = await db.auth.signInWithPassword({ email, password });
+  const { data, error } = await window._db.auth.signInWithPassword({ email, password });
   if (error) throw error;
   currentUser = data.user;
   await loadProfile();
 }
 
 async function logout() {
-  await db.auth.signOut();
+  await window._db.auth.signOut();
   currentUser = null;
   currentProfile = null;
   window.location.href = 'index.html';
@@ -131,15 +129,15 @@ async function logout() {
 // ── DATA ─────────────────────────────────────────────────────────────────────
 async function loadAllData() {
   const [sessRes, assessRes] = await Promise.all([
-    db.from('sessions').select('*, exercise_sets(*)').order('date', { ascending: false }),
-    db.from('assessments').select('*').order('date', { ascending: true })
+    window._db.from('sessions').select('*, exercise_sets(*)').order('date', { ascending: false }),
+    window._db.from('assessments').select('*').order('date', { ascending: true })
   ]);
   allSessions = sessRes.data || [];
   allAssessments = assessRes.data || [];
 }
 
 async function saveSession(sessionData, exercises) {
-  const { data: sess, error: sessErr } = await db.from('sessions').insert([{
+  const { data: sess, error: sessErr } = await window._db.from('sessions').insert([{
     user_id: currentUser.id,
     ...sessionData
   }]).select().single();
@@ -159,7 +157,7 @@ async function saveSession(sessionData, exercises) {
       }))
     );
     if (sets.length > 0) {
-      const { error: setsErr } = await db.from('exercise_sets').insert(sets);
+      const { error: setsErr } = await window._db.from('exercise_sets').insert(sets);
       if (setsErr) throw setsErr;
     }
   }
@@ -167,13 +165,13 @@ async function saveSession(sessionData, exercises) {
 }
 
 async function saveAssessment(data) {
-  const { error } = await db.from('assessments').insert([data]);
+  const { error } = await window._db.from('assessments').insert([data]);
   if (error) throw error;
 }
 
 // ── HELPERS ──────────────────────────────────────────────────────────────────
 function currentWeek() {
-  const started = new Date('2025-09-01'); // Update this to actual start date
+  const started = new Date('2025-09-01');
   const now = new Date();
   const diff = Math.floor((now - started) / (7 * 24 * 60 * 60 * 1000));
   return Math.max(1, Math.min(20, diff + 1));
@@ -187,11 +185,7 @@ function weekToMeso(week) {
   return 5;
 }
 
-function vasClass(v) {
-  if (v <= 2) return 'vas-' + v;
-  if (v <= 5) return 'vas-' + v;
-  return 'vas-' + v;
-}
+function vasClass(v) { return 'vas-' + v; }
 
 function fmt(val, unit='') {
   if (val === null || val === undefined || val === '') return '—';
@@ -204,22 +198,20 @@ function formatDate(d) {
 
 function toast(msg, type='') {
   const wrap = document.getElementById('toast-wrap');
+  if (!wrap) return;
   const t = document.createElement('div');
   t.className = 'toast ' + type;
   t.textContent = msg;
   wrap.appendChild(t);
   setTimeout(() => t.classList.add('show'), 10);
-  setTimeout(() => {
-    t.classList.remove('show');
-    setTimeout(() => t.remove(), 300);
-  }, 3000);
+  setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 300); }, 3000);
 }
 
 function showLoading(el) {
   el.innerHTML = '<div class="loading"><div class="spinner"></div>Loading...</div>';
 }
 
-// ── CHARTS (Chart.js) ─────────────────────────────────────────────────────────
+// ── CHARTS ───────────────────────────────────────────────────────────────────
 const CHART_COLORS = {
   red: '#c0392b', amber: '#d4820a', green: '#2d6a4f',
   blue: '#1a4a72', purple: '#6c3483', teal: '#1a7a6a'
@@ -231,14 +223,10 @@ function makeLineChart(canvasId, labels, datasets, opts={}) {
   if (ctx._chart) ctx._chart.destroy();
   ctx._chart = new Chart(ctx, {
     type: 'line',
-    data: { labels, datasets: datasets.map(d => ({
-      tension: 0.35, pointRadius: 4, pointHoverRadius: 6,
-      borderWidth: 2, fill: d.fill || false,
-      ...d
-    }))},
+    data: { labels, datasets: datasets.map(d => ({ tension:0.35, pointRadius:4, borderWidth:2, fill:false, ...d })) },
     options: {
       responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { labels: { font: { family:'DM Mono', size:10 }, color:'#7a7268' } }, tooltip: { titleFont:{family:'DM Mono'}, bodyFont:{family:'DM Sans'} } },
+      plugins: { legend: { labels: { font:{family:'DM Mono',size:10}, color:'#7a7268' } } },
       scales: {
         x: { grid:{color:'rgba(0,0,0,.04)'}, ticks:{font:{family:'DM Mono',size:9},color:'#7a7268'} },
         y: { grid:{color:'rgba(0,0,0,.04)'}, ticks:{font:{family:'DM Mono',size:9},color:'#7a7268'}, ...opts.yAxis }
@@ -265,15 +253,23 @@ function makeBarChart(canvasId, labels, datasets) {
   });
 }
 
-// ── EXPORT ───────────────────────────────────────────────────────────────────
-const { createClient } = supabase;
-const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+// ── INIT — runs after page loads ──────────────────────────────────────────────
+function _initSupabase() {
+  const { createClient } = supabase;
+  window._db = createClient(SUPABASE_URL, SUPABASE_KEY);
+}
+
+// ── EXPORT ────────────────────────────────────────────────────────────────────
 window.APP = {
-  db, PROGRAMME, GATE_CRITERIA, EXERCISES, CARDIO_TYPES,
+  get db() { return window._db; },
+  PROGRAMME, GATE_CRITERIA, EXERCISES, CARDIO_TYPES,
   checkAuth, login, logout, loadProfile, loadAllData,
-  saveSession, saveAssessment, currentUser: () => currentUser,
+  saveSession, saveAssessment,
+  currentUser: () => currentUser,
   currentProfile: () => currentProfile,
-  allSessions: () => allSessions, allAssessments: () => allAssessments,
+  allSessions: () => allSessions,
+  allAssessments: () => allAssessments,
   currentWeek, weekToMeso, vasClass, fmt, formatDate, toast, showLoading,
-  makeLineChart, makeBarChart, CHART_COLORS
+  makeLineChart, makeBarChart, CHART_COLORS,
+  init: _initSupabase
 };
