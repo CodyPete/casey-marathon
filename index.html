@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Casey Marathon — Login</title>
+<link rel="stylesheet" href="assets/style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/app.js"></script>
+</head>
+<body>
+<div class="auth-wrap">
+  <div class="auth-box">
+    <div class="auth-logo">Casey's<br>Marathon</div>
+    <div class="auth-sub">Training Programme Portal</div>
+    <div class="auth-err" id="auth-err"></div>
+    <div class="field" style="margin-bottom:12px">
+      <label>Email</label>
+      <input type="email" id="email" placeholder="your@email.com" autocomplete="email">
+    </div>
+    <div class="field" style="margin-bottom:20px">
+      <label>Password</label>
+      <input type="password" id="password" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center" id="login-btn" onclick="doLogin()">Sign In</button>
+    <p style="font-size:11px;color:var(--muted);text-align:center;margin-top:16px">Coach or client — same login page.<br>Contact your coach if you need access.</p>
+  </div>
+</div>
+<script>
+(async () => {
+  const authed = await APP.checkAuth();
+  if (authed) window.location.href = 'dashboard.html';
+})();
+
+document.getElementById('password').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doLogin();
+});
+
+async function doLogin() {
+  const btn = document.getElementById('login-btn');
+  const err = document.getElementById('auth-err');
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  err.classList.remove('show');
+  btn.textContent = 'Signing in…';
+  btn.disabled = true;
+  try {
+    await APP.login(email, password);
+    window.location.href = 'dashboard.html';
+  } catch(e) {
+    err.textContent = e.message || 'Login failed. Check your credentials.';
+    err.classList.add('show');
+    btn.textContent = 'Sign In';
+    btn.disabled = false;
+  }
+}
+</script>
+</body>
+</html>
