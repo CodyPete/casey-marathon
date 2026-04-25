@@ -29,6 +29,14 @@
     <a class="nav-item" onclick="showPage('history')"><span class="ic">≡</span> Session History</a>
     <div class="nav-section">Analysis</div>
     <a class="nav-item" onclick="showPage('progression')"><span class="ic">▲</span> Progression</a>
+    <div class="nav-section">Full Programme</div>
+    <a class="nav-item" onclick="showPage('prog-overview')"><span class="ic">◈</span> Programme Overview</a>
+    <a class="nav-item" onclick="showPage('prog-meso1')"><span class="ic">①</span> Meso 1 — Foundation</a>
+    <a class="nav-item" onclick="showPage('prog-meso2')"><span class="ic">②</span> Meso 2 — Base Build</a>
+    <a class="nav-item" onclick="showPage('prog-meso3')"><span class="ic">③</span> Meso 3 — Development</a>
+    <a class="nav-item" onclick="showPage('prog-meso4')"><span class="ic">④</span> Meso 4 — Peak</a>
+    <a class="nav-item" onclick="showPage('prog-meso5')"><span class="ic">⑤</span> Meso 5 — Taper</a>
+    <a class="nav-item" onclick="showPage('prog-nutrition')"><span class="ic">◉</span> Nutrition</a>
   </nav>
   <div class="sidebar-footer">
     <button class="btn-logout" onclick="APP.logout()">Sign Out</button>
@@ -279,6 +287,74 @@
     </div>
   </div>
 
+
+  <!-- ═══ PROGRAMME OVERVIEW ═══ -->
+  <div id="page-prog-overview" class="page">
+    <div class="topbar">
+      <div>
+        <div class="page-title">Programme <span>Overview</span></div>
+        <div style="font-size:12px;color:var(--muted)">Casey · NY Marathon · Start 27 Apr 2026 · Sub 4:00</div>
+      </div>
+    </div>
+    <div class="alert r" style="display:flex;gap:11px;padding:12px 15px;border-radius:5px;margin-bottom:18px;font-size:13px;line-height:1.55;background:#fde8e6;border-left:4px solid var(--red)">
+      <div style="font-size:16px;flex-shrink:0">⚠</div>
+      <div><strong>Primary Clinical Driver:</strong> Left glute med neurological inhibition. No L abductor feel. Quad dominant L leg. TFL overload → lateral knee pain (VAS 6/10). Zero running until Meso 1 gate criteria met. All Meso 1 strength is neural re-education only.</div>
+    </div>
+    <div class="section">
+      <div class="section-title">Baseline Assessment — Post Meso 1 Tests</div>
+      <div id="prog-baseline-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;margin-bottom:24px"></div>
+    </div>
+    <div class="section">
+      <div class="section-title">20-Week Macro Schedule</div>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:12px">
+          <thead><tr id="macro-sched-head"></tr></thead>
+          <tbody id="macro-sched-body"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Clinical Flags</div>
+      <div id="clinical-flags-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px"></div>
+    </div>
+  </div>
+
+  <!-- ═══ MESO 1 ═══ -->
+  <div id="page-prog-meso1" class="page">
+    <div class="topbar"><div class="page-title">Meso 1 — <span>Foundation</span></div></div>
+    <div id="meso1-content"></div>
+  </div>
+
+  <!-- ═══ MESO 2 ═══ -->
+  <div id="page-prog-meso2" class="page">
+    <div class="topbar"><div class="page-title">Meso 2 — <span>Base Build</span></div></div>
+    <div id="meso2-content"></div>
+  </div>
+
+  <!-- ═══ MESO 3 ═══ -->
+  <div id="page-prog-meso3" class="page">
+    <div class="topbar"><div class="page-title">Meso 3 — <span>Development</span></div></div>
+    <div id="meso3-content"></div>
+  </div>
+
+  <!-- ═══ MESO 4 ═══ -->
+  <div id="page-prog-meso4" class="page">
+    <div class="topbar"><div class="page-title">Meso 4 — <span>Peak</span></div></div>
+    <div id="meso4-content"></div>
+  </div>
+
+  <!-- ═══ MESO 5 ═══ -->
+  <div id="page-prog-meso5" class="page">
+    <div class="topbar"><div class="page-title">Meso 5 — <span>Taper & Race</span></div></div>
+    <div id="meso5-content"></div>
+  </div>
+
+  <!-- ═══ NUTRITION ═══ -->
+  <div id="page-prog-nutrition" class="page">
+    <div class="topbar"><div class="page-title">Nutrition <span>Programme</span></div></div>
+    <div id="nutrition-content"></div>
+  </div>
+
 </main>
 </div>
 
@@ -331,6 +407,7 @@ APP.init();
   renderDashboard();
   renderProgramme();
   populateExPicker();
+  renderProgrammePages();
   setDefaultDate();
 })();
 
@@ -778,6 +855,474 @@ function renderExProgression() {
     { label:'Reps', data:points.map(p=>p.reps), borderColor:APP.CHART_COLORS.green },
   ]);
 }
+
+
+// ══════════════════════════════════════════════════════
+// PROGRAMME CONTENT
+// ══════════════════════════════════════════════════════
+
+const PC = {
+  clinicalFlags: [
+    { title:'Left Lateral Knee — TFL/ITB', sev:'red', detail:'Active pain VAS 6/10. No running Meso 1. No side plank L. No high-resistance hip abduction until week 8. VAS monitored every session. >3/10 = reduce load. >5/10 = stop, refer to physio.' },
+    { title:'Left Glute Med Inhibition', sev:'red', detail:'No L abductor/adductor engagement. Strong quad activation L leg. Primary driver of all problems. All Meso 1 targets neurological re-education of L glute med before any running.' },
+    { title:'Hip IR Deficit — Bilateral', sev:'amber', detail:'90/90 hip rotation drill every warm-up. Both sides. Note L vs R difference each week. Reassess at weeks 4, 8, 12.' },
+    { title:'Left Ankle Dorsiflexion', sev:'amber', detail:'Ankle DF wall drill every session. Track wall-to-toe distance weekly. Heel elevated on goblet squat until improved. Consider 8-10mm heel drop shoe.' },
+    { title:'Right Hip Stability', sev:'amber', detail:'Split squat hold R = 8 sec vs L = 18 sec. R is collapsing through hip. R = hip stability loading priority alongside L glute med re-education.' },
+  ],
+  baseline: [
+    { test:'Glute Bridge L', val:'36 sec', target:'45 sec (Meso 2)', bar:80, color:'var(--amber)' },
+    { test:'Glute Bridge R', val:'38 sec', target:'45 sec (Meso 2)', bar:84, color:'var(--amber)' },
+    { test:'Split Squat L', val:'18 sec', target:'25 sec (Meso 2)', bar:72, color:'var(--amber)' },
+    { test:'Split Squat R', val:'8 sec', target:'20 sec (Meso 2)', bar:40, color:'var(--red)' },
+    { test:'SL Calf Raise L', val:'10 reps', target:'15 reps (Meso 2)', bar:67, color:'var(--red)' },
+    { test:'SL Calf Raise R', val:'15 reps', target:'22 reps (Meso 3)', bar:68, color:'var(--amber)' },
+    { test:'L Knee VAS', val:'6/10', target:'0-1/10 before running', bar:20, color:'var(--red)' },
+    { test:'L Glute Feel', val:'Quad dominant', target:'Clear glute med activation', bar:10, color:'var(--red)' },
+  ],
+  mesos: [
+    {
+      num:1, title:'Foundation & Rehabilitation', weeks:'1-4', color:'#1a1a2e',
+      tag:'No Running · -300 kcal deficit',
+      overview:'Zero running. Glute neurological re-education. Cardio via uphill walking, cross trainer, assault bike only. Primary goal: get L glute med firing before any running load. L calf eccentric programme begins week 1. All strength is bodyweight only until L glute fires reliably.',
+      weeklyLayout:[
+        { week:1, vol:'No running', lr:'40 min uphill walk', key:'Uphill walk 8% 30 min', strength:'Neural Activation A (coach)', nut:'-300 kcal' },
+        { week:2, vol:'No running', lr:'45 min uphill walk', key:'Cross trainer 35 min + intervals', strength:'Neural Activation A+B (coach)', nut:'-300 kcal' },
+        { week:3, vol:'No running', lr:'50 min uphill walk', key:'Assault bike 20 min (if knee OK)', strength:'Neural Activation A+B (coach)', nut:'-300 kcal' },
+        { week:4, vol:'DELOAD', lr:'30 min easy walk', key:'DELOAD + FULL RETEST', strength:'Mobility only', nut:'-300 kcal' },
+      ],
+      cardio:[
+        { mode:'Uphill Walk (Primary)', detail:'Treadmill incline 8-15%. Build to 50 min by week 3. Drives posterior chain without lateral knee shear. 3x/week.' },
+        { mode:'Cross Trainer (Secondary)', detail:'Elliptical 30-40 min. Low impact, full ROM. Cue: push through heel not quad pull. 2x/week max.' },
+        { mode:'Assault Bike (Conditional)', detail:'ONLY if lateral knee VAS does not increase during or 24hrs after. 20 min: 30s hard/90s easy ×8. Remove if knee responds.' },
+      ],
+      sessionA:{
+        title:'Session A — Glute Med Re-Education', day:'Tuesday with coach',
+        sections:[
+          { label:'WARM-UP (12 min)', color:'var(--red)', exercises:[
+            { ex:'Ankle DF Wall Drill L', sets:'2×15', tempo:'Slow', note:'5cm from wall. Heel flat. Track wall-to-toe distance weekly. Daily rehab Rx.' },
+            { ex:'90/90 Hip Rotation IR', sets:'2×8/side', tempo:'2 sec hold', note:'Drive front shin toward floor. Never force. Breathe into restriction. Note L vs R.' },
+            { ex:'Glute Bridge + Mini Band', sets:'2×12', tempo:'2-1-2', note:'Band above knees. Push knees OUT. Feel glute at top — not lower back.' },
+            { ex:"World's Greatest Stretch", sets:'4/side', tempo:'Flow', note:'Lunge → rotate → reach. Hip flexor + thoracic + hip.' },
+          ]},
+          { label:'ACTIVATION — PRIORITY WORK', color:'var(--red)', exercises:[
+            { ex:'Supine Glute Med — Bent Knee Fall Out', sets:'2×10/side', tempo:'Slow', note:'⭐ KEY EXERCISE. Lying, feet flat, knee falls OUT. Feel outer glute. Coach palpates. Reset if quad fires.' },
+            { ex:'Side-lying Hip Abduction L — NO LOAD', sets:'3×10 L only', tempo:'Slow + 2s hold', note:'⭐ MOST IMPORTANT MESO 1. No band. No weight. Lift to hip height. Stop if L glute not felt. Cue: push heel away not up.' },
+          ]},
+          { label:'MAIN LIFTS', color:'var(--green)', exercises:[
+            { ex:'RDL Bilateral — Bodyweight', sets:'3×12', tempo:'3-1-1', note:'Hip hinge. Push hips back. Feel hamstrings AND glutes. No load until pattern clean and L glute felt.' },
+            { ex:'Glute Bridge Isometric Hold ⏱ RETEST', sets:'3×max hold', tempo:'Hold', note:'Record time every session. Baseline: L 36s, R 38s. Target: 45s by wk 4 retest.' },
+            { ex:'Split Squat Hold L ⏱ RETEST', sets:'3×max hold', tempo:'Hold', note:'L leg forward. Feel L GLUTE not L quad. Cue: push floor with heel. Baseline 18s. Target: 25s.' },
+            { ex:'Split Squat Hold R ⏱ PRIORITY', sets:'3×max hold', tempo:'Hold', note:'R collapses at 8s. Priority. Watch hip adduction/drop. Cue: tall, hips level, back knee heavy. Target: 20s.' },
+            { ex:'Lateral Step-Up BW 15cm', sets:'3×10/side', tempo:'Controlled', note:'Drive through heel. Feel glute — not quad. Lower 3 sec. Coach palpates L glute.' },
+          ]},
+          { label:'CORE — TFL SAFE', color:'var(--purple)', exercises:[
+            { ex:'Dead Bug', sets:'3×8/side', tempo:'4 sec lower', note:'LB flat into floor. Opposite arm+leg. Breathe out on extension.' },
+            { ex:'Right Side Plank ONLY', sets:'3×20-30 sec', tempo:'Hold', note:'RIGHT ONLY. No left side plank Meso 1. Wk 1-2 from knee. Wk 3-4 from feet if comfortable.' },
+            { ex:'Bird Dog — L side emphasis', sets:'3×10/side', tempo:'3 sec hold', note:'Neutral spine. No hip rotation. L: squeeze L glute before moving.' },
+          ]},
+          { label:'CALF PROGRAMME', color:'var(--amber)', exercises:[
+            { ex:'SL Calf Raise Eccentric L ⏱ RETEST', sets:'4×max', tempo:'1-0-3', note:'Rise on 2 feet. Lower on L only. 3 sec eccentric. Step edge. Baseline: 10 reps. Target: 15 reps.' },
+            { ex:'SL Calf Raise R', sets:'2×15', tempo:'1-0-3', note:'Maintain R for comparison.' },
+          ]},
+        ],
+      },
+      sessionB:{
+        title:'Session B — Hip Stability + Single Leg', day:'Thursday with coach',
+        sections:[
+          { label:'WARM-UP (10 min)', color:'var(--red)', exercises:[
+            { ex:'Ankle DF Wall Drill L', sets:'2×15', tempo:'Slow', note:'Every session. Non-negotiable.' },
+            { ex:'Hip IR Pigeon Stretch', sets:'1×60s/side', tempo:'Passive', note:'Figure-4 or modified pigeon. Breathe. Note L vs R.' },
+            { ex:'Hip CAR', sets:'2×5/side', tempo:'Slow circles', note:'Full hip circle: flex → abduct → extend → adduct.' },
+            { ex:'Clamshell — NO BAND, hip <45°', sets:'3×15/side', tempo:'2s hold top', note:'NEUROLOGICAL ONLY. No resistance. Coach palpates. Add lightest band only when glute med confirmed firing.' },
+          ]},
+          { label:'MAIN LIFTS', color:'var(--green)', exercises:[
+            { ex:'Reverse Lunge BW — Slow Eccentric', sets:'3×10/side', tempo:'3-1-2', note:'Step back. Drive through FRONT heel. Feel front glute — not quad. Lean slightly forward from hip if quad dominant.' },
+            { ex:'SL Glute Bridge L + R', sets:'3×12/side', tempo:'2-2-2', note:'Full hip extension. Note L vs R quality of glute contraction every session.' },
+            { ex:'Standing Hip Abduction — Cable/Light Band', sets:'3×12/side', tempo:'2-1-2', note:'Hip neutral. No pelvis hike. Drive outer glute. Front-of-hip = TFL → reduce load immediately.' },
+            { ex:'Lateral Step-Down Eccentric 15cm', sets:'3×8/side', tempo:'3 sec lower', note:'Control hip drop. Feel lateral glute of standing leg. Monitor lateral knee pain closely.' },
+            { ex:'SL Calf Raise L', sets:'3×max', tempo:'1-0-3', note:'Building toward 15 reps. Record each session.' },
+            { ex:'Bent Over Row — Light', sets:'3×12', tempo:'2-1-2', note:'Postural. Retract shoulder blades. Low load.' },
+          ]},
+          { label:'CORE + COOL-DOWN', color:'var(--purple)', exercises:[
+            { ex:'Dead Bug', sets:'2×8/side', tempo:'4 sec lower', note:'Same as Session A.' },
+            { ex:'Pallof Press', sets:'3×10/side', tempo:'2 sec hold', note:'Anti-rotation. Cable or band at chest.' },
+            { ex:'90/90 Hip + Soleus Stretch', sets:'60s/side', tempo:'Passive', note:'End every session. Non-negotiable.' },
+          ]},
+        ],
+      },
+      rehab:[
+        { ex:'Ankle DF Wall Drill L', freq:'Daily', sets:'2×15', note:'Track wall-to-toe distance weekly.' },
+        { ex:'Calf/Soleus Stretch — bent knee', freq:'Daily', sets:'2×45s/side', note:'Bent knee targets soleus. Left side focus.' },
+        { ex:'90/90 Hip Rotation IR', freq:'Daily', sets:'2×8/side', note:'Both sides. Never force.' },
+        { ex:'Hip IR Pigeon Stretch', freq:'Daily', sets:'1×60s/side', note:'Passive. Breathe into restriction.' },
+        { ex:'Foam Roll TFL/outer hip', freq:'Daily', sets:'60s/side', note:'NOT on point of lateral knee pain. Light pressure only.' },
+        { ex:'Standing Hip Abduction activation', freq:'Daily', sets:'2×15/side', note:'Drive outer glute. Front-of-hip = reduce load.' },
+        { ex:'Ice + compression L knee', freq:'Post cardio >30 min', sets:'10-15 min', note:'Track VAS before and after every session.' },
+      ],
+      gate:[
+        { test:'Glute Bridge Hold L', baseline:36, target:45, unit:'sec' },
+        { test:'Glute Bridge Hold R', baseline:38, target:45, unit:'sec' },
+        { test:'Split Squat Hold L', baseline:18, target:25, unit:'sec' },
+        { test:'Split Squat Hold R', baseline:8, target:20, unit:'sec' },
+        { test:'SL Calf Raise L', baseline:10, target:15, unit:'reps' },
+        { test:'L Glute Med Feel', baseline:'Quad dominant', target:'Clear glute med activation', unit:'' },
+        { test:'Lateral Knee VAS', baseline:6, target:1, unit:'/10' },
+        { test:'Ankle DF L', baseline:'Measure wk 1', target:'2+ cm improvement', unit:'' },
+      ],
+    },
+    {
+      num:2, title:'Base Build', weeks:'5-8', color:'#1a4a72',
+      tag:'Running Returns · -250 kcal deficit',
+      overview:'Running re-introduced ONLY if Meso 1 gate criteria met. All Meso 2 running is easy RPE 3-4 only — no tempo, no intervals. Cadence cued 170+ spm from first run back. Running cue: push ground away behind you (glute) not lift the knee (quad/TFL). Strength progresses to loaded single-leg work.',
+      weeklyLayout:[
+        { week:5, vol:'30 km', lr:'14 km easy', key:'Easy run only — gate check', strength:'Loaded SL Strength A (coach)', nut:'-250 kcal' },
+        { week:6, vol:'34 km', lr:'16 km easy', key:'4×strides + easy runs', strength:'Strength A+B (coach)', nut:'-250 kcal' },
+        { week:7, vol:'38 km', lr:'18 km easy', key:'25 min easy tempo', strength:'Strength A+B (coach)', nut:'-250 kcal' },
+        { week:8, vol:'DELOAD 24 km', lr:'12 km easy', key:'DELOAD + RETEST', strength:'Deload (coach)', nut:'-250 kcal' },
+      ],
+      keyExercises:[
+        { ex:'RDL loaded (8-12kg)', note:'Progress from BW. Add load when L glute felt. Hip hinge.' },
+        { ex:'Hip Thrust loaded', note:'Add load. Compare L vs R glute quality at top.' },
+        { ex:'Split Squat — full reps', note:'Progress from Meso 1 static holds. Load only when L glute drives.' },
+        { ex:'Clamshell — lightest band', note:'First use of band. Hip <45°. L glute must be felt. Remove if TFL fires.' },
+        { ex:'Nordic Hamstring Curl (introduced)', note:'Start wk 5. 2×5-6 only. Eccentric focus. Resist the fall.' },
+        { ex:'SL Calf Raise L — 15 reps', note:'Maintain gate target. Build toward 20 reps.' },
+      ],
+      gate:[
+        { test:'Glute Bridge Hold L', baseline:45, target:55, unit:'sec' },
+        { test:'Split Squat Hold R', baseline:20, target:30, unit:'sec' },
+        { test:'SL Calf Raise L', baseline:15, target:20, unit:'reps' },
+        { test:'L Glute Feel During Run', baseline:'Quad dominant', target:'Glute push-off felt running', unit:'' },
+        { test:'Running Lateral Knee VAS', baseline:6, target:2, unit:'/10' },
+      ],
+    },
+    {
+      num:3, title:'Development', weeks:'9-13', color:'#2d6a4f',
+      tag:'Tempo + Long Run · Maintenance calories',
+      overview:'Running is now primary stimulus. Glute med should fire reliably (confirmed at Meso 2 retest). Tempo runs introduced short and built carefully. First 30km+ long run week 11. Gel practice from week 9 every long run. Strength shifts to power endurance. Ice after every long run >20km.',
+      weeklyLayout:[
+        { week:9, vol:'46 km', lr:'23 km', key:'5 km tempo @ 5:20/km', strength:'Strength C (coach)', nut:'Maintenance' },
+        { week:10, vol:'52 km', lr:'26 km', key:'6×800m intervals', strength:'Strength C (coach)', nut:'Maintenance' },
+        { week:11, vol:'58 km', lr:'29 km', key:'8 km @ MP 5:41/km', strength:'Strength C (coach)', nut:'Maint +50 kcal' },
+        { week:12, vol:'DELOAD 36 km', lr:'18 km', key:'DELOAD + RETEST', strength:'Deload (coach)', nut:'Maintenance' },
+        { week:13, vol:'62 km', lr:'32 km', key:'10 km tempo', strength:'Strength C light (coach)', nut:'Maint +100 kcal' },
+      ],
+      keyExercises:[
+        { ex:'SL RDL loaded', note:'3×8/side. 10-14kg. L glute must drive hip extension.' },
+        { ex:'Bulgarian Split Squat', note:'3×8/side. Watch L quad dominance. R watch hip drop.' },
+        { ex:'Hip Thrust heavy', note:'3×10. Barbell or heavy DBs. Compare L vs R.' },
+        { ex:'Nordic Hamstring Curl — build', note:'3×6-8. Build from Meso 2.' },
+        { ex:'SL Calf Raise L — 20+ reps', note:'If consistent 20: add small load.' },
+        { ex:'SL Hop L (wk 10+)', note:'Only if VAS 0-1. Soft landing. Glute push-off cue.' },
+        { ex:'Bounding', note:'4×20m. Exaggerated stride. Feel glute drive at push-off.' },
+      ],
+      gate:[
+        { test:'SL Calf Raise L', baseline:20, target:22, unit:'reps' },
+        { test:'Split Squat Hold R', baseline:30, target:40, unit:'sec' },
+        { test:'Running VAS L knee 30km+', baseline:4, target:2, unit:'/10' },
+        { test:'L side plank', baseline:'Excluded', target:'Full L side plank pain-free', unit:'' },
+      ],
+    },
+    {
+      num:4, title:'Peak', weeks:'14-17', color:'#c0392b',
+      tag:'Max Mileage · Maint +100 kcal',
+      overview:'Maximum mileage. Race-specific tempo at 5:41/km. Strength drops to 1 maintenance session/week — nothing new. Ice + compress L knee after every long run. If VAS above 3 during any run: reduce mileage 20% immediately. Peak physical stress — protect the knee.',
+      weeklyLayout:[
+        { week:14, vol:'66 km', lr:'34 km', key:'2×6km @ MP (5:41/km)', strength:'Maintenance (coach)', nut:'Maint +100' },
+        { week:15, vol:'70 km', lr:'36 km', key:'14 km @ MP', strength:'Maintenance (coach)', nut:'Maint +100' },
+        { week:16, vol:'72 km', lr:'38 km PEAK', key:'3×5km @ MP', strength:'Maintenance (coach)', nut:'Maint +100' },
+        { week:17, vol:'DELOAD 46 km', lr:'22 km', key:'DELOAD + FINAL RETEST', strength:'Rest', nut:'Maintenance' },
+      ],
+      maintenanceSession:[
+        { ex:'SL Glute Bridge / Hip Thrust', sets:'2×10/side', note:'Confirm L glute still firing under fatigue.' },
+        { ex:'SL RDL', sets:'2×8/side', note:'Moderate load. No increase. Maintenance only.' },
+        { ex:'SL Calf Raise L', sets:'3×20', note:'Non-negotiable even in peak. Ankle stability at 70+km/week.' },
+        { ex:'Standing Hip Abduction', sets:'2×12/side', note:'Maintain glute med. TFL management continues.' },
+        { ex:'Dead Bug + Bird Dog', sets:'2×8/side each', note:'Core maintenance. Pelvic stability.' },
+      ],
+      gate:[
+        { test:'Running VAS L knee', baseline:2, target:1, unit:'/10' },
+        { test:'SL Calf Raise L', baseline:22, target:22, unit:'reps — maintain' },
+      ],
+    },
+    {
+      num:5, title:'Taper & Race', weeks:'18-20', color:'#6c3483',
+      tag:'Race Day · Carb Load',
+      overview:'Volume drops 40% week 18, 60% week 19. Intensity maintained — pace stays sharp. No strength weeks 19-20. Taper madness is normal — heavy legs, anxiety, feeling unfit. This means it is working. Trust the 20 weeks.',
+      weeklyLayout:[
+        { week:18, vol:'42 km', lr:'20 km easy', key:'10 km @ MP', strength:'None', nut:'Maintenance' },
+        { week:19, vol:'26 km', lr:'12 km easy', key:'5 km @ MP + strides', strength:'None', nut:'Carb load begins' },
+        { week:20, vol:'RACE', lr:'—', key:'NY MARATHON — Target 3:59:59', strength:'None', nut:'Race fuelling' },
+      ],
+      racePacing:[
+        { seg:'Staten Island', km:'0-5', pace:'5:50-6:00/km', effort:'Easy RPE 4', note:'Ignore crowd. Verrazano hill — shorten stride, relax.' },
+        { seg:'Brooklyn', km:'5-20', pace:'5:43-5:48/km', effort:'Controlled RPE 5', note:'Most runners blow up here. Keep lid on it. Should feel easy.' },
+        { seg:'Queensboro Bridge', km:'~25', pace:'6:00-6:10/km', effort:'Manage RPE 5', note:'Biggest hill. Silence on bridge. Hip stability work pays here.' },
+        { seg:'1st Avenue', km:'25-32', pace:'5:41-5:46/km', effort:'MP RPE 6-7', note:'Massive crowds. Feed off it — do not race it. Gel at km 27.' },
+        { seg:'The Bronx', km:'32-36', pace:'5:41/km', effort:'MP RPE 7', note:'Wall zone. Gel at km 32 + 36. Trust the training.' },
+        { seg:'Central Park', km:'36-42.2', pace:'5:35-5:41/km', effort:'Race it RPE 8+', note:'Final hill km 40 then downhill. Empty the tank after km 41.' },
+      ],
+      gels:['km 10','km 20','km 27','km 32','km 37'],
+    },
+  ],
+  nutrition:{
+    phases:[
+      { phase:'Meso 1-2 (Wks 1-8)', kcal:'~1,900-2,100', mode:'-250-300 kcal', carbP:'50%', protP:'28%', fatP:'22%', carbG:244, protG:137, fatG:48 },
+      { phase:'Meso 3-4 (Wks 9-17)', kcal:'~2,400-2,600', mode:'Maintenance+', carbP:'55%', protP:'25%', fatP:'20%', carbG:337, protG:153, fatG:54 },
+      { phase:'Race Week', kcal:'~2,600+', mode:'Carb load', carbP:'65%', protP:'20%', fatP:'15%', carbG:423, protG:130, fatG:43 },
+    ],
+    supps:[
+      { name:'Vitamin D3', dose:'2,000 IU/day', timing:'Morning', ev:'Strong' },
+      { name:'Omega-3 EPA+DHA', dose:'1-2g/day', timing:'With food', ev:'Strong' },
+      { name:'Magnesium glycinate', dose:'300mg', timing:'Before bed', ev:'Moderate' },
+      { name:'Collagen + Vit C', dose:'15g', timing:'Pre-training', ev:'Moderate' },
+      { name:'Beetroot/nitrate', dose:'400mg nitrate', timing:'3hrs before key run', ev:'Good' },
+      { name:'Caffeine', dose:'3-6mg/kg', timing:'45min pre-race', ev:'Strong' },
+      { name:'Creatine', dose:'5g/day', timing:'Anytime', ev:'Strong — Meso 1-2 only' },
+    ],
+  },
+};
+
+// ── PROGRAMME RENDER HELPERS ──────────────────────────────────────────────────
+function renderProgrammePages() {
+  renderProgOverview();
+  renderMeso(0, 'meso1-content');
+  renderMeso(1, 'meso2-content');
+  renderMeso(2, 'meso3-content');
+  renderMeso(3, 'meso4-content');
+  renderMeso(4, 'meso5-content');
+  renderNutrition();
+}
+
+function renderProgOverview() {
+  // Baseline grid
+  const bg = document.getElementById('prog-baseline-grid');
+  if (bg) bg.innerHTML = PC.baseline.map(b => `
+    <div class="card">
+      <div style="font-weight:600;font-size:13px;margin-bottom:6px">${b.test}</div>
+      <div style="background:var(--cream);border-radius:10px;height:8px;margin:6px 0;overflow:hidden">
+        <div style="width:${b.bar}%;height:100%;border-radius:10px;background:${b.color}"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">
+        <span>Current: <strong style="color:var(--ink)">${b.val}</strong></span>
+        <span>${b.target}</span>
+      </div>
+    </div>`).join('');
+
+  // Macro schedule table
+  const head = document.getElementById('macro-sched-head');
+  const body = document.getElementById('macro-sched-body');
+  if (head) head.innerHTML = ['Wk','Meso','Volume','Long Run/Cardio','Key Session','Strength','Nutrition'].map(h =>
+    `<th style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.13em;text-transform:uppercase;background:var(--ink);color:var(--paper);padding:8px 11px;text-align:left;white-space:nowrap">${h}</th>`).join('');
+  if (body) body.innerHTML = APP.PROGRAMME.map(w => {
+    const meso = PC.mesos[w.meso-1];
+    const isDl = w.type==='deload', isRace = w.type==='race', isGate = w.type==='gate';
+    const bg = isRace?'background:var(--red);color:white':isDl?'background:#e4edf6;color:#185fa5;font-style:italic':isGate?'background:#fdf3e0':'';
+    return `<tr style="${bg}">
+      <td style="padding:7px 11px;border-bottom:1px solid var(--border);font-weight:700">${w.week}</td>
+      <td style="padding:7px 11px;border-bottom:1px solid var(--border)">M${w.meso}</td>
+      <td style="padding:7px 11px;border-bottom:1px solid var(--border)">${w.km>0?w.km+' km':'No run'}</td>
+      <td style="padding:7px 11px;border-bottom:1px solid var(--border)">${w.lr}</td>
+      <td style="padding:7px 11px;border-bottom:1px solid var(--border)">${w.key}</td>
+      <td style="padding:7px 11px;border-bottom:1px solid var(--border)">${w.strength}</td>
+      <td style="padding:7px 11px;border-bottom:1px solid var(--border)">${w.nut}</td>
+    </tr>`;
+  }).join('');
+
+  // Clinical flags
+  const cf = document.getElementById('clinical-flags-grid');
+  if (cf) cf.innerHTML = PC.clinicalFlags.map(f => `
+    <div class="card ${f.sev==='red'?'lr':'la'}">
+      <div style="font-weight:700;font-size:12.5px;margin-bottom:6px">${f.title}</div>
+      <div style="font-size:12px;color:#444;line-height:1.55">${f.detail}</div>
+    </div>`).join('');
+}
+
+function renderMeso(idx, containerId) {
+  const m = PC.mesos[idx];
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  let html = `
+    <div style="background:${m.color};color:white;padding:14px 20px;border-radius:8px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px">
+      <div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:.04em">Meso ${m.num} — ${m.title}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:9.5px;opacity:.7;margin-top:3px">Weeks ${m.weeks} · ${m.tag}</div>
+      </div>
+    </div>
+    <div class="alert b" style="display:flex;gap:11px;padding:12px 15px;border-radius:5px;margin-bottom:18px;font-size:13px;line-height:1.55;background:#e4edf6;border-left:4px solid var(--blue)">
+      <div>${m.overview}</div>
+    </div>`;
+
+  // Weekly layout table
+  html += `<div class="section"><div class="section-title">Weekly Layout</div>
+    <div style="overflow-x:auto;margin-bottom:20px"><table style="width:100%;border-collapse:collapse;font-size:12px">
+    <thead><tr>${['Week','Volume','Long Run','Key Session','Strength','Nutrition'].map(h=>`<th style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.13em;text-transform:uppercase;background:var(--ink);color:var(--paper);padding:8px 11px;text-align:left;white-space:nowrap">${h}</th>`).join('')}</tr></thead>
+    <tbody>${m.weeklyLayout.map(w=>{
+      const isDl = w.week===4||w.week===8||w.week===12||w.week===17||String(w.vol).includes('DELOAD');
+      const isRace = w.week===20;
+      const s = isRace?'background:var(--red);color:white':isDl?'background:#e4edf6;color:#185fa5;font-style:italic':'';
+      return `<tr style="${s}">${[w.week,w.vol,w.lr,w.key,w.strength,w.nut].map(v=>`<td style="padding:7px 11px;border-bottom:1px solid var(--border)">${v}</td>`).join('')}</tr>`;
+    }).join('')}</tbody></table></div></div>`;
+
+  // Cardio (meso 1)
+  if (m.cardio) {
+    html += `<div class="section"><div class="section-title">Cardio Prescription</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-bottom:20px">
+      ${m.cardio.map(c=>`<div class="card lt" style="border-left:4px solid var(--teal)"><h4>${c.mode}</h4><p>${c.detail}</p></div>`).join('')}
+      </div></div>`;
+  }
+
+  // Session A
+  if (m.sessionA) {
+    html += renderSession(m.sessionA);
+  }
+  // Session B
+  if (m.sessionB) {
+    html += renderSession(m.sessionB);
+  }
+
+  // Key exercises (meso 2+)
+  if (m.keyExercises) {
+    html += `<div class="section"><div class="section-title">Key Exercises This Meso</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;margin-bottom:20px">
+      ${m.keyExercises.map(e=>`<div class="card"><div style="font-weight:600;font-size:13px;margin-bottom:4px">${e.ex}</div><div style="font-size:12px;color:#444">${e.note}</div></div>`).join('')}
+      </div></div>`;
+  }
+
+  // Maintenance session (meso 4)
+  if (m.maintenanceSession) {
+    html += `<div class="section"><div class="section-title">Maintenance Strength Session (1×/week)</div>
+      ${renderExTable(m.maintenanceSession)}</div>`;
+  }
+
+  // Race pacing (meso 5)
+  if (m.racePacing) {
+    html += `<div class="section"><div class="section-title">Race Pacing Plan</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-bottom:20px">
+      ${m.racePacing.map(r=>`<div class="card ${r.seg==='Central Park'?'lr':''}">
+        <div style="font-weight:700;font-size:13px;margin-bottom:2px">${r.seg}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:9.5px;color:var(--muted);margin-bottom:6px">${r.km}</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:${r.seg==='Central Park'?'var(--red)':'var(--ink)'}">${r.pace}</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:6px">${r.effort}</div>
+        <div style="font-size:12px;color:#444">${r.note}</div>
+      </div>`).join('')}
+      </div>
+      <div style="background:#e4edf6;border-radius:6px;padding:12px 16px;font-size:13px;margin-bottom:20px">
+        <strong>Gel Strategy:</strong> ${m.gels.join(' · ')} — always with water at station. Same brands practised in training from week 9.
+      </div></div>`;
+  }
+
+  // Rehab (meso 1)
+  if (m.rehab) {
+    html += `<div class="section"><div class="section-title">Daily Rehab Routine</div>
+      ${renderExTable(m.rehab, ['Exercise','Frequency','Sets','Note'])}</div>`;
+  }
+
+  // Gate criteria
+  if (m.gate) {
+    html += `<div class="gate-box" style="background:#fdf3e0;border:1px solid #f0c060;border-radius:6px;padding:14px 16px;margin:14px 0">
+      <div style="font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--amber);font-weight:500;margin-bottom:10px">Gate Criteria — Must Meet Before Next Meso</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px">
+      ${m.gate.map(g=>{
+        const isNum = typeof g.baseline === 'number' && typeof g.target === 'number';
+        const pct = isNum ? Math.max(0,Math.min(100,(g.baseline/(g.target||1))*100)) : 30;
+        return `<div style="background:white;border-radius:4px;padding:9px 11px">
+          <div style="font-size:12px;font-weight:600;margin-bottom:3px">${g.test}</div>
+          ${isNum?`<div style="background:var(--cream);border-radius:10px;height:6px;margin:5px 0;overflow:hidden"><div style="width:${pct}%;height:100%;border-radius:10px;background:var(--amber)"></div></div>`:''}
+          <div style="display:flex;justify-content:space-between;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">
+            <span>Now: ${g.baseline}${g.unit}</span><span>Need: ${g.target}${g.unit}</span>
+          </div>
+        </div>`;
+      }).join('')}
+      </div>
+      <p style="font-size:11.5px;color:var(--muted);margin-top:10px">If gate not met: extend this meso 1-2 weeks. Do not rush to the next phase.</p>
+    </div>`;
+  }
+
+  container.innerHTML = html;
+}
+
+function renderSession(s) {
+  return `<div class="section"><div class="section-title">${s.title} <span>${s.day}</span></div>
+    <div style="background:white;border:1px solid var(--border);border-radius:6px;margin-bottom:20px;overflow:hidden">
+    ${s.sections.map(sec => `
+      <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:white;padding:7px 16px;background:${sec.color}">
+        ${sec.label}
+      </div>
+      <div style="padding:0 16px">
+        <div style="display:grid;grid-template-columns:2fr 80px 75px 1fr;gap:9px;padding:5px 0 7px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.11em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border)">
+          <span>Exercise</span><span>Sets×Reps</span><span>Tempo</span><span>Coaching Note</span>
+        </div>
+        ${sec.exercises.map(e=>`
+          <div style="display:grid;grid-template-columns:2fr 80px 75px 1fr;gap:9px;padding:9px 0;border-bottom:1px solid var(--border);font-size:12px;align-items:start">
+            <div style="font-weight:600;line-height:1.4">${e.ex}</div>
+            <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)">${e.sets}</div>
+            <div style="font-family:'DM Mono',monospace;font-size:10.5px;color:#888">${e.tempo}</div>
+            <div style="font-size:11.5px;color:#555;line-height:1.5">${e.note}</div>
+          </div>`).join('')}
+      </div>`).join('')}
+    </div></div>`;
+}
+
+function renderExTable(rows, headers) {
+  const h = headers || ['Exercise','Sets','Tempo','Note'];
+  return `<div style="overflow-x:auto;margin-bottom:20px">
+    <table style="width:100%;border-collapse:collapse;font-size:12px">
+    <thead><tr>${h.map(hh=>`<th style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.13em;text-transform:uppercase;background:var(--ink);color:var(--paper);padding:8px 11px;text-align:left">${hh}</th>`).join('')}</tr></thead>
+    <tbody>${rows.map((r,i)=>`<tr style="${i%2===0?'background:rgba(0,0,0,.018)':''}">
+      ${Object.values(r).map(v=>`<td style="padding:8px 11px;border-bottom:1px solid var(--border);line-height:1.5">${v}</td>`).join('')}
+    </tr>`).join('')}</tbody>
+    </table></div>`;
+}
+
+function renderNutrition() {
+  const n = PC.nutrition;
+  const c = document.getElementById('nutrition-content');
+  if (!c) return;
+
+  const phaseCards = n.phases.map(p => `
+    <div class="card" style="border:1px solid var(--border)">
+      <div class="bdg b" style="margin-bottom:8px">${p.phase}</div>
+      <h4>${p.kcal}</h4>
+      <p style="margin-bottom:8px">${p.mode}</p>
+      <div style="display:flex;height:22px;border-radius:4px;overflow:hidden;margin-bottom:4px">
+        <div style="width:${p.carbP};background:var(--amber);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:8.5px;color:white">${p.carbP} Carb</div>
+        <div style="width:${p.protP};background:var(--red);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:8.5px;color:white">${p.protP} Prot</div>
+        <div style="width:${p.fatP};background:var(--blue);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:8.5px;color:white">${p.fatP} Fat</div>
+      </div>
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">Carb ${p.carbG}g · Prot ${p.protG}g · Fat ${p.fatG}g</div>
+    </div>`).join('');
+
+  const suppTable = `<table style="width:100%;border-collapse:collapse;font-size:12px">
+    <thead><tr>${['Supplement','Dose','Timing','Evidence'].map(h=>`<th style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.13em;text-transform:uppercase;background:var(--ink);color:var(--paper);padding:8px 11px;text-align:left">${h}</th>`).join('')}</tr></thead>
+    <tbody>${n.supps.map((s,i)=>`<tr style="${i%2===0?'background:rgba(0,0,0,.018)':''}">
+      <td style="padding:8px 11px;border-bottom:1px solid var(--border);font-weight:600">${s.name}</td>
+      <td style="padding:8px 11px;border-bottom:1px solid var(--border)">${s.dose}</td>
+      <td style="padding:8px 11px;border-bottom:1px solid var(--border)">${s.timing}</td>
+      <td style="padding:8px 11px;border-bottom:1px solid var(--border)"><span class="bdg g">${s.ev}</span></td>
+    </tr>`).join('')}</tbody></table>`;
+
+  c.innerHTML = `
+    <div class="alert a" style="display:flex;gap:11px;padding:12px 15px;border-radius:5px;margin-bottom:18px;font-size:13px;line-height:1.55;background:#fdf3e0;border-left:4px solid var(--amber)">
+      <div><strong>Dual Goal:</strong> Weight loss 73→65-70kg AND sub-4:00 marathon. Moderate deficit Meso 1-2 only. Maintenance from Meso 3. Never deficit in peak mileage weeks. Performance before aesthetics from week 9 onwards.</div>
+    </div>
+    <div class="section"><div class="section-title">Caloric Targets by Phase</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-bottom:20px">${phaseCards}</div>
+    </div>
+    <div class="section"><div class="section-title">Supplements — Evidence Based Only</div>
+      <div style="overflow-x:auto;margin-bottom:20px">${suppTable}</div>
+    </div>
+    <div class="section"><div class="section-title">In-Run Nutrition</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:20px">
+        <div class="card lg"><h4>Under 60 min</h4><p>Water only. No gels needed.</p></div>
+        <div class="card la"><h4>60-90 min</h4><p>500-750ml water + 1 gel at 45 min mark.</p></div>
+        <div class="card lr"><h4>90 min+</h4><p>1 gel every 40-45 min from 45 min. 500-750ml water/hr. Electrolyte tab.</p></div>
+        <div class="card lb"><h4>Race Day</h4><p>Gels at km 10, 20, 27, 32, 37. Always with water. Same brands trained with.</p></div>
+      </div>
+    </div>`;
+}
+
 </script>
 </body>
 </html>

@@ -171,7 +171,7 @@ async function saveAssessment(data) {
 
 // ── HELPERS ──────────────────────────────────────────────────────────────────
 function currentWeek() {
-  const started = new Date('2025-09-01');
+  const started = new Date('2026-04-27');
   const now = new Date();
   const diff = Math.floor((now - started) / (7 * 24 * 60 * 60 * 1000));
   return Math.max(1, Math.min(20, diff + 1));
