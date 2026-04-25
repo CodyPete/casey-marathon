@@ -5,9 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Casey Marathon — Dashboard</title>
 <link rel="stylesheet" href="assets/style.css">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
-<script src="assets/app.js"></script>
 </head>
 <body>
 <div class="app">
@@ -34,6 +31,755 @@
     <a class="nav-item" onclick="showPage('progression')"><span class="ic">▲</span> Progression</a>
   </nav>
   <div class="sidebar-footer">
+    <button class="btn-logout" onclick="APP.logout()">Sign Out</button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- ═══ DASHBOARD ═══ -->
+  <div id="page-dashboard" class="page active">
+    <div class="topbar">
+      <div>
+        <div class="page-title">Dashboard</div>
+        <div style="font-size:12.5px;color:var(--muted)" id="dash-week-label">Loading programme position…</div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-primary" onclick="showPage('log-session')">+ Log Session</button>
+        <button class="btn btn-secondary" onclick="showPage('assessments')">+ Assessment</button>
+      </div>
+    </div>
+
+    <!-- Stats strip -->
+    <div class="stats-strip" id="stats-strip">
+      <div class="stat-card blue"><div class="stat-label">Current Week</div><div class="stat-val" id="st-week">—</div><div class="stat-sub" id="st-meso">—</div></div>
+      <div class="stat-card red"><div class="stat-label">L Knee VAS (last)</div><div class="stat-val" id="st-vas">—</div><div class="stat-sub">Target: 0-1</div></div>
+      <div class="stat-card green"><div class="stat-label">Sessions This Week</div><div class="stat-val" id="st-sess">—</div><div class="stat-sub" id="st-sess-sub">—</div></div>
+      <div class="stat-card amber"><div class="stat-label">L Calf Raise</div><div class="stat-val" id="st-calf">—</div><div class="stat-sub">Target: 15 → 22 reps</div></div>
+      <div class="stat-card purple"><div class="stat-label">Split Squat R</div><div class="stat-val" id="st-ssq">—</div><div class="stat-sub">Target: 20 → 40 sec</div></div>
+    </div>
+
+    <!-- Gate progress -->
+    <div class="section">
+      <div class="section-title">Gate Criteria Progress <span id="gate-meso-label"></span></div>
+      <div class="gate-grid" id="gate-progress"></div>
+    </div>
+
+    <!-- Charts row -->
+    <div class="chart-grid">
+      <div class="chart-card">
+        <div class="chart-title">Knee VAS — All Sessions <span class="bdg r">Track</span></div>
+        <div class="chart-canvas-wrap"><canvas id="chart-vas"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Weekly Volume (km) <span class="bdg g">Cardio</span></div>
+        <div class="chart-canvas-wrap"><canvas id="chart-vol"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Assessment — Hold Times (sec) <span class="bdg a">Retest</span></div>
+        <div class="chart-canvas-wrap"><canvas id="chart-holds"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Calf Raise Reps — L vs R <span class="bdg b">Symmetry</span></div>
+        <div class="chart-canvas-wrap"><canvas id="chart-calf"></canvas></div>
+      </div>
+    </div>
+
+    <!-- Recent sessions -->
+    <div class="section">
+      <div class="section-title">Recent Sessions <span>last 10</span></div>
+      <div class="log-table-wrap">
+        <table class="log-table">
+          <thead><tr><th>Date</th><th>Wk</th><th>Type</th><th>Vol / Duration</th><th>HR avg</th><th>RPE</th><th>VAS Knee</th><th>Coach Notes</th></tr></thead>
+          <tbody id="recent-sessions-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ LOG SESSION ═══ -->
+  <div id="page-log-session" class="page">
+    <div class="topbar">
+      <div class="page-title">Log <span>Session</span></div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-title">Session Details</div>
+      <div class="form-grid">
+        <div class="field"><label>Date</label><input type="date" id="log-date"></div>
+        <div class="field"><label>Week #</label><input type="number" id="log-week" min="1" max="20" placeholder="1-20"></div>
+        <div class="field"><label>Session Type</label>
+          <select id="log-type">
+            <option value="">Select…</option>
+            <option>Strength A — Neural Activation</option>
+            <option>Strength B — Neural Activation</option>
+            <option>Strength A — Loaded SL</option>
+            <option>Strength B — Loaded SL</option>
+            <option>Strength C — Power Endurance</option>
+            <option>Strength — Maintenance</option>
+            <option>Easy Run</option>
+            <option>Tempo Run</option>
+            <option>Intervals</option>
+            <option>Long Run</option>
+            <option>MP Run</option>
+            <option>Uphill Walk</option>
+            <option>Cross Trainer</option>
+            <option>Assault Bike</option>
+            <option>Rehab / Mobility</option>
+            <option>Rest</option>
+          </select>
+        </div>
+        <div class="field"><label>Overall RPE (1-10)</label>
+          <div style="display:flex;align-items:center">
+            <input type="range" id="log-rpe" min="1" max="10" value="5" oninput="document.getElementById('log-rpe-val').textContent=this.value">
+            <span class="range-val" id="log-rpe-val">5</span>
+          </div>
+        </div>
+        <div class="field"><label>Knee VAS — Left (0-10)</label>
+          <div style="display:flex;align-items:center">
+            <input type="range" id="log-vas" min="0" max="10" value="0" oninput="updateVasDisplay(this.value)">
+            <span class="range-val" id="log-vas-val">0</span>
+          </div>
+          <div class="hint" id="vas-hint" style="color:var(--green)">No pain — good</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARDIO block -->
+    <div class="form-card" id="cardio-block" style="display:none">
+      <div class="form-title">Cardio / Run Data</div>
+      <div class="form-grid">
+        <div class="field"><label>Mode</label>
+          <select id="log-cardio-mode">
+            <option>Easy Run</option><option>Tempo Run</option><option>Intervals</option>
+            <option>Long Run</option><option>MP Run</option><option>Uphill Walk</option>
+            <option>Cross Trainer</option><option>Assault Bike</option>
+          </select>
+        </div>
+        <div class="field"><label>Duration (min)</label><input type="number" id="log-dur" placeholder="e.g. 45"></div>
+        <div class="field"><label>Distance (km)</label><input type="number" id="log-dist" step="0.1" placeholder="e.g. 14.2"></div>
+        <div class="field"><label>Avg Pace (mm:ss)</label><input type="text" id="log-pace" placeholder="e.g. 6:10"></div>
+        <div class="field"><label>HR Average (bpm)</label><input type="number" id="log-hr-avg" placeholder="e.g. 145"></div>
+        <div class="field"><label>HR Max (bpm)</label><input type="number" id="log-hr-max" placeholder="e.g. 168"></div>
+        <div class="field"><label>Avg Power (W)</label><input type="number" id="log-power" placeholder="e.g. 210 (if device tracks)"></div>
+        <div class="field"><label>Incline %</label><input type="number" id="log-incline" placeholder="e.g. 12 (for walks)"></div>
+        <div class="field form-full"><label>Cardio Notes</label><textarea id="log-cardio-notes" rows="2" placeholder="How did it feel? Perceived effort, breathing, any issues…"></textarea></div>
+      </div>
+    </div>
+
+    <!-- STRENGTH block -->
+    <div class="form-card" id="strength-block" style="display:none">
+      <div class="form-title">Strength — Exercise Log</div>
+      <div style="margin-bottom:14px;display:flex;gap:8px;flex-wrap:wrap">
+        <select id="ex-picker" style="padding:7px 10px;border:1px solid var(--border);border-radius:4px;font-family:'DM Sans',sans-serif;font-size:13px;flex:1;min-width:200px">
+          <option value="">+ Add Exercise…</option>
+        </select>
+        <button class="btn btn-secondary" onclick="addExerciseBlock()">Add</button>
+      </div>
+      <div id="exercise-blocks"></div>
+    </div>
+
+    <!-- Notes -->
+    <div class="form-card">
+      <div class="form-title">Notes</div>
+      <div class="form-grid">
+        <div class="field form-full"><label>Coach Notes (visible to both)</label><textarea id="log-coach-notes" rows="3" placeholder="Observations, cues that worked, what to adjust next session…"></textarea></div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="submitSession()">Save Session</button>
+      <button class="btn btn-ghost" onclick="showPage('dashboard')">Cancel</button>
+    </div>
+  </div>
+
+  <!-- ═══ ASSESSMENTS ═══ -->
+  <div id="page-assessments" class="page">
+    <div class="topbar">
+      <div class="page-title">Assessments</div>
+      <button class="btn btn-primary" onclick="openAssessModal()">+ Record Assessment</button>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Latest Results vs Gate Targets</div>
+      <div class="assess-grid" id="assess-display"></div>
+    </div>
+
+    <div class="chart-grid">
+      <div class="chart-card" style="grid-column:1/-1">
+        <div class="chart-title">All Assessment Metrics Over Time</div>
+        <div class="chart-canvas-wrap" style="height:280px"><canvas id="chart-assess-all"></canvas></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Assessment History</div>
+      <div class="log-table-wrap">
+        <table class="log-table">
+          <thead><tr><th>Date</th><th>Meso</th><th>GB L (s)</th><th>GB R (s)</th><th>SS L (s)</th><th>SS R (s)</th><th>Calf L</th><th>Calf R</th><th>VAS</th><th>Notes</th></tr></thead>
+          <tbody id="assess-history-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PROGRAMME ═══ -->
+  <div id="page-programme" class="page">
+    <div class="topbar"><div class="page-title">Weekly <span>Programme</span></div></div>
+    <div class="meso-tabs" id="meso-tabs"></div>
+    <div id="programme-view"></div>
+  </div>
+
+  <!-- ═══ SESSION HISTORY ═══ -->
+  <div id="page-history" class="page">
+    <div class="topbar"><div class="page-title">Session <span>History</span></div></div>
+    <div class="log-table-wrap">
+      <table class="log-table">
+        <thead><tr><th>Date</th><th>Wk</th><th>Type</th><th>Distance</th><th>Duration</th><th>HR avg</th><th>Power</th><th>RPE</th><th>VAS</th><th>Notes</th></tr></thead>
+        <tbody id="history-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══ PROGRESSION ═══ -->
+  <div id="page-progression" class="page">
+    <div class="topbar"><div class="page-title">Progression <span>Analysis</span></div></div>
+
+    <div class="section">
+      <div class="section-title">Strength Exercise Progression <span>Pick an exercise</span></div>
+      <div style="margin-bottom:16px">
+        <select id="prog-ex-select" onchange="renderExProgression()" style="padding:8px 12px;border:1px solid var(--border);border-radius:4px;font-family:'DM Sans',sans-serif;font-size:13px;min-width:260px">
+          <option value="">Select exercise…</option>
+        </select>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title" id="prog-chart-title">Load / Reps Over Time</div>
+        <div class="chart-canvas-wrap" style="height:240px"><canvas id="chart-prog-ex"></canvas></div>
+      </div>
+    </div>
+
+    <div class="chart-grid">
+      <div class="chart-card">
+        <div class="chart-title">RPE Trend — All Sessions</div>
+        <div class="chart-canvas-wrap"><canvas id="chart-rpe"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">HR Average — Cardio Sessions</div>
+        <div class="chart-canvas-wrap"><canvas id="chart-hr"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Running Volume — Week by Week</div>
+        <div class="chart-canvas-wrap"><canvas id="chart-vol2"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">VAS Trend — Lateral Knee</div>
+        <div class="chart-canvas-wrap"><canvas id="chart-vas2"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+</div>
+
+<!-- ASSESS MODAL -->
+<div class="modal-overlay" id="assess-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Record Assessment</h3>
+      <button class="modal-close" onclick="closeAssessModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field"><label>Date</label><input type="date" id="am-date"></div>
+        <div class="field"><label>Meso</label><select id="am-meso"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
+        <div class="field"><label>Glute Bridge Hold — L (sec)</label><input type="number" id="am-gb-l" placeholder="e.g. 36"></div>
+        <div class="field"><label>Glute Bridge Hold — R (sec)</label><input type="number" id="am-gb-r" placeholder="e.g. 38"></div>
+        <div class="field"><label>Split Squat Hold — L (sec)</label><input type="number" id="am-ss-l" placeholder="e.g. 18"></div>
+        <div class="field"><label>Split Squat Hold — R (sec)</label><input type="number" id="am-ss-r" placeholder="e.g. 8"></div>
+        <div class="field"><label>SL Calf Raise — L (reps)</label><input type="number" id="am-calf-l" placeholder="e.g. 10"></div>
+        <div class="field"><label>SL Calf Raise — R (reps)</label><input type="number" id="am-calf-r" placeholder="e.g. 15"></div>
+        <div class="field"><label>Ankle DF — L (cm wall dist)</label><input type="number" id="am-df-l" step="0.5" placeholder="e.g. 5.5"></div>
+        <div class="field"><label>Lateral Knee VAS (0-10)</label><input type="number" id="am-vas" min="0" max="10" placeholder="0 = no pain"></div>
+        <div class="field"><label>L Glute Feel</label><select id="am-glute"><option value="">—</option><option value="none">No glute feel — quad dominant</option><option value="partial">Some glute activation</option><option value="good">Clear glute med activation</option><option value="strong">Strong reliable activation</option></select></div>
+        <div class="field form-full"><label>Notes</label><textarea id="am-notes" rows="3" placeholder="Observations, what's changed, next focus areas…"></textarea></div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:4px">
+        <button class="btn btn-primary" onclick="submitAssessment()">Save Assessment</button>
+        <button class="btn btn-ghost" onclick="closeAssessModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-wrap" id="toast-wrap"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script src="assets/app.js"></script>
+<script>
+// ── INIT ─────────────────────────────────────────────────────────────────────
+(async () => {
+  const authed = await APP.checkAuth();
+  if (!authed) { window.location.href = 'index.html'; return; }
+  const p = APP.currentProfile();
+  document.getElementById('sb-name').textContent = p ? p.name : APP.currentUser().email;
+  document.getElementById('sb-role').textContent = p ? p.role : 'user';
+  await APP.loadAllData();
+  renderDashboard();
+  renderProgramme();
+  populateExPicker();
+  setDefaultDate();
+})();
+
+function setDefaultDate() {
+  const today = new Date().toISOString().split('T')[0];
+  ['log-date','am-date'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = today;
+  });
+  const wk = APP.currentWeek();
+  const wkEl = document.getElementById('log-week');
+  if (wkEl) wkEl.value = wk;
+}
+
+// ── PAGE NAV ─────────────────────────────────────────────────────────────────
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const page = document.getElementById('page-' + name);
+  if (page) page.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => {
+    if (n.getAttribute('onclick') && n.getAttribute('onclick').includes("'" + name + "'"))
+      n.classList.add('active');
+  });
+  if (name === 'history') renderHistory();
+  if (name === 'assessments') renderAssessments();
+  if (name === 'progression') renderProgression();
+  if (name === 'log-session') updateSessionForm();
+  window.scrollTo(0, 0);
+}
+
+// ── DASHBOARD ─────────────────────────────────────────────────────────────────
+function renderDashboard() {
+  const wk = APP.currentWeek();
+  const meso = APP.weekToMeso(wk);
+  const prog = APP.PROGRAMME.find(p => p.week === wk);
+
+  document.getElementById('st-week').textContent = wk;
+  document.getElementById('st-meso').textContent = prog ? `Meso ${meso} — ${prog.key}` : `Meso ${meso}`;
+  document.getElementById('dash-week-label').textContent = `Week ${wk} of 20 · Meso ${meso} · ${prog ? prog.cardio : ''}`;
+  document.getElementById('gate-meso-label').textContent = `Meso ${meso}`;
+
+  const sessions = APP.allSessions();
+  const assessments = APP.allAssessments();
+
+  // VAS
+  const recentWithVas = sessions.filter(s => s.overall_vas_knee !== null);
+  const lastVas = recentWithVas[0]?.overall_vas_knee;
+  const vasEl = document.getElementById('st-vas');
+  vasEl.textContent = lastVas !== undefined ? lastVas : '—';
+  vasEl.style.color = lastVas > 5 ? 'var(--red)' : lastVas > 2 ? 'var(--amber)' : 'var(--green)';
+
+  // Sessions this week
+  const weekSessions = sessions.filter(s => s.week_num === wk);
+  document.getElementById('st-sess').textContent = weekSessions.length;
+  document.getElementById('st-sess-sub').textContent = weekSessions.map(s => s.session_type.split(' ')[0]).join(', ') || 'None yet';
+
+  // Assessment stats
+  const lastAssess = assessments[assessments.length - 1];
+  document.getElementById('st-calf').textContent = lastAssess ? (lastAssess.calf_raise_l_reps || '—') : '10';
+  document.getElementById('st-ssq').textContent = lastAssess ? (lastAssess.split_squat_r_sec ? lastAssess.split_squat_r_sec + 's' : '—') : '8s';
+
+  renderGateProgress(meso, lastAssess);
+  renderDashboardCharts(sessions, assessments);
+  renderRecentSessions(sessions.slice(0, 10));
+}
+
+function renderGateProgress(meso, lastAssess) {
+  const criteria = APP.GATE_CRITERIA[Math.min(meso, 3)] || APP.GATE_CRITERIA[3];
+  const container = document.getElementById('gate-progress');
+  if (!criteria) { container.innerHTML = '<p style="color:var(--muted);font-size:12px">Peak phase — no gate criteria. Maintain and race.</p>'; return; }
+
+  const baselines = { glute_bridge_l_sec:36, glute_bridge_r_sec:38, split_squat_l_sec:18, split_squat_r_sec:8, calf_raise_l_reps:10, vas_knee:4 };
+
+  container.innerHTML = criteria.map(c => {
+    const curr = lastAssess ? lastAssess[c.field] : (baselines[c.field] || 0);
+    const base = c.baseline !== null ? c.baseline : (baselines[c.field] || 0);
+    const pct = c.lowerIsBetter
+      ? Math.max(0, Math.min(100, ((base - (curr||base)) / (base - c.target)) * 100))
+      : Math.max(0, Math.min(100, ((curr||base) - base) / (c.target - base) * 100));
+    const done = c.lowerIsBetter ? (curr !== null && curr <= c.target) : (curr !== null && curr >= c.target);
+    return `<div class="gate-item">
+      <div class="gi-test">${c.test}</div>
+      <div class="gi-bar-wrap"><div class="gi-bar ${done?'done':''}" style="width:${pct}%"></div></div>
+      <div class="gi-nums"><span>Current: <strong>${curr !== null && curr !== undefined ? curr + c.unit : '—'}</strong></span><span>Need: ${c.target}${c.unit}</span></div>
+    </div>`;
+  }).join('');
+}
+
+function renderDashboardCharts(sessions, assessments) {
+  // VAS chart
+  const vasSess = sessions.filter(s => s.overall_vas_knee !== null).slice(0, 20).reverse();
+  APP.makeLineChart('chart-vas',
+    vasSess.map(s => APP.formatDate(s.date)),
+    [{ label:'VAS Knee L', data: vasSess.map(s => s.overall_vas_knee), borderColor: APP.CHART_COLORS.red, backgroundColor:'rgba(192,57,43,.1)', fill:true }]
+  );
+
+  // Weekly volume
+  const volByWeek = {};
+  sessions.forEach(s => { if (s.week_num && s.cardio_distance_km) volByWeek[s.week_num] = (volByWeek[s.week_num]||0) + s.cardio_distance_km; });
+  const weeks = Object.keys(volByWeek).sort((a,b)=>a-b);
+  APP.makeBarChart('chart-vol', weeks.map(w=>'Wk'+w), [{
+    label: 'km', data: weeks.map(w=>volByWeek[w]),
+    backgroundColor: 'rgba(44,106,79,.6)', borderColor:'var(--green)', borderWidth:1
+  }]);
+
+  // Hold times
+  const assessDates = assessments.map(a => APP.formatDate(a.date));
+  APP.makeLineChart('chart-holds', assessDates, [
+    { label:'Split Squat L (s)', data: assessments.map(a=>a.split_squat_l_sec), borderColor: APP.CHART_COLORS.blue },
+    { label:'Split Squat R (s)', data: assessments.map(a=>a.split_squat_r_sec), borderColor: APP.CHART_COLORS.red },
+    { label:'Glute Bridge L (s)', data: assessments.map(a=>a.glute_bridge_l_sec), borderColor: APP.CHART_COLORS.green },
+    { label:'Glute Bridge R (s)', data: assessments.map(a=>a.glute_bridge_r_sec), borderColor: APP.CHART_COLORS.teal },
+  ]);
+
+  // Calf
+  APP.makeLineChart('chart-calf', assessDates, [
+    { label:'L Calf Reps', data: assessments.map(a=>a.calf_raise_l_reps), borderColor: APP.CHART_COLORS.red },
+    { label:'R Calf Reps', data: assessments.map(a=>a.calf_raise_r_reps), borderColor: APP.CHART_COLORS.green },
+  ]);
+}
+
+function renderRecentSessions(sessions) {
+  const tbody = document.getElementById('recent-sessions-body');
+  if (!sessions.length) { tbody.innerHTML = '<tr><td colspan="8" style="color:var(--muted);text-align:center;padding:20px">No sessions logged yet</td></tr>'; return; }
+  tbody.innerHTML = sessions.map(s => `
+    <tr onclick="showPage('history')">
+      <td class="dy">${APP.formatDate(s.date)}</td>
+      <td>${s.week_num||'—'}</td>
+      <td>${s.session_type||'—'}</td>
+      <td>${s.cardio_distance_km ? s.cardio_distance_km+'km' : s.cardio_duration_min ? s.cardio_duration_min+'min' : '—'}</td>
+      <td>${s.cardio_hr_avg||'—'}</td>
+      <td>${s.overall_rpe||'—'}</td>
+      <td class="${s.overall_vas_knee !== null ? 'vas-'+s.overall_vas_knee : ''}">${s.overall_vas_knee !== null ? s.overall_vas_knee : '—'}</td>
+      <td style="max-width:200px;font-size:11.5px">${s.coach_notes||'—'}</td>
+    </tr>`).join('');
+}
+
+// ── SESSION FORM ──────────────────────────────────────────────────────────────
+function updateSessionForm() {
+  const type = document.getElementById('log-type').value;
+  const isCardio = ['Easy Run','Tempo Run','Intervals','Long Run','MP Run','Uphill Walk','Cross Trainer','Assault Bike'].some(t => type.includes(t));
+  const isStrength = type.includes('Strength');
+  document.getElementById('cardio-block').style.display = isCardio ? 'block' : 'none';
+  document.getElementById('strength-block').style.display = isStrength ? 'block' : 'none';
+}
+document.getElementById('log-type').addEventListener('change', updateSessionForm);
+
+function updateVasDisplay(val) {
+  document.getElementById('log-vas-val').textContent = val;
+  const hint = document.getElementById('vas-hint');
+  if (val <= 2) { hint.textContent = val==0?'No pain — good':'Awareness only — monitor'; hint.style.color='var(--green)'; }
+  else if (val <= 5) { hint.textContent = 'Flag to coach. Consider modifying session.'; hint.style.color='var(--amber)'; }
+  else { hint.textContent = '⚠ Stop session. Refer to physio.'; hint.style.color='var(--red)'; }
+}
+
+function populateExPicker() {
+  const picker = document.getElementById('ex-picker');
+  if (!picker) return;
+  const allEx = new Set();
+  Object.values(APP.EXERCISES).forEach(list => list.forEach(e => allEx.add(e)));
+  allEx.forEach(ex => {
+    const o = document.createElement('option');
+    o.value = o.textContent = ex;
+    picker.appendChild(o);
+  });
+  const progSel = document.getElementById('prog-ex-select');
+  if (progSel) {
+    allEx.forEach(ex => {
+      const o = document.createElement('option');
+      o.value = o.textContent = ex;
+      progSel.appendChild(o);
+    });
+  }
+}
+
+let exerciseBlocks = [];
+
+function addExerciseBlock() {
+  const picker = document.getElementById('ex-picker');
+  const name = picker.value;
+  if (!name) return;
+  const id = Date.now();
+  exerciseBlocks.push({ id, name, sets: [{reps:'',weight:'',duration:''}] });
+  renderExerciseBlocks();
+  picker.value = '';
+}
+
+function renderExerciseBlocks() {
+  const container = document.getElementById('exercise-blocks');
+  container.innerHTML = exerciseBlocks.map(ex => `
+    <div class="ex-block" id="exb-${ex.id}">
+      <div class="ex-block-title">
+        ${ex.name}
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-secondary btn-sm" onclick="addSet(${ex.id})">+ Set</button>
+          <button class="btn btn-ghost btn-sm" onclick="removeEx(${ex.id})">✕</button>
+        </div>
+      </div>
+      <div class="set-header"><div></div><div class="set-header-inner"><span>Reps / Secs</span><span>Weight (kg)</span><span>RPE</span></div></div>
+      ${ex.sets.map((s,i) => `
+        <div class="set-row">
+          <div class="set-num">${i+1}</div>
+          <div class="set-fields">
+            <input type="number" placeholder="—" value="${s.reps}" oninput="updateSet(${ex.id},${i},'reps',this.value)">
+            <input type="number" placeholder="—" step="0.5" value="${s.weight}" oninput="updateSet(${ex.id},${i},'weight',this.value)">
+            <input type="number" placeholder="—" min="1" max="10" value="${s.rpe}" oninput="updateSet(${ex.id},${i},'rpe',this.value)">
+          </div>
+        </div>`).join('')}
+    </div>`).join('');
+}
+
+function addSet(id) {
+  const ex = exerciseBlocks.find(e => e.id === id);
+  if (ex) { ex.sets.push({reps:'',weight:'',duration:''}); renderExerciseBlocks(); }
+}
+function removeEx(id) { exerciseBlocks = exerciseBlocks.filter(e => e.id !== id); renderExerciseBlocks(); }
+function updateSet(exId, setIdx, field, val) {
+  const ex = exerciseBlocks.find(e => e.id === exId);
+  if (ex && ex.sets[setIdx]) ex.sets[setIdx][field] = val;
+}
+
+async function submitSession() {
+  const sessionData = {
+    date: document.getElementById('log-date').value,
+    week_num: parseInt(document.getElementById('log-week').value) || APP.currentWeek(),
+    meso: APP.weekToMeso(parseInt(document.getElementById('log-week').value) || APP.currentWeek()),
+    session_type: document.getElementById('log-type').value,
+    cardio_mode: document.getElementById('log-cardio-mode')?.value || null,
+    cardio_duration_min: parseInt(document.getElementById('log-dur')?.value) || null,
+    cardio_distance_km: parseFloat(document.getElementById('log-dist')?.value) || null,
+    cardio_hr_avg: parseInt(document.getElementById('log-hr-avg')?.value) || null,
+    cardio_hr_max: parseInt(document.getElementById('log-hr-max')?.value) || null,
+    cardio_power_avg: parseInt(document.getElementById('log-power')?.value) || null,
+    cardio_notes: document.getElementById('log-cardio-notes')?.value || null,
+    overall_rpe: parseInt(document.getElementById('log-rpe').value),
+    overall_vas_knee: parseInt(document.getElementById('log-vas').value),
+    coach_notes: document.getElementById('log-coach-notes').value || null,
+  };
+  try {
+    await APP.saveSession(sessionData, exerciseBlocks);
+    await APP.loadAllData();
+    APP.toast('Session saved!', 'success');
+    exerciseBlocks = [];
+    renderExerciseBlocks();
+    renderDashboard();
+    showPage('dashboard');
+  } catch(e) {
+    APP.toast('Error: ' + e.message, 'error');
+  }
+}
+
+// ── ASSESSMENTS ───────────────────────────────────────────────────────────────
+function renderAssessments() {
+  const assessments = APP.allAssessments();
+  const last = assessments[assessments.length - 1];
+  const meso = APP.weekToMeso(APP.currentWeek());
+  const criteria = APP.GATE_CRITERIA[Math.min(meso, 3)] || APP.GATE_CRITERIA[3];
+
+  const display = document.getElementById('assess-display');
+  const tests = [
+    { label:'Glute Bridge Hold L', key:'glute_bridge_l_sec', unit:'sec', target:45, baseline:36, color:'g' },
+    { label:'Glute Bridge Hold R', key:'glute_bridge_r_sec', unit:'sec', target:45, baseline:38, color:'g' },
+    { label:'Split Squat Hold L', key:'split_squat_l_sec', unit:'sec', target:25, baseline:18, color:'a' },
+    { label:'Split Squat Hold R', key:'split_squat_r_sec', unit:'sec', target:20, baseline:8, color:'r' },
+    { label:'SL Calf Raise L', key:'calf_raise_l_reps', unit:'reps', target:22, baseline:10, color:'r' },
+    { label:'SL Calf Raise R', key:'calf_raise_r_reps', unit:'reps', target:22, baseline:15, color:'g' },
+    { label:'Lateral Knee VAS', key:'vas_knee', unit:'/10', target:1, baseline:4, color:'r', lower:true },
+    { label:'Ankle DF L', key:'ankle_df_l_cm', unit:'cm', target:8, baseline:0, color:'b' },
+  ];
+
+  display.innerHTML = tests.map(t => {
+    const curr = last ? last[t.key] : null;
+    const pct = t.lower
+      ? Math.max(0, Math.min(100, ((t.baseline-(curr||t.baseline))/(t.baseline-t.target))*100))
+      : Math.max(0, Math.min(100, ((curr||t.baseline)-t.baseline)/(t.target-t.baseline)*100));
+    const done = t.lower ? (curr !== null && curr <= t.target) : (curr !== null && curr >= t.target);
+    return `<div class="assess-card">
+      <div class="assess-test">${t.label}</div>
+      <div class="assess-bar-wrap"><div class="assess-bar bar-${done?'g':t.color}" style="width:${pct}%"></div></div>
+      <div class="assess-nums"><span>Current: <strong>${curr !== null ? curr+t.unit : '—'}</strong></span><span>Target: ${t.target}${t.unit}</span></div>
+      ${done ? '<div style="font-size:10.5px;color:var(--green);margin-top:4px;font-weight:600">✓ Gate met</div>' : ''}
+    </div>`;
+  }).join('');
+
+  // History table
+  const tbody = document.getElementById('assess-history-body');
+  const rows = [...assessments].reverse();
+  tbody.innerHTML = rows.length ? rows.map(a => `
+    <tr>
+      <td class="dy">${APP.formatDate(a.date)}</td>
+      <td>${a.meso||'—'}</td>
+      <td>${a.glute_bridge_l_sec||'—'}</td>
+      <td>${a.glute_bridge_r_sec||'—'}</td>
+      <td>${a.split_squat_l_sec||'—'}</td>
+      <td>${a.split_squat_r_sec||'—'}</td>
+      <td>${a.calf_raise_l_reps||'—'}</td>
+      <td>${a.calf_raise_r_reps||'—'}</td>
+      <td class="${a.vas_knee!==null?'vas-'+a.vas_knee:''}">${a.vas_knee!==null?a.vas_knee:'—'}</td>
+      <td style="font-size:11.5px">${a.notes||'—'}</td>
+    </tr>`).join('')
+    : '<tr><td colspan="10" style="color:var(--muted);text-align:center;padding:20px">No assessments recorded yet</td></tr>';
+
+  // Chart
+  const dates = assessments.map(a => APP.formatDate(a.date));
+  APP.makeLineChart('chart-assess-all', dates, [
+    { label:'Split Squat L (s)', data:assessments.map(a=>a.split_squat_l_sec), borderColor:APP.CHART_COLORS.blue },
+    { label:'Split Squat R (s)', data:assessments.map(a=>a.split_squat_r_sec), borderColor:APP.CHART_COLORS.red },
+    { label:'Calf Raise L', data:assessments.map(a=>a.calf_raise_l_reps), borderColor:APP.CHART_COLORS.amber },
+    { label:'Calf Raise R', data:assessments.map(a=>a.calf_raise_r_reps), borderColor:APP.CHART_COLORS.green },
+    { label:'VAS Knee', data:assessments.map(a=>a.vas_knee), borderColor:'#e74c3c', borderDash:[4,4] },
+  ]);
+}
+
+function openAssessModal() {
+  document.getElementById('assess-modal').classList.add('open');
+}
+function closeAssessModal() {
+  document.getElementById('assess-modal').classList.remove('open');
+}
+async function submitAssessment() {
+  const data = {
+    date: document.getElementById('am-date').value,
+    meso: parseInt(document.getElementById('am-meso').value),
+    glute_bridge_l_sec: parseInt(document.getElementById('am-gb-l').value)||null,
+    glute_bridge_r_sec: parseInt(document.getElementById('am-gb-r').value)||null,
+    split_squat_l_sec: parseInt(document.getElementById('am-ss-l').value)||null,
+    split_squat_r_sec: parseInt(document.getElementById('am-ss-r').value)||null,
+    calf_raise_l_reps: parseInt(document.getElementById('am-calf-l').value)||null,
+    calf_raise_r_reps: parseInt(document.getElementById('am-calf-r').value)||null,
+    ankle_df_l_cm: parseFloat(document.getElementById('am-df-l').value)||null,
+    vas_knee: parseInt(document.getElementById('am-vas').value)||null,
+    glute_feel_l: document.getElementById('am-glute').value||null,
+    notes: document.getElementById('am-notes').value||null,
+  };
+  try {
+    await APP.saveAssessment(data);
+    await APP.loadAllData();
+    APP.toast('Assessment saved!', 'success');
+    closeAssessModal();
+    renderAssessments();
+    renderDashboard();
+  } catch(e) {
+    APP.toast('Error: ' + e.message, 'error');
+  }
+}
+
+// ── PROGRAMME VIEW ────────────────────────────────────────────────────────────
+function renderProgramme() {
+  const mesoNums = [1,2,3,4,5];
+  const tabs = document.getElementById('meso-tabs');
+  tabs.innerHTML = mesoNums.map(m =>
+    `<button class="meso-tab ${m===1?'on':''}" onclick="showMeso(${m},this)">
+      ${['M1 Foundation','M2 Base Build','M3 Development','M4 Peak','M5 Taper'][m-1]}
+    </button>`
+  ).join('');
+  showMeso(1, tabs.querySelector('.meso-tab'));
+}
+
+function showMeso(meso, btn) {
+  document.querySelectorAll('.meso-tab').forEach(t => t.classList.remove('on'));
+  if (btn) btn.classList.add('on');
+  const weeks = APP.PROGRAMME.filter(w => w.meso === meso);
+  const container = document.getElementById('programme-view');
+  container.innerHTML = `
+    <div class="week-hd">
+      <div>Week</div><div>Volume</div><div>Long / Main Cardio</div><div>Key Session</div><div>Strength / Nutrition</div>
+    </div>
+    ${weeks.map(w => `
+      <div class="week-row ${w.type==='deload'?'deload':w.type==='race'?'race':w.type==='gate'?'gate':''}">
+        <div style="font-weight:700">Wk ${w.week}</div>
+        <div>${w.km > 0 ? w.km+' km' : w.lr.includes('min')||w.lr.includes('walk') ? 'No run' : '—'}</div>
+        <div>${w.lr}</div>
+        <div>${w.key}</div>
+        <div>${w.strength} · ${w.nut}</div>
+      </div>`).join('')}`;
+}
+
+// ── HISTORY ───────────────────────────────────────────────────────────────────
+function renderHistory() {
+  const tbody = document.getElementById('history-body');
+  const sessions = APP.allSessions();
+  tbody.innerHTML = sessions.length ? sessions.map(s => `
+    <tr>
+      <td class="dy">${APP.formatDate(s.date)}</td>
+      <td>${s.week_num||'—'}</td>
+      <td>${s.session_type||'—'}</td>
+      <td>${s.cardio_distance_km ? s.cardio_distance_km+'km' : '—'}</td>
+      <td>${s.cardio_duration_min ? s.cardio_duration_min+'min' : '—'}</td>
+      <td>${s.cardio_hr_avg||'—'}</td>
+      <td>${s.cardio_power_avg ? s.cardio_power_avg+'W' : '—'}</td>
+      <td>${s.overall_rpe||'—'}</td>
+      <td class="${s.overall_vas_knee!==null?'vas-'+s.overall_vas_knee:''}">${s.overall_vas_knee!==null?s.overall_vas_knee:'—'}</td>
+      <td style="font-size:11.5px;max-width:200px">${s.coach_notes||'—'}</td>
+    </tr>`).join('')
+    : '<tr><td colspan="10" style="color:var(--muted);text-align:center;padding:20px">No sessions logged yet</td></tr>';
+}
+
+// ── PROGRESSION ───────────────────────────────────────────────────────────────
+function renderProgression() {
+  const sessions = APP.allSessions();
+
+  // RPE
+  const rpeData = sessions.filter(s=>s.overall_rpe).slice(0,20).reverse();
+  APP.makeLineChart('chart-rpe', rpeData.map(s=>APP.formatDate(s.date)),
+    [{ label:'RPE', data:rpeData.map(s=>s.overall_rpe), borderColor:APP.CHART_COLORS.amber }]);
+
+  // HR
+  const hrData = sessions.filter(s=>s.cardio_hr_avg).slice(0,20).reverse();
+  APP.makeLineChart('chart-hr', hrData.map(s=>APP.formatDate(s.date)),
+    [{ label:'HR avg (bpm)', data:hrData.map(s=>s.cardio_hr_avg), borderColor:APP.CHART_COLORS.red },
+     { label:'HR max', data:hrData.map(s=>s.cardio_hr_max), borderColor:'rgba(192,57,43,.4)' }]);
+
+  // Volume
+  const volByWeek = {};
+  sessions.forEach(s => { if(s.week_num && s.cardio_distance_km) volByWeek[s.week_num]=(volByWeek[s.week_num]||0)+s.cardio_distance_km; });
+  const weeks = Object.keys(volByWeek).sort((a,b)=>a-b);
+  APP.makeBarChart('chart-vol2', weeks.map(w=>'Wk'+w),
+    [{label:'km',data:weeks.map(w=>volByWeek[w]),backgroundColor:'rgba(44,106,79,.6)',borderColor:'var(--green)',borderWidth:1}]);
+
+  // VAS
+  const vasData = sessions.filter(s=>s.overall_vas_knee!==null).slice(0,20).reverse();
+  APP.makeLineChart('chart-vas2', vasData.map(s=>APP.formatDate(s.date)),
+    [{ label:'VAS L Knee', data:vasData.map(s=>s.overall_vas_knee), borderColor:APP.CHART_COLORS.red, backgroundColor:'rgba(192,57,43,.1)', fill:true }],
+    { yAxis:{ min:0, max:10 } });
+}
+
+function renderExProgression() {
+  const exName = document.getElementById('prog-ex-select').value;
+  if (!exName) return;
+  document.getElementById('prog-chart-title').textContent = exName + ' — Load Progression';
+  const sessions = APP.allSessions();
+  const points = [];
+  sessions.forEach(s => {
+    if (s.exercise_sets) {
+      const exSets = s.exercise_sets.filter(e => e.exercise_name === exName);
+      exSets.forEach(set => {
+        points.push({ date: s.date, weight: set.weight_kg, reps: set.reps, rpe: set.rpe, setNum: set.set_number });
+      });
+    }
+  });
+  points.sort((a,b) => new Date(a.date)-new Date(b.date));
+  APP.makeLineChart('chart-prog-ex', points.map(p=>APP.formatDate(p.date)+' S'+p.setNum), [
+    { label:'Weight (kg)', data:points.map(p=>p.weight), borderColor:APP.CHART_COLORS.blue },
+    { label:'Reps', data:points.map(p=>p.reps), borderColor:APP.CHART_COLORS.green },
+  ]);
+}
+</script>
+</body>
+</html>
     <button class="btn-logout" onclick="APP.logout()">Sign Out</button>
   </div>
 </aside>
