@@ -3,1326 +3,910 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Casey Marathon — Dashboard</title>
-<link rel="stylesheet" href="style.css">
+<title>Casey — Training Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0f0e0d;--paper:#f5f2ee;--cream:#ede9e3;--red:#c0392b;--rlt:#e74c3c;--amb:#d4820a;--grn:#2d6a4f;--blu:#1a4a72;--pur:#6c3483;--tel:#1a7a6a;--mut:#7a7268;--bdr:#d5cfc6;--wh:#fff;--sb:230px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);font-size:14px;line-height:1.6}
+.app{display:flex;min-height:100vh}
+/* SIDEBAR */
+.sb{width:var(--sb);background:var(--ink);position:fixed;top:0;left:0;height:100vh;display:flex;flex-direction:column;z-index:100;overflow-y:auto}
+.sb-logo{padding:20px 18px 14px;border-bottom:1px solid rgba(255,255,255,.08)}
+.sb-logo-name{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--rlt);line-height:1.1}
+.sb-logo-sub{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.14em;color:rgba(255,255,255,.3);margin-top:3px;text-transform:uppercase}
+.sb-user{padding:10px 18px;border-bottom:1px solid rgba(255,255,255,.08);font-size:12px}
+.sb-user-name{font-weight:600}
+.sb-user-role{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--rlt)}
+.sb-nav{flex:1;padding:10px 0}
+.nav-sec{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.28);padding:12px 18px 5px}
+.ni{display:flex;align-items:center;gap:9px;padding:8px 18px;color:rgba(255,255,255,.52);font-size:12.5px;cursor:pointer;transition:all .15s;border-left:3px solid transparent;user-select:none}
+.ni:hover{color:var(--paper);background:rgba(255,255,255,.05)}
+.ni.on{color:var(--paper);border-left-color:var(--rlt);background:rgba(255,255,255,.07)}
+.ni .ic{font-size:14px;width:16px;text-align:center}
+.sb-foot{padding:14px 18px;border-top:1px solid rgba(255,255,255,.08)}
+.btn-out{width:100%;font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;background:rgba(255,255,255,.07);color:rgba(255,255,255,.5);border:none;padding:8px;border-radius:4px;cursor:pointer;transition:all .2s}
+.btn-out:hover{background:var(--red);color:#fff}
+/* MAIN */
+.main{margin-left:var(--sb);flex:1;padding:28px 34px 60px;max-width:1180px}
+.page{display:none}.page.on{display:block}
+.topbar{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:22px;flex-wrap:wrap;gap:12px}
+.page-title{font-family:'Bebas Neue',sans-serif;font-size:34px;letter-spacing:.04em;line-height:1}
+.page-title span{color:var(--rlt)}
+.acts{display:flex;gap:8px;flex-wrap:wrap}
+/* BUTTONS */
+.btn{font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;border:none;padding:8px 15px;border-radius:4px;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.btn-p{background:var(--red);color:#fff}.btn-p:hover{background:var(--rlt)}
+.btn-s{background:var(--cream);color:var(--ink);border:1px solid var(--bdr)}.btn-s:hover{background:var(--bdr)}
+.btn-g{background:transparent;color:var(--mut);border:1px solid var(--bdr)}.btn-g:hover{color:var(--ink);border-color:var(--ink)}
+.btn-grn{background:var(--grn);color:#fff}.btn-grn:hover{background:var(--tel)}
+.btn-sm{padding:5px 10px;font-size:8.5px}
+.btn-xs{padding:3px 7px;font-size:8px}
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:11px;margin-bottom:22px}
+.stat{background:#fff;border:1px solid var(--bdr);border-radius:6px;padding:13px 15px}
+.stat.r{border-left:4px solid var(--red)}.stat.g{border-left:4px solid var(--grn)}.stat.a{border-left:4px solid var(--amb)}.stat.b{border-left:4px solid var(--blu)}.stat.p{border-left:4px solid var(--pur)}
+.stat-lbl{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);margin-bottom:3px}
+.stat-val{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:.02em;line-height:1;color:var(--ink)}
+.stat-sub{font-size:11px;color:var(--mut);margin-top:2px}
+/* CARDS */
+.cg{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-bottom:20px}
+.card{background:#fff;border:1px solid var(--bdr);border-radius:6px;padding:16px}
+.card.lr{border-left:4px solid var(--red)}.card.lg{border-left:4px solid var(--grn)}.card.la{border-left:4px solid var(--amb)}.card.lb{border-left:4px solid var(--blu)}.card.lp{border-left:4px solid var(--pur)}
+.card h4{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
+.card p,.card li{font-size:12.5px;color:#333;line-height:1.55}
+.card ul{padding-left:14px}.card li{margin-bottom:3px}
+/* SECTION */
+.sec{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.04em;border-bottom:2px solid var(--ink);padding-bottom:5px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
+.sec span{font-family:'DM Sans',sans-serif;font-size:12px;font-weight:400;color:var(--mut);letter-spacing:0}
+/* ALERTS */
+.al{display:flex;gap:10px;padding:11px 14px;border-radius:5px;margin-bottom:14px;font-size:13px;line-height:1.55}
+.al.r{background:#fde8e6;border-left:4px solid var(--red)}.al.a{background:#fdf3e0;border-left:4px solid var(--amb)}.al.g{background:#e6f4ed;border-left:4px solid var(--grn)}.al.b{background:#e4edf6;border-left:4px solid var(--blu)}
+/* HR ZONE BADGE */
+.zb{display:inline-block;font-family:'DM Mono',monospace;font-size:9px;padding:2px 7px;border-radius:3px;color:#fff;font-weight:600}
+/* CARDIO CARD */
+.cc{background:#fff;border:1px solid var(--bdr);border-radius:8px;margin-bottom:16px;overflow:hidden}
+.cc-hd{padding:12px 18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.cc-hd.walk{background:linear-gradient(135deg,#1a4a72,#1a7a6a)}
+.cc-hd.bike{background:linear-gradient(135deg,#6c3483,#c0392b)}
+.cc-hd.norwegian{background:linear-gradient(135deg,#c0392b,#d4820a)}
+.cc-hd h3{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.04em;color:#fff}
+.cc-hd .ctag{font-family:'DM Mono',monospace;font-size:9px;padding:3px 9px;background:rgba(255,255,255,.18);color:#fff;border-radius:20px;letter-spacing:.08em}
+.cc-body{padding:14px 18px}
+.wu-bar{background:var(--cream);border-radius:5px;padding:9px 12px;margin-bottom:12px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.wu-lbl{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);min-width:65px}
+/* INTERVAL ROW */
+.irow{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--bdr);flex-wrap:wrap}
+.irow:last-child{border-bottom:none}
+.irow.work{background:#fde8e6;margin:0 -18px;padding:10px 18px;border-bottom:1px solid #f5c0bc}
+.irow.rest{background:#e6f4ed;margin:0 -18px;padding:10px 18px;border-bottom:1px solid #b8dccb}
+.irow.cooldown{background:#f0ede9;margin:0 -18px;padding:10px 18px}
+.irow-check{width:26px;height:26px;border-radius:50%;border:2px solid var(--bdr);background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .2s;flex-shrink:0;margin-top:2px}
+.irow-check.done{background:var(--grn);border-color:var(--grn);color:#fff}
+.irow-info{flex:1;min-width:180px}
+.irow-label{font-weight:600;font-size:13px;margin-bottom:3px}
+.irow-metrics{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:4px}
+.irow-metric{font-family:'DM Mono',monospace;font-size:10px;color:var(--mut)}
+.irow-metric strong{color:var(--ink);font-size:12px}
+.irow-note{font-size:11.5px;color:var(--mut);font-style:italic}
+.irow-actual{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;margin-top:6px}
+.actual-field{display:flex;flex-direction:column;gap:3px}
+.actual-field label{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
+.actual-field input{width:68px;padding:5px 7px;border:1px solid var(--bdr);border-radius:3px;font-family:'DM Sans',sans-serif;font-size:12px;text-align:center;background:var(--paper)}
+.actual-field input:focus{outline:none;border-color:var(--rlt)}
+/* SESSION COMPLETE STRIP */
+.sess-complete{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--cream);border-top:1px solid var(--bdr);flex-wrap:wrap;gap:8px}
+/* REHAB LIST */
+.rlist{background:#fff;border:1px solid var(--bdr);border-radius:6px;overflow:hidden;margin-bottom:14px}
+.ritem{display:grid;grid-template-columns:38px 1fr auto;align-items:center;gap:10px;padding:11px 16px;border-bottom:1px solid var(--bdr);cursor:pointer;transition:background .15s}
+.ritem:last-child{border-bottom:none}
+.ritem:hover{background:var(--cream)}
+.ritem.done{background:#e6f4ed}
+.rcheck{width:28px;height:28px;border-radius:50%;border:2px solid var(--bdr);background:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .2s;flex-shrink:0}
+.rcheck.done{background:var(--grn);border-color:var(--grn);color:#fff}
+.rname{font-weight:600;font-size:13px}
+.rdetail{font-size:11.5px;color:var(--mut);margin-top:1px}
+.rfreq{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);white-space:nowrap}
+/* STRENGTH */
+.str-sess{background:#fff;border:1px solid var(--bdr);border-radius:8px;margin-bottom:18px;overflow:hidden}
+.str-hd{background:var(--ink);color:#fff;padding:12px 18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.str-hd h3{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.04em}
+.str-grp{border-bottom:1px solid var(--bdr)}
+.str-grp:last-child{border-bottom:none}
+.grp-hd{display:flex;align-items:center;gap:9px;padding:9px 16px;background:var(--cream);flex-wrap:wrap}
+.gt{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;padding:2px 8px;border-radius:3px;color:#fff;font-weight:600;flex-shrink:0;cursor:pointer}
+.gt-single{background:var(--mut)}.gt-superset{background:var(--blu)}.gt-triset{background:var(--pur)}.gt-giant{background:var(--red)}
+.grp-label{font-weight:600;font-size:13px;flex:1}
+.grp-acts{display:flex;gap:4px}
+/* EX ROW COACH */
+.ex-hd-coach{display:grid;grid-template-columns:1fr 62px 62px 62px 60px 55px auto;gap:7px;padding:5px 16px 7px;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.11em;text-transform:uppercase;color:var(--mut);border-bottom:1px solid var(--bdr)}
+.ex-row-coach{display:grid;grid-template-columns:1fr 62px 62px 62px 60px 55px auto;gap:7px;padding:9px 16px;border-bottom:1px solid var(--bdr);align-items:start;font-size:12.5px}
+.ex-row-coach:last-child{border-bottom:none}
+/* EX ROW CLIENT */
+.ex-hd-client{display:grid;grid-template-columns:1fr 65px 65px 55px 36px;gap:7px;padding:5px 16px 7px;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.11em;text-transform:uppercase;color:var(--mut);border-bottom:1px solid var(--bdr)}
+.ex-row-client{padding:9px 16px;border-bottom:1px solid var(--bdr)}
+.ex-row-client:last-child{border-bottom:none}
+.ex-name{font-weight:600}
+.ex-note-cl{font-size:11px;color:var(--mut);font-style:italic;margin-top:2px}
+.ef input,.ef select{width:100%;padding:5px 6px;border:1px solid var(--bdr);border-radius:3px;font-family:'DM Sans',sans-serif;font-size:12px;background:var(--paper);text-align:center}
+.ef input:focus,.ef select:focus{outline:none;border-color:var(--rlt)}
+/* SET LOG ROWS */
+.set-hd{display:grid;grid-template-columns:28px 1fr 1fr 1fr 32px;gap:6px;padding:4px 16px;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);background:#f5f2ee;border-top:1px solid var(--bdr)}
+.set-row{display:grid;grid-template-columns:28px 1fr 1fr 1fr 32px;gap:6px;padding:6px 16px;border-top:1px solid var(--bdr);align-items:center}
+.set-row:nth-child(even){background:#f9f7f4}
+.set-n{font-family:'DM Mono',monospace;font-size:10px;color:var(--mut);text-align:center}
+.set-row input{padding:5px 6px;border:1px solid var(--bdr);border-radius:3px;font-family:'DM Sans',sans-serif;font-size:12px;width:100%;text-align:center;background:#fff}
+.set-row input:focus{outline:none;border-color:var(--rlt)}
+.scheck{width:24px;height:24px;border-radius:50%;border:2px solid var(--bdr);background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .2s}
+.scheck.done{background:var(--grn);border-color:var(--grn);color:#fff}
+/* PROGRESS BAR */
+.prog-bar-wrap{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.prog-bar-label{font-size:12.5px;min-width:160px}
+.prog-bar-track{flex:1;background:var(--cream);border-radius:10px;height:9px;overflow:hidden}
+.prog-bar-fill{height:100%;border-radius:10px;background:var(--grn);transition:width .5s}
+.prog-bar-val{font-family:'DM Mono',monospace;font-size:10px;color:var(--mut);min-width:55px;text-align:right}
+/* MODAL */
+.mov{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s}
+.mov.open{opacity:1;pointer-events:all}
+.modal{background:var(--paper);border-radius:8px;width:100%;max-width:600px;max-height:90vh;overflow-y:auto}
+.modal-hd{padding:15px 20px;border-bottom:1px solid var(--bdr);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--paper);z-index:2}
+.modal-hd h3{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.04em}
+.mx{background:none;border:none;font-size:22px;cursor:pointer;color:var(--mut);line-height:1}
+.modal-body{padding:18px 20px}
+/* FORMS */
+.fg{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:14px}
+.fgf{grid-column:1/-1}
+.field label{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--mut);display:block;margin-bottom:3px}
+.field input,.field select,.field textarea{width:100%;padding:7px 10px;border:1px solid var(--bdr);border-radius:4px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);background:var(--paper);resize:vertical}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--rlt)}
+/* MACRO BAR */
+.mbar{display:flex;height:24px;border-radius:4px;overflow:hidden;margin-bottom:8px}
+.mbar div{display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:9px;font-weight:500;color:#fff;letter-spacing:.04em}
+/* TOAST */
+.toasts{position:fixed;bottom:20px;right:20px;z-index:300;display:flex;flex-direction:column;gap:7px}
+.toast{background:var(--ink);color:#fff;padding:11px 16px;border-radius:6px;font-size:13px;opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none;border-left:4px solid var(--rlt);max-width:280px}
+.toast.show{opacity:1;transform:none;pointer-events:all}
+.toast.success{border-left-color:var(--grn)}
+.toast.error{border-left-color:var(--red)}
+@media(max-width:768px){
+  .sb{width:100%;height:auto;position:relative}
+  .main{margin-left:0;padding:16px 14px 48px}
+  .app{flex-direction:column}
+  .ex-hd-coach,.ex-row-coach{grid-template-columns:1fr 58px 58px 58px}
+  .ex-hd-coach>:nth-child(n+5),.ex-row-coach>:nth-child(n+5){display:none}
+}
+</style>
 </head>
 <body>
 <div class="app">
 
-<!-- SIDEBAR -->
-<aside class="sidebar">
-  <div class="sidebar-logo">
-    <div class="sidebar-logo-text">Casey<br>Marathon</div>
-    <div class="sidebar-sub">NY 2025 · Sub 4:00</div>
+<aside class="sb">
+  <div class="sb-logo">
+    <div class="sb-logo-name">Casey<br>Training</div>
+    <div class="sb-logo-sub">Age 37 · VO2max 41 · Weight Loss</div>
   </div>
-  <div class="sidebar-user">
-    <div class="sidebar-user-name" id="sb-name">Loading…</div>
-    <div class="sidebar-user-role" id="sb-role"></div>
+  <div class="sb-user">
+    <div class="sb-user-name" id="sb-name">Loading…</div>
+    <div class="sb-user-role" id="sb-role"></div>
   </div>
-  <nav class="sidebar-nav">
-    <div class="nav-section">Main</div>
-    <a class="nav-item active" onclick="showPage('dashboard')"><span class="ic">◈</span> Dashboard</a>
-    <a class="nav-item" onclick="showPage('log-session')"><span class="ic">+</span> Log Session</a>
-    <a class="nav-item" onclick="showPage('assessments')"><span class="ic">◎</span> Assessments</a>
-    <div class="nav-section">Programme</div>
-    <a class="nav-item" onclick="showPage('programme')"><span class="ic">▦</span> Weekly Plan</a>
-    <a class="nav-item" onclick="showPage('history')"><span class="ic">≡</span> Session History</a>
-    <div class="nav-section">Analysis</div>
-    <a class="nav-item" onclick="showPage('progression')"><span class="ic">▲</span> Progression</a>
-    <div class="nav-section">Full Programme</div>
-    <a class="nav-item" onclick="showPage('prog-overview')"><span class="ic">◈</span> Programme Overview</a>
-    <a class="nav-item" onclick="showPage('prog-meso1')"><span class="ic">①</span> Meso 1 — Foundation</a>
-    <a class="nav-item" onclick="showPage('prog-meso2')"><span class="ic">②</span> Meso 2 — Base Build</a>
-    <a class="nav-item" onclick="showPage('prog-meso3')"><span class="ic">③</span> Meso 3 — Development</a>
-    <a class="nav-item" onclick="showPage('prog-meso4')"><span class="ic">④</span> Meso 4 — Peak</a>
-    <a class="nav-item" onclick="showPage('prog-meso5')"><span class="ic">⑤</span> Meso 5 — Taper</a>
-    <a class="nav-item" onclick="showPage('prog-nutrition')"><span class="ic">◉</span> Nutrition</a>
+  <nav class="sb-nav">
+    <div class="nav-sec">Today</div>
+    <div class="ni on" onclick="nav('dashboard')"><span class="ic">◈</span> Dashboard</div>
+    <div class="ni" onclick="nav('cardio')"><span class="ic">♥</span> Cardio Workouts</div>
+    <div class="ni" onclick="nav('strength')"><span class="ic">◉</span> Strength Sessions</div>
+    <div class="ni" onclick="nav('rehab')"><span class="ic">✓</span> Rehab Checklist</div>
+    <div class="nav-sec">Programme</div>
+    <div class="ni" onclick="nav('overview')"><span class="ic">▦</span> Programme Overview</div>
+    <div class="ni" onclick="nav('nutrition')"><span class="ic">◑</span> Nutrition Plan</div>
+    <div class="nav-sec" id="coach-sec" style="display:none">Coach</div>
+    <div class="ni" id="editor-link" style="display:none" onclick="nav('editor')"><span class="ic">✎</span> Programme Editor</div>
   </nav>
-  <div class="sidebar-footer">
-    <button class="btn-logout" onclick="APP.logout()">Sign Out</button>
-  </div>
+  <div class="sb-foot"><button class="btn-out" onclick="APP.logout()">Sign Out</button></div>
 </aside>
 
-<!-- MAIN -->
 <main class="main">
 
-  <!-- ═══ DASHBOARD ═══ -->
-  <div id="page-dashboard" class="page active">
-    <div class="topbar">
-      <div>
-        <div class="page-title">Dashboard</div>
-        <div style="font-size:12.5px;color:var(--muted)" id="dash-week-label">Loading programme position…</div>
-      </div>
-      <div class="topbar-actions">
-        <button class="btn btn-primary" onclick="showPage('log-session')">+ Log Session</button>
-        <button class="btn btn-secondary" onclick="showPage('assessments')">+ Assessment</button>
-      </div>
-    </div>
-
-    <!-- Stats strip -->
-    <div class="stats-strip" id="stats-strip">
-      <div class="stat-card blue"><div class="stat-label">Current Week</div><div class="stat-val" id="st-week">—</div><div class="stat-sub" id="st-meso">—</div></div>
-      <div class="stat-card red"><div class="stat-label">L Knee VAS (last)</div><div class="stat-val" id="st-vas">—</div><div class="stat-sub">Target: 0-1</div></div>
-      <div class="stat-card green"><div class="stat-label">Sessions This Week</div><div class="stat-val" id="st-sess">—</div><div class="stat-sub" id="st-sess-sub">—</div></div>
-      <div class="stat-card amber"><div class="stat-label">L Calf Raise</div><div class="stat-val" id="st-calf">—</div><div class="stat-sub">Target: 15 → 22 reps</div></div>
-      <div class="stat-card purple"><div class="stat-label">Split Squat R</div><div class="stat-val" id="st-ssq">—</div><div class="stat-sub">Target: 20 → 40 sec</div></div>
-    </div>
-
-    <!-- Gate progress -->
-    <div class="section">
-      <div class="section-title">Gate Criteria Progress <span id="gate-meso-label"></span></div>
-      <div class="gate-grid" id="gate-progress"></div>
-    </div>
-
-    <!-- Charts row -->
-    <div class="chart-grid">
-      <div class="chart-card">
-        <div class="chart-title">Knee VAS — All Sessions <span class="bdg r">Track</span></div>
-        <div class="chart-canvas-wrap"><canvas id="chart-vas"></canvas></div>
-      </div>
-      <div class="chart-card">
-        <div class="chart-title">Weekly Volume (km) <span class="bdg g">Cardio</span></div>
-        <div class="chart-canvas-wrap"><canvas id="chart-vol"></canvas></div>
-      </div>
-      <div class="chart-card">
-        <div class="chart-title">Assessment — Hold Times (sec) <span class="bdg a">Retest</span></div>
-        <div class="chart-canvas-wrap"><canvas id="chart-holds"></canvas></div>
-      </div>
-      <div class="chart-card">
-        <div class="chart-title">Calf Raise Reps — L vs R <span class="bdg b">Symmetry</span></div>
-        <div class="chart-canvas-wrap"><canvas id="chart-calf"></canvas></div>
-      </div>
-    </div>
-
-    <!-- Recent sessions -->
-    <div class="section">
-      <div class="section-title">Recent Sessions <span>last 10</span></div>
-      <div class="log-table-wrap">
-        <table class="log-table">
-          <thead><tr><th>Date</th><th>Wk</th><th>Type</th><th>Vol / Duration</th><th>HR avg</th><th>RPE</th><th>VAS Knee</th><th>Coach Notes</th></tr></thead>
-          <tbody id="recent-sessions-body"></tbody>
-        </table>
-      </div>
+<!-- DASHBOARD -->
+<div id="page-dashboard" class="page on">
+  <div class="topbar">
+    <div>
+      <div class="page-title">Dashboard</div>
+      <div style="font-size:12px;color:var(--mut)" id="dash-sub">Loading…</div>
     </div>
   </div>
+  <div class="al b" id="hr-zones-bar"></div>
+  <div class="stats">
+    <div class="stat b"><div class="stat-lbl">Current Week</div><div class="stat-val" id="st-wk">—</div><div class="stat-sub" id="st-meso">—</div></div>
+    <div class="stat g"><div class="stat-lbl">Cardio This Week</div><div class="stat-val" id="st-cardio">—</div><div class="stat-sub">of 3 sessions</div></div>
+    <div class="stat r"><div class="stat-lbl">Strength This Week</div><div class="stat-val" id="st-str">—</div><div class="stat-sub">of 2 sessions</div></div>
+    <div class="stat a"><div class="stat-lbl">Rehab Today</div><div class="stat-val" id="st-rehab">—</div><div class="stat-sub" id="st-rehab-sub">items</div></div>
+    <div class="stat p"><div class="stat-lbl">HRmax (Tanaka)</div><div class="stat-val">182</div><div class="stat-sub">Age 37 female</div></div>
+  </div>
+  <div class="sec">Today's Programme</div>
+  <div id="dash-today"></div>
+  <div class="sec" style="margin-top:20px">Client Profile</div>
+  <div class="cg">
+    <div class="card lr"><h4>Goal</h4><ul><li>Weight: 73kg → 65-70kg</li><li>Rate: 0.3-0.5 kg/week</li><li>Deficit: 300-500 kcal/day</li><li>VO2max 41 — good base for Norwegian</li><li>Protein priority: 1.8-2.2g/kg</li></ul></div>
+    <div class="card lg"><h4>HR Zones (HRmax 182)</h4><ul><li>Z1 Recovery: &lt;100 bpm</li><li>Z2 Fat Burn: 100-118 bpm</li><li>Z3 Aerobic: 118-136 bpm</li><li>Z4 Threshold: 136-155 bpm</li><li>Z5 Norwegian: 155-173 bpm</li></ul></div>
+    <div class="card la"><h4>Meso 1 Cardio</h4><ul><li>Day 1+2: 10min walk + 60min 8% 5.5kph</li><li>Day 3: 10min warmup + 5×(2min 50rpm / 2min 20rpm)</li><li>Walk target: Z2 (100-118 bpm)</li><li>Bike work: Z5 (155-164 bpm)</li></ul></div>
+    <div class="card lb"><h4>Strength: 2×/week with Coach</h4><ul><li>Session A: Lower body + posterior chain</li><li>Session B: Upper body + single leg</li><li>RPE 6-7 Meso 1 → 7-8 Meso 2</li><li>Supersets, tri-sets, giant sets</li></ul></div>
+  </div>
+</div>
 
-  <!-- ═══ LOG SESSION ═══ -->
-  <div id="page-log-session" class="page">
-    <div class="topbar">
-      <div class="page-title">Log <span>Session</span></div>
+<!-- CARDIO -->
+<div id="page-cardio" class="page">
+  <div class="topbar">
+    <div>
+      <div class="page-title">Cardio <span>Workouts</span></div>
+      <div style="font-size:12px;color:var(--mut)">Tick each block as you complete it · Log actual values if different from prescribed</div>
     </div>
+    <div class="acts" id="cardio-acts"></div>
+  </div>
+  <div id="cardio-content"></div>
+</div>
 
-    <div class="form-card">
-      <div class="form-title">Session Details</div>
-      <div class="form-grid">
-        <div class="field"><label>Date</label><input type="date" id="log-date"></div>
-        <div class="field"><label>Week #</label><input type="number" id="log-week" min="1" max="20" placeholder="1-20"></div>
-        <div class="field"><label>Session Type</label>
-          <select id="log-type">
-            <option value="">Select…</option>
-            <option>Strength A — Neural Activation</option>
-            <option>Strength B — Neural Activation</option>
-            <option>Strength A — Loaded SL</option>
-            <option>Strength B — Loaded SL</option>
-            <option>Strength C — Power Endurance</option>
-            <option>Strength — Maintenance</option>
-            <option>Easy Run</option>
-            <option>Tempo Run</option>
-            <option>Intervals</option>
-            <option>Long Run</option>
-            <option>MP Run</option>
-            <option>Uphill Walk</option>
-            <option>Cross Trainer</option>
-            <option>Assault Bike</option>
-            <option>Rehab / Mobility</option>
-            <option>Rest</option>
-          </select>
-        </div>
-        <div class="field"><label>Overall RPE (1-10)</label>
-          <div style="display:flex;align-items:center">
-            <input type="range" id="log-rpe" min="1" max="10" value="5" oninput="document.getElementById('log-rpe-val').textContent=this.value">
-            <span class="range-val" id="log-rpe-val">5</span>
-          </div>
-        </div>
-        <div class="field"><label>Knee VAS — Left (0-10)</label>
-          <div style="display:flex;align-items:center">
-            <input type="range" id="log-vas" min="0" max="10" value="0" oninput="updateVasDisplay(this.value)">
-            <span class="range-val" id="log-vas-val">0</span>
-          </div>
-          <div class="hint" id="vas-hint" style="color:var(--green)">No pain — good</div>
-        </div>
-      </div>
+<!-- STRENGTH -->
+<div id="page-strength" class="page">
+  <div class="topbar">
+    <div>
+      <div class="page-title">Strength <span>Sessions</span></div>
+      <div style="font-size:12px;color:var(--mut)">Coach sessions x2/week · Log your sets · tick when done</div>
     </div>
+    <div class="acts" id="str-acts"></div>
+  </div>
+  <div id="str-content"></div>
+</div>
 
-    <!-- CARDIO block -->
-    <div class="form-card" id="cardio-block" style="display:none">
-      <div class="form-title">Cardio / Run Data</div>
-      <div class="form-grid">
-        <div class="field"><label>Mode</label>
-          <select id="log-cardio-mode">
-            <option>Easy Run</option><option>Tempo Run</option><option>Intervals</option>
-            <option>Long Run</option><option>MP Run</option><option>Uphill Walk</option>
-            <option>Cross Trainer</option><option>Assault Bike</option>
-          </select>
-        </div>
-        <div class="field"><label>Duration (min)</label><input type="number" id="log-dur" placeholder="e.g. 45"></div>
-        <div class="field"><label>Distance (km)</label><input type="number" id="log-dist" step="0.1" placeholder="e.g. 14.2"></div>
-        <div class="field"><label>Avg Pace (mm:ss)</label><input type="text" id="log-pace" placeholder="e.g. 6:10"></div>
-        <div class="field"><label>HR Average (bpm)</label><input type="number" id="log-hr-avg" placeholder="e.g. 145"></div>
-        <div class="field"><label>HR Max (bpm)</label><input type="number" id="log-hr-max" placeholder="e.g. 168"></div>
-        <div class="field"><label>Avg Power (W)</label><input type="number" id="log-power" placeholder="e.g. 210 (if device tracks)"></div>
-        <div class="field"><label>Incline %</label><input type="number" id="log-incline" placeholder="e.g. 12 (for walks)"></div>
-        <div class="field form-full"><label>Cardio Notes</label><textarea id="log-cardio-notes" rows="2" placeholder="How did it feel? Perceived effort, breathing, any issues…"></textarea></div>
-      </div>
+<!-- REHAB -->
+<div id="page-rehab" class="page">
+  <div class="topbar">
+    <div>
+      <div class="page-title">Rehab <span>Checklist</span></div>
+      <div style="font-size:12px;color:var(--mut)">Tick each item as you complete it · resets daily</div>
     </div>
+    <div class="acts"><button class="btn btn-g btn-sm" onclick="resetRehab()">Reset Today</button></div>
+  </div>
+  <div class="al g"><div>Daily routine — 15-20 min. Consistency here is what creates lasting change across mesos.</div></div>
+  <div id="rehab-content"></div>
+</div>
 
-    <!-- STRENGTH block -->
-    <div class="form-card" id="strength-block" style="display:none">
-      <div class="form-title">Strength — Exercise Log</div>
-      <div style="margin-bottom:14px;display:flex;gap:8px;flex-wrap:wrap">
-        <select id="ex-picker" style="padding:7px 10px;border:1px solid var(--border);border-radius:4px;font-family:'DM Sans',sans-serif;font-size:13px;flex:1;min-width:200px">
-          <option value="">+ Add Exercise…</option>
-        </select>
-        <button class="btn btn-secondary" onclick="addExerciseBlock()">Add</button>
-      </div>
-      <div id="exercise-blocks"></div>
+<!-- OVERVIEW -->
+<div id="page-overview" class="page">
+  <div class="topbar"><div class="page-title">Programme <span>Overview</span></div></div>
+  <div id="overview-content"></div>
+</div>
+
+<!-- NUTRITION -->
+<div id="page-nutrition" class="page">
+  <div class="topbar"><div class="page-title">Nutrition <span>Plan</span></div></div>
+  <div id="nut-content"></div>
+</div>
+
+<!-- EDITOR -->
+<div id="page-editor" class="page">
+  <div class="topbar">
+    <div>
+      <div class="page-title">Programme <span>Editor</span></div>
+      <div style="font-size:12px;color:var(--mut)">Full coach control · Edit, add, reorder all sessions</div>
     </div>
-
-    <!-- Notes -->
-    <div class="form-card">
-      <div class="form-title">Notes</div>
-      <div class="form-grid">
-        <div class="field form-full"><label>Coach Notes (visible to both)</label><textarea id="log-coach-notes" rows="3" placeholder="Observations, cues that worked, what to adjust next session…"></textarea></div>
-      </div>
-    </div>
-
-    <div style="display:flex;gap:10px;flex-wrap:wrap">
-      <button class="btn btn-primary" onclick="submitSession()">Save Session</button>
-      <button class="btn btn-ghost" onclick="showPage('dashboard')">Cancel</button>
+    <div class="acts">
+      <button class="btn btn-grn" onclick="APP.saveProg()">💾 Save Programme</button>
+      <button class="btn btn-s" onclick="resetProg()">↺ Reset Default</button>
     </div>
   </div>
-
-  <!-- ═══ ASSESSMENTS ═══ -->
-  <div id="page-assessments" class="page">
-    <div class="topbar">
-      <div class="page-title">Assessments</div>
-      <button class="btn btn-primary" onclick="openAssessModal()">+ Record Assessment</button>
-    </div>
-
-    <div class="section">
-      <div class="section-title">Latest Results vs Gate Targets</div>
-      <div class="assess-grid" id="assess-display"></div>
-    </div>
-
-    <div class="chart-grid">
-      <div class="chart-card" style="grid-column:1/-1">
-        <div class="chart-title">All Assessment Metrics Over Time</div>
-        <div class="chart-canvas-wrap" style="height:280px"><canvas id="chart-assess-all"></canvas></div>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-title">Assessment History</div>
-      <div class="log-table-wrap">
-        <table class="log-table">
-          <thead><tr><th>Date</th><th>Meso</th><th>GB L (s)</th><th>GB R (s)</th><th>SS L (s)</th><th>SS R (s)</th><th>Calf L</th><th>Calf R</th><th>VAS</th><th>Notes</th></tr></thead>
-          <tbody id="assess-history-body"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- ═══ PROGRAMME ═══ -->
-  <div id="page-programme" class="page">
-    <div class="topbar"><div class="page-title">Weekly <span>Programme</span></div></div>
-    <div class="meso-tabs" id="meso-tabs"></div>
-    <div id="programme-view"></div>
-  </div>
-
-  <!-- ═══ SESSION HISTORY ═══ -->
-  <div id="page-history" class="page">
-    <div class="topbar"><div class="page-title">Session <span>History</span></div></div>
-    <div class="log-table-wrap">
-      <table class="log-table">
-        <thead><tr><th>Date</th><th>Wk</th><th>Type</th><th>Distance</th><th>Duration</th><th>HR avg</th><th>Power</th><th>RPE</th><th>VAS</th><th>Notes</th></tr></thead>
-        <tbody id="history-body"></tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- ═══ PROGRESSION ═══ -->
-  <div id="page-progression" class="page">
-    <div class="topbar"><div class="page-title">Progression <span>Analysis</span></div></div>
-
-    <div class="section">
-      <div class="section-title">Strength Exercise Progression <span>Pick an exercise</span></div>
-      <div style="margin-bottom:16px">
-        <select id="prog-ex-select" onchange="renderExProgression()" style="padding:8px 12px;border:1px solid var(--border);border-radius:4px;font-family:'DM Sans',sans-serif;font-size:13px;min-width:260px">
-          <option value="">Select exercise…</option>
-        </select>
-      </div>
-      <div class="chart-card">
-        <div class="chart-title" id="prog-chart-title">Load / Reps Over Time</div>
-        <div class="chart-canvas-wrap" style="height:240px"><canvas id="chart-prog-ex"></canvas></div>
-      </div>
-    </div>
-
-    <div class="chart-grid">
-      <div class="chart-card">
-        <div class="chart-title">RPE Trend — All Sessions</div>
-        <div class="chart-canvas-wrap"><canvas id="chart-rpe"></canvas></div>
-      </div>
-      <div class="chart-card">
-        <div class="chart-title">HR Average — Cardio Sessions</div>
-        <div class="chart-canvas-wrap"><canvas id="chart-hr"></canvas></div>
-      </div>
-      <div class="chart-card">
-        <div class="chart-title">Running Volume — Week by Week</div>
-        <div class="chart-canvas-wrap"><canvas id="chart-vol2"></canvas></div>
-      </div>
-      <div class="chart-card">
-        <div class="chart-title">VAS Trend — Lateral Knee</div>
-        <div class="chart-canvas-wrap"><canvas id="chart-vas2"></canvas></div>
-      </div>
-    </div>
-  </div>
-
-
-  <!-- ═══ PROGRAMME OVERVIEW ═══ -->
-  <div id="page-prog-overview" class="page">
-    <div class="topbar">
-      <div>
-        <div class="page-title">Programme <span>Overview</span></div>
-        <div style="font-size:12px;color:var(--muted)">Casey · NY Marathon · Start 27 Apr 2026 · Sub 4:00</div>
-      </div>
-    </div>
-    <div class="alert r" style="display:flex;gap:11px;padding:12px 15px;border-radius:5px;margin-bottom:18px;font-size:13px;line-height:1.55;background:#fde8e6;border-left:4px solid var(--red)">
-      <div style="font-size:16px;flex-shrink:0">⚠</div>
-      <div><strong>Primary Clinical Driver:</strong> Left glute med neurological inhibition. No L abductor feel. Quad dominant L leg. TFL overload → lateral knee pain (VAS 6/10). Zero running until Meso 1 gate criteria met. All Meso 1 strength is neural re-education only.</div>
-    </div>
-    <div class="section">
-      <div class="section-title">Baseline Assessment — Post Meso 1 Tests</div>
-      <div id="prog-baseline-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;margin-bottom:24px"></div>
-    </div>
-    <div class="section">
-      <div class="section-title">20-Week Macro Schedule</div>
-      <div style="overflow-x:auto">
-        <table style="width:100%;border-collapse:collapse;font-size:12px">
-          <thead><tr id="macro-sched-head"></tr></thead>
-          <tbody id="macro-sched-body"></tbody>
-        </table>
-      </div>
-    </div>
-    <div class="section">
-      <div class="section-title">Clinical Flags</div>
-      <div id="clinical-flags-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px"></div>
-    </div>
-  </div>
-
-  <!-- ═══ MESO 1 ═══ -->
-  <div id="page-prog-meso1" class="page">
-    <div class="topbar"><div class="page-title">Meso 1 — <span>Foundation</span></div></div>
-    <div id="meso1-content"></div>
-  </div>
-
-  <!-- ═══ MESO 2 ═══ -->
-  <div id="page-prog-meso2" class="page">
-    <div class="topbar"><div class="page-title">Meso 2 — <span>Base Build</span></div></div>
-    <div id="meso2-content"></div>
-  </div>
-
-  <!-- ═══ MESO 3 ═══ -->
-  <div id="page-prog-meso3" class="page">
-    <div class="topbar"><div class="page-title">Meso 3 — <span>Development</span></div></div>
-    <div id="meso3-content"></div>
-  </div>
-
-  <!-- ═══ MESO 4 ═══ -->
-  <div id="page-prog-meso4" class="page">
-    <div class="topbar"><div class="page-title">Meso 4 — <span>Peak</span></div></div>
-    <div id="meso4-content"></div>
-  </div>
-
-  <!-- ═══ MESO 5 ═══ -->
-  <div id="page-prog-meso5" class="page">
-    <div class="topbar"><div class="page-title">Meso 5 — <span>Taper & Race</span></div></div>
-    <div id="meso5-content"></div>
-  </div>
-
-  <!-- ═══ NUTRITION ═══ -->
-  <div id="page-prog-nutrition" class="page">
-    <div class="topbar"><div class="page-title">Nutrition <span>Programme</span></div></div>
-    <div id="nutrition-content"></div>
-  </div>
+  <div id="editor-content"></div>
+</div>
 
 </main>
 </div>
 
-<!-- ASSESS MODAL -->
-<div class="modal-overlay" id="assess-modal">
+<!-- MODALS -->
+<div class="mov" id="modal-ex">
   <div class="modal">
-    <div class="modal-header">
-      <h3>Record Assessment</h3>
-      <button class="modal-close" onclick="closeAssessModal()">×</button>
-    </div>
+    <div class="modal-hd"><h3>Add Exercise</h3><button class="mx" onclick="closeM('modal-ex')">×</button></div>
     <div class="modal-body">
-      <div class="form-grid">
-        <div class="field"><label>Date</label><input type="date" id="am-date"></div>
-        <div class="field"><label>Meso</label><select id="am-meso"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
-        <div class="field"><label>Glute Bridge Hold — L (sec)</label><input type="number" id="am-gb-l" placeholder="e.g. 36"></div>
-        <div class="field"><label>Glute Bridge Hold — R (sec)</label><input type="number" id="am-gb-r" placeholder="e.g. 38"></div>
-        <div class="field"><label>Split Squat Hold — L (sec)</label><input type="number" id="am-ss-l" placeholder="e.g. 18"></div>
-        <div class="field"><label>Split Squat Hold — R (sec)</label><input type="number" id="am-ss-r" placeholder="e.g. 8"></div>
-        <div class="field"><label>SL Calf Raise — L (reps)</label><input type="number" id="am-calf-l" placeholder="e.g. 10"></div>
-        <div class="field"><label>SL Calf Raise — R (reps)</label><input type="number" id="am-calf-r" placeholder="e.g. 15"></div>
-        <div class="field"><label>Ankle DF — L (cm wall dist)</label><input type="number" id="am-df-l" step="0.5" placeholder="e.g. 5.5"></div>
-        <div class="field"><label>Lateral Knee VAS (0-10)</label><input type="number" id="am-vas" min="0" max="10" placeholder="0 = no pain"></div>
-        <div class="field"><label>L Glute Feel</label><select id="am-glute"><option value="">—</option><option value="none">No glute feel — quad dominant</option><option value="partial">Some glute activation</option><option value="good">Clear glute med activation</option><option value="strong">Strong reliable activation</option></select></div>
-        <div class="field form-full"><label>Notes</label><textarea id="am-notes" rows="3" placeholder="Observations, what's changed, next focus areas…"></textarea></div>
+      <div class="fg">
+        <div class="field fgf"><label>Exercise Name</label><input type="text" id="me-name" placeholder="e.g. Hip Thrust"></div>
+        <div class="field"><label>Sets</label><input type="number" id="me-sets" value="3" min="1"></div>
+        <div class="field"><label>Reps</label><input type="number" id="me-reps" value="12"></div>
+        <div class="field"><label>Duration (sec)</label><input type="number" id="me-dur" placeholder="Leave blank for reps"></div>
+        <div class="field"><label>Weight (kg)</label><input type="number" id="me-wt" step="0.5" placeholder="Optional"></div>
+        <div class="field"><label>Tempo</label><input type="text" id="me-tempo" placeholder="e.g. 3-1-1"></div>
+        <div class="field"><label>RPE Target</label><input type="number" id="me-rpe" min="1" max="10" placeholder="e.g. 7"></div>
+        <div class="field fgf"><label>Coaching Note</label><textarea id="me-note" rows="2" placeholder="Cues, focus points…"></textarea></div>
       </div>
-      <div style="display:flex;gap:10px;margin-top:4px">
-        <button class="btn btn-primary" onclick="submitAssessment()">Save Assessment</button>
-        <button class="btn btn-ghost" onclick="closeAssessModal()">Cancel</button>
-      </div>
+      <button class="btn btn-p" onclick="confirmAddEx()">Add Exercise</button>
     </div>
   </div>
 </div>
 
-<!-- TOAST -->
-<div class="toast-wrap" id="toast-wrap"></div>
+<div class="mov" id="modal-grp">
+  <div class="modal">
+    <div class="modal-hd"><h3>Add Group</h3><button class="mx" onclick="closeM('modal-grp')">×</button></div>
+    <div class="modal-body">
+      <div class="fg">
+        <div class="field fgf"><label>Group Label</label><input type="text" id="mg-label" placeholder="e.g. A — Superset"></div>
+        <div class="field fgf"><label>Type</label>
+          <select id="mg-type">
+            <option value="single">Single</option>
+            <option value="superset">Superset</option>
+            <option value="triset">Tri-Set</option>
+            <option value="giant">Giant Set</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn btn-p" onclick="confirmAddGrp()">Add Group</button>
+    </div>
+  </div>
+</div>
+
+<div class="mov" id="modal-block">
+  <div class="modal">
+    <div class="modal-hd"><h3 id="mb-title">Edit Block</h3><button class="mx" onclick="closeM('modal-block')">×</button></div>
+    <div class="modal-body">
+      <div class="fg">
+        <div class="field fgf"><label>Label</label><input type="text" id="mb-label"></div>
+        <div class="field"><label>Duration (min)</label><input type="number" id="mb-dur" step="0.5"></div>
+        <div class="field"><label>Speed (kph)</label><input type="number" id="mb-kph" step="0.5"></div>
+        <div class="field"><label>Incline (%)</label><input type="number" id="mb-inc"></div>
+        <div class="field"><label>RPM</label><input type="number" id="mb-rpm"></div>
+        <div class="field"><label>HR Low (bpm)</label><input type="number" id="mb-hrlo"></div>
+        <div class="field"><label>HR High (bpm)</label><input type="number" id="mb-hrhi"></div>
+        <div class="field"><label>Zone</label>
+          <select id="mb-zone">
+            <option value="Z1">Z1 Recovery</option>
+            <option value="Z2">Z2 Fat Burn</option>
+            <option value="Z3">Z3 Aerobic</option>
+            <option value="Z4">Z4 Threshold</option>
+            <option value="Z5">Z5 Norwegian</option>
+          </select>
+        </div>
+        <div class="field fgf"><label>Note</label><textarea id="mb-note" rows="2"></textarea></div>
+      </div>
+      <input type="hidden" id="mb-sid"><input type="hidden" id="mb-bid">
+      <button class="btn btn-p" onclick="saveBlock()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="toasts" id="toasts"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <script src="app.js"></script>
 <script>
-// ── INIT ─────────────────────────────────────────────────────────────────────
-APP.init();
+// ── INIT ──────────────────────────────────────────────────────────────────────
 (async () => {
+  APP.init();
   const authed = await APP.checkAuth();
   if (!authed) { window.location.href = 'index.html'; return; }
   const p = APP.currentProfile();
   document.getElementById('sb-name').textContent = p ? p.name : APP.currentUser().email;
   document.getElementById('sb-role').textContent = p ? p.role : 'user';
-  await APP.loadAllData();
-  renderDashboard();
-  renderProgramme();
-  populateExPicker();
-  renderProgrammePages();
-  setDefaultDate();
+  if (APP.isCoach()) {
+    document.getElementById('coach-sec').style.display = '';
+    document.getElementById('editor-link').style.display = '';
+  }
+  APP.loadProg(); APP.loadCompletion();
+  renderAll();
 })();
 
-function setDefaultDate() {
-  const today = new Date().toISOString().split('T')[0];
-  ['log-date','am-date'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.value = today;
-  });
-  const wk = APP.currentWeek();
-  const wkEl = document.getElementById('log-week');
-  if (wkEl) wkEl.value = wk;
+function renderAll() {
+  renderDashboard(); renderCardio(); renderStrength();
+  renderRehab(); renderOverview(); renderNutrition();
+  if (APP.isCoach()) renderEditor();
 }
 
-// ── PAGE NAV ─────────────────────────────────────────────────────────────────
-function showPage(name) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  const page = document.getElementById('page-' + name);
-  if (page) page.classList.add('active');
-  document.querySelectorAll('.nav-item').forEach(n => {
-    if (n.getAttribute('onclick') && n.getAttribute('onclick').includes("'" + name + "'"))
-      n.classList.add('active');
+// ── NAV ───────────────────────────────────────────────────────────────────────
+function nav(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.ni').forEach(n => n.classList.remove('on'));
+  document.getElementById('page-' + id).classList.add('on');
+  document.querySelectorAll('.ni').forEach(n => {
+    if ((n.getAttribute('onclick')||'').includes("'" + id + "'")) n.classList.add('on');
   });
-  if (name === 'history') renderHistory();
-  if (name === 'assessments') renderAssessments();
-  if (name === 'progression') renderProgression();
-  if (name === 'log-session') updateSessionForm();
-  window.scrollTo(0, 0);
 }
 
 // ── DASHBOARD ─────────────────────────────────────────────────────────────────
 function renderDashboard() {
+  const C = APP.CLIENT;
   const wk = APP.currentWeek();
-  const meso = APP.weekToMeso(wk);
-  const prog = APP.PROGRAMME.find(p => p.week === wk);
+  const meso = APP.getMeso(wk);
+  document.getElementById('st-wk').textContent = wk;
+  document.getElementById('st-meso').textContent = 'Meso ' + meso.num + ' — ' + meso.title;
+  document.getElementById('dash-sub').textContent = 'Week ' + wk + ' · Meso ' + meso.num + ' — ' + meso.title + ' · Start ' + APP.prog.startDate;
+  document.getElementById('hr-zones-bar').innerHTML = `<div><strong>HR Zones (HRmax 182 bpm, age 37)</strong> · Z2 Fat Burn: <strong>100-118 bpm</strong> · Z3 Aerobic: <strong>118-136 bpm</strong> · Z5 Norwegian: <strong>155-173 bpm</strong> · Recovery: <strong>~127 bpm</strong></div>`;
 
-  document.getElementById('st-week').textContent = wk;
-  document.getElementById('st-meso').textContent = prog ? `Meso ${meso} — ${prog.key}` : `Meso ${meso}`;
-  document.getElementById('dash-week-label').textContent = `Week ${wk} of 20 · Meso ${meso} · ${prog ? prog.cardio : ''}`;
-  document.getElementById('gate-meso-label').textContent = `Meso ${meso}`;
+  const today = APP.todayKey();
+  const comp = APP.completed;
+  const rdone = APP.rehabDone;
+  const cardioDone = meso.cardio.filter(c => comp[today+'_'+c.id]).length;
+  const strDone = meso.strength.filter(s => comp[today+'_'+s.id]).length;
+  const rehabCount = meso.rehab.filter(r => rdone[today+'_'+r.id]).length;
 
-  const sessions = APP.allSessions();
-  const assessments = APP.allAssessments();
+  document.getElementById('st-cardio').textContent = cardioDone + '/' + meso.cardio.length;
+  document.getElementById('st-str').textContent = strDone + '/' + meso.strength.length;
+  document.getElementById('st-rehab').textContent = rehabCount;
+  document.getElementById('st-rehab-sub').textContent = 'of ' + meso.rehab.length + ' items';
 
-  // VAS
-  const recentWithVas = sessions.filter(s => s.overall_vas_knee !== null);
-  const lastVas = recentWithVas[0]?.overall_vas_knee;
-  const vasEl = document.getElementById('st-vas');
-  vasEl.textContent = lastVas !== undefined ? lastVas : '—';
-  vasEl.style.color = lastVas > 5 ? 'var(--red)' : lastVas > 2 ? 'var(--amber)' : 'var(--green)';
-
-  // Sessions this week
-  const weekSessions = sessions.filter(s => s.week_num === wk);
-  document.getElementById('st-sess').textContent = weekSessions.length;
-  document.getElementById('st-sess-sub').textContent = weekSessions.map(s => s.session_type.split(' ')[0]).join(', ') || 'None yet';
-
-  // Assessment stats
-  const lastAssess = assessments[assessments.length - 1];
-  document.getElementById('st-calf').textContent = lastAssess ? (lastAssess.calf_raise_l_reps || '—') : '10';
-  document.getElementById('st-ssq').textContent = lastAssess ? (lastAssess.split_squat_r_sec ? lastAssess.split_squat_r_sec + 's' : '—') : '8s';
-
-  renderGateProgress(meso, lastAssess);
-  renderDashboardCharts(sessions, assessments);
-  renderRecentSessions(sessions.slice(0, 10));
-}
-
-function renderGateProgress(meso, lastAssess) {
-  const criteria = APP.GATE_CRITERIA[Math.min(meso, 3)] || APP.GATE_CRITERIA[3];
-  const container = document.getElementById('gate-progress');
-  if (!criteria) { container.innerHTML = '<p style="color:var(--muted);font-size:12px">Peak phase — no gate criteria. Maintain and race.</p>'; return; }
-
-  const baselines = { glute_bridge_l_sec:36, glute_bridge_r_sec:38, split_squat_l_sec:18, split_squat_r_sec:8, calf_raise_l_reps:10, vas_knee:4 };
-
-  container.innerHTML = criteria.map(c => {
-    const curr = lastAssess ? lastAssess[c.field] : (baselines[c.field] || 0);
-    const base = c.baseline !== null ? c.baseline : (baselines[c.field] || 0);
-    const pct = c.lowerIsBetter
-      ? Math.max(0, Math.min(100, ((base - (curr||base)) / (base - c.target)) * 100))
-      : Math.max(0, Math.min(100, ((curr||base) - base) / (c.target - base) * 100));
-    const done = c.lowerIsBetter ? (curr !== null && curr <= c.target) : (curr !== null && curr >= c.target);
-    return `<div class="gate-item">
-      <div class="gi-test">${c.test}</div>
-      <div class="gi-bar-wrap"><div class="gi-bar ${done?'done':''}" style="width:${pct}%"></div></div>
-      <div class="gi-nums"><span>Current: <strong>${curr !== null && curr !== undefined ? curr + c.unit : '—'}</strong></span><span>Need: ${c.target}${c.unit}</span></div>
-    </div>`;
-  }).join('');
-}
-
-function renderDashboardCharts(sessions, assessments) {
-  // VAS chart
-  const vasSess = sessions.filter(s => s.overall_vas_knee !== null).slice(0, 20).reverse();
-  APP.makeLineChart('chart-vas',
-    vasSess.map(s => APP.formatDate(s.date)),
-    [{ label:'VAS Knee L', data: vasSess.map(s => s.overall_vas_knee), borderColor: APP.CHART_COLORS.red, backgroundColor:'rgba(192,57,43,.1)', fill:true }]
-  );
-
-  // Weekly volume
-  const volByWeek = {};
-  sessions.forEach(s => { if (s.week_num && s.cardio_distance_km) volByWeek[s.week_num] = (volByWeek[s.week_num]||0) + s.cardio_distance_km; });
-  const weeks = Object.keys(volByWeek).sort((a,b)=>a-b);
-  APP.makeBarChart('chart-vol', weeks.map(w=>'Wk'+w), [{
-    label: 'km', data: weeks.map(w=>volByWeek[w]),
-    backgroundColor: 'rgba(44,106,79,.6)', borderColor:'var(--green)', borderWidth:1
-  }]);
-
-  // Hold times
-  const assessDates = assessments.map(a => APP.formatDate(a.date));
-  APP.makeLineChart('chart-holds', assessDates, [
-    { label:'Split Squat L (s)', data: assessments.map(a=>a.split_squat_l_sec), borderColor: APP.CHART_COLORS.blue },
-    { label:'Split Squat R (s)', data: assessments.map(a=>a.split_squat_r_sec), borderColor: APP.CHART_COLORS.red },
-    { label:'Glute Bridge L (s)', data: assessments.map(a=>a.glute_bridge_l_sec), borderColor: APP.CHART_COLORS.green },
-    { label:'Glute Bridge R (s)', data: assessments.map(a=>a.glute_bridge_r_sec), borderColor: APP.CHART_COLORS.teal },
-  ]);
-
-  // Calf
-  APP.makeLineChart('chart-calf', assessDates, [
-    { label:'L Calf Reps', data: assessments.map(a=>a.calf_raise_l_reps), borderColor: APP.CHART_COLORS.red },
-    { label:'R Calf Reps', data: assessments.map(a=>a.calf_raise_r_reps), borderColor: APP.CHART_COLORS.green },
-  ]);
-}
-
-function renderRecentSessions(sessions) {
-  const tbody = document.getElementById('recent-sessions-body');
-  if (!sessions.length) { tbody.innerHTML = '<tr><td colspan="8" style="color:var(--muted);text-align:center;padding:20px">No sessions logged yet</td></tr>'; return; }
-  tbody.innerHTML = sessions.map(s => `
-    <tr onclick="showPage('history')">
-      <td class="dy">${APP.formatDate(s.date)}</td>
-      <td>${s.week_num||'—'}</td>
-      <td>${s.session_type||'—'}</td>
-      <td>${s.cardio_distance_km ? s.cardio_distance_km+'km' : s.cardio_duration_min ? s.cardio_duration_min+'min' : '—'}</td>
-      <td>${s.cardio_hr_avg||'—'}</td>
-      <td>${s.overall_rpe||'—'}</td>
-      <td class="${s.overall_vas_knee !== null ? 'vas-'+s.overall_vas_knee : ''}">${s.overall_vas_knee !== null ? s.overall_vas_knee : '—'}</td>
-      <td style="max-width:200px;font-size:11.5px">${s.coach_notes||'—'}</td>
-    </tr>`).join('');
-}
-
-// ── SESSION FORM ──────────────────────────────────────────────────────────────
-function updateSessionForm() {
-  const type = document.getElementById('log-type').value;
-  const isCardio = ['Easy Run','Tempo Run','Intervals','Long Run','MP Run','Uphill Walk','Cross Trainer','Assault Bike'].some(t => type.includes(t));
-  const isStrength = type.includes('Strength');
-  document.getElementById('cardio-block').style.display = isCardio ? 'block' : 'none';
-  document.getElementById('strength-block').style.display = isStrength ? 'block' : 'none';
-}
-document.getElementById('log-type').addEventListener('change', updateSessionForm);
-
-function updateVasDisplay(val) {
-  document.getElementById('log-vas-val').textContent = val;
-  const hint = document.getElementById('vas-hint');
-  if (val <= 2) { hint.textContent = val==0?'No pain — good':'Awareness only — monitor'; hint.style.color='var(--green)'; }
-  else if (val <= 5) { hint.textContent = 'Flag to coach. Consider modifying session.'; hint.style.color='var(--amber)'; }
-  else { hint.textContent = '⚠ Stop session. Refer to physio.'; hint.style.color='var(--red)'; }
-}
-
-function populateExPicker() {
-  const picker = document.getElementById('ex-picker');
-  if (!picker) return;
-  const allEx = new Set();
-  Object.values(APP.EXERCISES).forEach(list => list.forEach(e => allEx.add(e)));
-  allEx.forEach(ex => {
-    const o = document.createElement('option');
-    o.value = o.textContent = ex;
-    picker.appendChild(o);
-  });
-  const progSel = document.getElementById('prog-ex-select');
-  if (progSel) {
-    allEx.forEach(ex => {
-      const o = document.createElement('option');
-      o.value = o.textContent = ex;
-      progSel.appendChild(o);
-    });
-  }
-}
-
-let exerciseBlocks = [];
-
-function addExerciseBlock() {
-  const picker = document.getElementById('ex-picker');
-  const name = picker.value;
-  if (!name) return;
-  const id = Date.now();
-  exerciseBlocks.push({ id, name, sets: [{reps:'',weight:'',duration:''}] });
-  renderExerciseBlocks();
-  picker.value = '';
-}
-
-function renderExerciseBlocks() {
-  const container = document.getElementById('exercise-blocks');
-  container.innerHTML = exerciseBlocks.map(ex => `
-    <div class="ex-block" id="exb-${ex.id}">
-      <div class="ex-block-title">
-        ${ex.name}
-        <div style="display:flex;gap:6px">
-          <button class="btn btn-secondary btn-sm" onclick="addSet(${ex.id})">+ Set</button>
-          <button class="btn btn-ghost btn-sm" onclick="removeEx(${ex.id})">✕</button>
+  document.getElementById('dash-today').innerHTML = `
+    <div class="cg">
+      ${meso.cardio.map(c => {
+        const done = comp[today+'_'+c.id];
+        return `<div class="card ${done?'lg':''}" style="cursor:pointer" onclick="nav('cardio')">
+          <div style="font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin-bottom:4px">${c.day}</div>
+          <div style="font-weight:600;font-size:13px;margin-bottom:3px">${c.label}</div>
+          <div style="font-size:11.5px;color:var(--mut)">${c.warmup.dur + c.blocks.reduce((a,b)=>a+b.dur,0)} min total</div>
+          ${done ? '<div style="color:var(--grn);font-weight:600;font-size:12px;margin-top:6px">✓ Completed</div>' : '<div style="color:var(--mut);font-size:12px;margin-top:6px">→ Tap to log</div>'}
+        </div>`;
+      }).join('')}
+      ${meso.strength.map(s => {
+        const done = comp[today+'_'+s.id];
+        return `<div class="card ${done?'lg':'lr'}" style="cursor:pointer" onclick="nav('strength')">
+          <div style="font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin-bottom:4px">${s.day}</div>
+          <div style="font-weight:600;font-size:13px;margin-bottom:3px">${s.label}</div>
+          <div style="font-size:11.5px;color:var(--mut)">${s.groups.reduce((a,g)=>a+g.exercises.length,0)} exercises · Coach session</div>
+          ${done ? '<div style="color:var(--grn);font-weight:600;font-size:12px;margin-top:6px">✓ Completed</div>' : '<div style="color:var(--red);font-size:12px;margin-top:6px">With coach</div>'}
+        </div>`;
+      }).join('')}
+      <div class="card" style="cursor:pointer;border-left:4px solid var(--tel)" onclick="nav('rehab')">
+        <div style="font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin-bottom:4px">Daily</div>
+        <div style="font-weight:600;font-size:13px;margin-bottom:3px">Rehab Routine</div>
+        <div style="font-size:11.5px;color:var(--mut)">${meso.rehab.length} items · ~20 min</div>
+        <div style="background:var(--cream);border-radius:10px;height:7px;margin:8px 0;overflow:hidden">
+          <div style="width:${Math.round(rehabCount/meso.rehab.length*100)}%;height:100%;border-radius:10px;background:var(--tel);transition:width .4s"></div>
         </div>
       </div>
-      <div class="set-header"><div></div><div class="set-header-inner"><span>Reps / Secs</span><span>Weight (kg)</span><span>RPE</span></div></div>
-      ${ex.sets.map((s,i) => `
-        <div class="set-row">
-          <div class="set-num">${i+1}</div>
-          <div class="set-fields">
-            <input type="number" placeholder="—" value="${s.reps}" oninput="updateSet(${ex.id},${i},'reps',this.value)">
-            <input type="number" placeholder="—" step="0.5" value="${s.weight}" oninput="updateSet(${ex.id},${i},'weight',this.value)">
-            <input type="number" placeholder="—" min="1" max="10" value="${s.rpe}" oninput="updateSet(${ex.id},${i},'rpe',this.value)">
-          </div>
-        </div>`).join('')}
-    </div>`).join('');
+    </div>`;
 }
 
-function addSet(id) {
-  const ex = exerciseBlocks.find(e => e.id === id);
-  if (ex) { ex.sets.push({reps:'',weight:'',duration:''}); renderExerciseBlocks(); }
-}
-function removeEx(id) { exerciseBlocks = exerciseBlocks.filter(e => e.id !== id); renderExerciseBlocks(); }
-function updateSet(exId, setIdx, field, val) {
-  const ex = exerciseBlocks.find(e => e.id === exId);
-  if (ex && ex.sets[setIdx]) ex.sets[setIdx][field] = val;
-}
-
-async function submitSession() {
-  const sessionData = {
-    date: document.getElementById('log-date').value,
-    week_num: parseInt(document.getElementById('log-week').value) || APP.currentWeek(),
-    meso: APP.weekToMeso(parseInt(document.getElementById('log-week').value) || APP.currentWeek()),
-    session_type: document.getElementById('log-type').value,
-    cardio_mode: document.getElementById('log-cardio-mode')?.value || null,
-    cardio_duration_min: parseInt(document.getElementById('log-dur')?.value) || null,
-    cardio_distance_km: parseFloat(document.getElementById('log-dist')?.value) || null,
-    cardio_hr_avg: parseInt(document.getElementById('log-hr-avg')?.value) || null,
-    cardio_hr_max: parseInt(document.getElementById('log-hr-max')?.value) || null,
-    cardio_power_avg: parseInt(document.getElementById('log-power')?.value) || null,
-    cardio_notes: document.getElementById('log-cardio-notes')?.value || null,
-    overall_rpe: parseInt(document.getElementById('log-rpe').value),
-    overall_vas_knee: parseInt(document.getElementById('log-vas').value),
-    coach_notes: document.getElementById('log-coach-notes').value || null,
-  };
-  try {
-    await APP.saveSession(sessionData, exerciseBlocks);
-    await APP.loadAllData();
-    APP.toast('Session saved!', 'success');
-    exerciseBlocks = [];
-    renderExerciseBlocks();
-    renderDashboard();
-    showPage('dashboard');
-  } catch(e) {
-    APP.toast('Error: ' + e.message, 'error');
+// ── CARDIO ────────────────────────────────────────────────────────────────────
+function renderCardio() {
+  const meso = APP.getMeso(APP.currentWeek());
+  if (APP.isCoach()) {
+    document.getElementById('cardio-acts').innerHTML = `<button class="btn btn-s btn-sm" onclick="addCardioSess()">+ Add Day</button>`;
   }
+  document.getElementById('cardio-content').innerHTML = meso.cardio.map(s => buildCardioCard(s)).join('');
 }
 
-// ── ASSESSMENTS ───────────────────────────────────────────────────────────────
-function renderAssessments() {
-  const assessments = APP.allAssessments();
-  const last = assessments[assessments.length - 1];
-  const meso = APP.weekToMeso(APP.currentWeek());
-  const criteria = APP.GATE_CRITERIA[Math.min(meso, 3)] || APP.GATE_CRITERIA[3];
+function buildCardioCard(sess) {
+  const today = APP.todayKey();
+  const sessKey = today + '_' + sess.id;
+  const sessLike = APP.completed[sessKey];
+  const typeClass = sess.type === 'walk' ? 'walk' : sess.type === 'norwegian' ? 'norwegian' : 'bike';
+  const totalMin = sess.warmup.dur + sess.blocks.reduce((a,b) => a + b.dur, 0);
 
-  const display = document.getElementById('assess-display');
-  const tests = [
-    { label:'Glute Bridge Hold L', key:'glute_bridge_l_sec', unit:'sec', target:45, baseline:36, color:'g' },
-    { label:'Glute Bridge Hold R', key:'glute_bridge_r_sec', unit:'sec', target:45, baseline:38, color:'g' },
-    { label:'Split Squat Hold L', key:'split_squat_l_sec', unit:'sec', target:25, baseline:18, color:'a' },
-    { label:'Split Squat Hold R', key:'split_squat_r_sec', unit:'sec', target:20, baseline:8, color:'r' },
-    { label:'SL Calf Raise L', key:'calf_raise_l_reps', unit:'reps', target:22, baseline:10, color:'r' },
-    { label:'SL Calf Raise R', key:'calf_raise_r_reps', unit:'reps', target:22, baseline:15, color:'g' },
-    { label:'Lateral Knee VAS', key:'vas_knee', unit:'/10', target:1, baseline:4, color:'r', lower:true },
-    { label:'Ankle DF L', key:'ankle_df_l_cm', unit:'cm', target:8, baseline:0, color:'b' },
-  ];
+  const warmupCheck = APP.completed['blk_' + today + '_' + sess.id + '_warmup'];
 
-  display.innerHTML = tests.map(t => {
-    const curr = last ? last[t.key] : null;
-    const pct = t.lower
-      ? Math.max(0, Math.min(100, ((t.baseline-(curr||t.baseline))/(t.baseline-t.target))*100))
-      : Math.max(0, Math.min(100, ((curr||t.baseline)-t.baseline)/(t.target-t.baseline)*100));
-    const done = t.lower ? (curr !== null && curr <= t.target) : (curr !== null && curr >= t.target);
-    return `<div class="assess-card">
-      <div class="assess-test">${t.label}</div>
-      <div class="assess-bar-wrap"><div class="assess-bar bar-${done?'g':t.color}" style="width:${pct}%"></div></div>
-      <div class="assess-nums"><span>Current: <strong>${curr !== null ? curr+t.unit : '—'}</strong></span><span>Target: ${t.target}${t.unit}</span></div>
-      ${done ? '<div style="font-size:10.5px;color:var(--green);margin-top:4px;font-weight:600">✓ Gate met</div>' : ''}
+  const blocksHtml = sess.blocks.map(blk => {
+    const blkKey = 'blk_' + today + '_' + sess.id + '_' + blk.id;
+    const blkDone = APP.completed[blkKey];
+    const act = APP.completed['act_' + today + '_' + sess.id + '_' + blk.id] || {};
+    const isWork = blk.zone === 'Z5' || blk.zone === 'Z4';
+    const isRest = blk.zone === 'Z1' || blk.zone === 'Z3';
+    const rowClass = isWork ? 'work' : (blk.label.toLowerCase().includes('cool') ? 'cooldown' : (isRest && sess.type !== 'walk' ? 'rest' : ''));
+
+    let metrics = [];
+    if (blk.dur) metrics.push(`Duration: <strong>${blk.dur} min</strong>`);
+    if (blk.kph) metrics.push(`Speed: <strong>${blk.kph} kph</strong>`);
+    if (blk.incline !== null && blk.incline !== undefined && blk.incline !== '') metrics.push(`Incline: <strong>${blk.incline}%</strong>`);
+    if (blk.rpm) metrics.push(`RPM: <strong>${blk.rpm}</strong>`);
+    if (blk.hrLo) metrics.push(`HR: <strong>${blk.hrLo}-${blk.hrHi} bpm</strong> <span class="zb" style="background:${APP.zoneColor(blk.zone)}">${blk.zone}</span>`);
+
+    let actFields = [];
+    if (blk.kph) actFields.push(`<div class="actual-field"><label>Actual kph</label><input type="number" step="0.5" value="${act.kph||''}" placeholder="${blk.kph}" onchange="saveAct('${sess.id}','${blk.id}','kph',this.value)"></div>`);
+    if (blk.incline !== null && blk.incline !== undefined && blk.incline !== '') actFields.push(`<div class="actual-field"><label>Actual incline%</label><input type="number" value="${act.inc||''}" placeholder="${blk.incline}" onchange="saveAct('${sess.id}','${blk.id}','inc',this.value)"></div>`);
+    if (blk.rpm) actFields.push(`<div class="actual-field"><label>Actual RPM</label><input type="number" value="${act.rpm||''}" placeholder="${blk.rpm}" onchange="saveAct('${sess.id}','${blk.id}','rpm',this.value)"></div>`);
+    actFields.push(`<div class="actual-field"><label>HR (bpm)</label><input type="number" value="${act.hr||''}" placeholder="—" onchange="saveAct('${sess.id}','${blk.id}','hr',this.value)"></div>`);
+    actFields.push(`<div class="actual-field"><label>Time (min)</label><input type="number" step="0.5" value="${act.time||''}" placeholder="${blk.dur}" onchange="saveAct('${sess.id}','${blk.id}','time',this.value)"></div>`);
+
+    return `<div class="irow ${rowClass}">
+      <div class="irow-check ${blkDone?'done':''}" onclick="toggleBlk('${sess.id}','${blk.id}')">${blkDone?'✓':''}</div>
+      <div class="irow-info">
+        <div class="irow-label">${blk.label}</div>
+        <div class="irow-metrics">${metrics.map(m=>`<div class="irow-metric">${m}</div>`).join('')}</div>
+        ${blk.note ? `<div class="irow-note">${blk.note}</div>` : ''}
+        <div class="irow-actual">
+          ${actFields.join('')}
+          ${APP.isCoach() ? `<button class="btn btn-xs btn-g" style="margin-top:18px" onclick="openEditBlock('${sess.id}','${blk.id}')">✎ Edit</button>` : ''}
+        </div>
+      </div>
     </div>`;
   }).join('');
 
-  // History table
-  const tbody = document.getElementById('assess-history-body');
-  const rows = [...assessments].reverse();
-  tbody.innerHTML = rows.length ? rows.map(a => `
-    <tr>
-      <td class="dy">${APP.formatDate(a.date)}</td>
-      <td>${a.meso||'—'}</td>
-      <td>${a.glute_bridge_l_sec||'—'}</td>
-      <td>${a.glute_bridge_r_sec||'—'}</td>
-      <td>${a.split_squat_l_sec||'—'}</td>
-      <td>${a.split_squat_r_sec||'—'}</td>
-      <td>${a.calf_raise_l_reps||'—'}</td>
-      <td>${a.calf_raise_r_reps||'—'}</td>
-      <td class="${a.vas_knee!==null?'vas-'+a.vas_knee:''}">${a.vas_knee!==null?a.vas_knee:'—'}</td>
-      <td style="font-size:11.5px">${a.notes||'—'}</td>
-    </tr>`).join('')
-    : '<tr><td colspan="10" style="color:var(--muted);text-align:center;padding:20px">No assessments recorded yet</td></tr>';
-
-  // Chart
-  const dates = assessments.map(a => APP.formatDate(a.date));
-  APP.makeLineChart('chart-assess-all', dates, [
-    { label:'Split Squat L (s)', data:assessments.map(a=>a.split_squat_l_sec), borderColor:APP.CHART_COLORS.blue },
-    { label:'Split Squat R (s)', data:assessments.map(a=>a.split_squat_r_sec), borderColor:APP.CHART_COLORS.red },
-    { label:'Calf Raise L', data:assessments.map(a=>a.calf_raise_l_reps), borderColor:APP.CHART_COLORS.amber },
-    { label:'Calf Raise R', data:assessments.map(a=>a.calf_raise_r_reps), borderColor:APP.CHART_COLORS.green },
-    { label:'VAS Knee', data:assessments.map(a=>a.vas_knee), borderColor:'#e74c3c', borderDash:[4,4] },
-  ]);
-}
-
-function openAssessModal() {
-  document.getElementById('assess-modal').classList.add('open');
-}
-function closeAssessModal() {
-  document.getElementById('assess-modal').classList.remove('open');
-}
-async function submitAssessment() {
-  const data = {
-    date: document.getElementById('am-date').value,
-    meso: parseInt(document.getElementById('am-meso').value),
-    glute_bridge_l_sec: parseInt(document.getElementById('am-gb-l').value)||null,
-    glute_bridge_r_sec: parseInt(document.getElementById('am-gb-r').value)||null,
-    split_squat_l_sec: parseInt(document.getElementById('am-ss-l').value)||null,
-    split_squat_r_sec: parseInt(document.getElementById('am-ss-r').value)||null,
-    calf_raise_l_reps: parseInt(document.getElementById('am-calf-l').value)||null,
-    calf_raise_r_reps: parseInt(document.getElementById('am-calf-r').value)||null,
-    ankle_df_l_cm: parseFloat(document.getElementById('am-df-l').value)||null,
-    vas_knee: parseInt(document.getElementById('am-vas').value)||null,
-    glute_feel_l: document.getElementById('am-glute').value||null,
-    notes: document.getElementById('am-notes').value||null,
-  };
-  try {
-    await APP.saveAssessment(data);
-    await APP.loadAllData();
-    APP.toast('Assessment saved!', 'success');
-    closeAssessModal();
-    renderAssessments();
-    renderDashboard();
-  } catch(e) {
-    APP.toast('Error: ' + e.message, 'error');
-  }
-}
-
-// ── PROGRAMME VIEW ────────────────────────────────────────────────────────────
-function renderProgramme() {
-  const mesoNums = [1,2,3,4,5];
-  const tabs = document.getElementById('meso-tabs');
-  tabs.innerHTML = mesoNums.map(m =>
-    `<button class="meso-tab ${m===1?'on':''}" onclick="showMeso(${m},this)">
-      ${['M1 Foundation','M2 Base Build','M3 Development','M4 Peak','M5 Taper'][m-1]}
-    </button>`
-  ).join('');
-  showMeso(1, tabs.querySelector('.meso-tab'));
-}
-
-function showMeso(meso, btn) {
-  document.querySelectorAll('.meso-tab').forEach(t => t.classList.remove('on'));
-  if (btn) btn.classList.add('on');
-  const weeks = APP.PROGRAMME.filter(w => w.meso === meso);
-  const container = document.getElementById('programme-view');
-  container.innerHTML = `
-    <div class="week-hd">
-      <div>Week</div><div>Volume</div><div>Long / Main Cardio</div><div>Key Session</div><div>Strength / Nutrition</div>
+  return `<div class="cc">
+    <div class="cc-hd ${typeClass}">
+      <div>
+        <h3>${sess.day} — ${sess.label}</h3>
+        <div style="font-family:'DM Mono',monospace;font-size:9px;color:rgba(255,255,255,.65);margin-top:2px">${totalMin} min total · ${sess.type.replace('_',' ')}</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        ${sessLike ? '<span class="ctag">✓ Done</span>' : ''}
+        <button class="btn btn-sm" style="background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.3)" onclick="markSessDone('${sess.id}')">${sessLike?'Unmark':'Mark Complete'}</button>
+        ${APP.isCoach() ? `<button class="btn btn-sm" style="background:rgba(255,255,255,.12);color:#fff" onclick="openEditBlock('${sess.id}','warmup')">Edit Warmup</button>` : ''}
+      </div>
     </div>
-    ${weeks.map(w => `
-      <div class="week-row ${w.type==='deload'?'deload':w.type==='race'?'race':w.type==='gate'?'gate':''}">
-        <div style="font-weight:700">Wk ${w.week}</div>
-        <div>${w.km > 0 ? w.km+' km' : w.lr.includes('min')||w.lr.includes('walk') ? 'No run' : '—'}</div>
-        <div>${w.lr}</div>
-        <div>${w.key}</div>
-        <div>${w.strength} · ${w.nut}</div>
+    <div class="cc-body">
+      <div class="wu-bar">
+        <div class="wu-lbl">Warm-Up</div>
+        <div class="irow-check ${warmupCheck?'done':''}" style="width:22px;height:22px;font-size:12px" onclick="toggleBlk('${sess.id}','warmup')">${warmupCheck?'✓':''}</div>
+        <div style="flex:1;font-size:13px">
+          <strong>${sess.warmup.dur} min</strong>
+          ${sess.warmup.kph ? ' · ' + sess.warmup.kph + ' kph' : ''}
+          ${sess.warmup.incline ? ' · ' + sess.warmup.incline + '% incline' : ''}
+          ${sess.warmup.rpm ? ' · ' + sess.warmup.rpm + ' rpm' : ''}
+          <span style="font-size:11.5px;color:var(--mut);margin-left:6px">${sess.warmup.note}</span>
+        </div>
+      </div>
+      <div style="font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin-bottom:8px">${sess.type==='bike'||sess.type==='norwegian'?'Intervals — Prescribed + Actual Log':'Main Block — Prescribed + Actual Log'}</div>
+      ${blocksHtml}
+    </div>
+  </div>`;
+}
+
+function toggleBlk(sessId, blkId) {
+  const key = 'blk_' + APP.todayKey() + '_' + sessId + '_' + blkId;
+  APP.completed[key] = !APP.completed[key];
+  APP.saveCompletion(); renderCardio(); renderDashboard();
+}
+function markSessDone(sessId) {
+  const key = APP.todayKey() + '_' + sessId;
+  APP.completed[key] = !APP.completed[key];
+  APP.saveCompletion(); renderCardio(); renderDashboard();
+}
+function saveAct(sessId, blkId, field, val) {
+  const key = 'act_' + APP.todayKey() + '_' + sessId + '_' + blkId;
+  if (!APP.completed[key]) APP.completed[key] = {};
+  APP.completed[key][field] = val;
+  APP.saveCompletion();
+}
+
+// ── STRENGTH ──────────────────────────────────────────────────────────────────
+function renderStrength() {
+  const meso = APP.getMeso(APP.currentWeek());
+  if (APP.isCoach()) {
+    document.getElementById('str-acts').innerHTML = `<button class="btn btn-s btn-sm" onclick="addStrSess()">+ Add Session</button>`;
+  }
+  document.getElementById('str-content').innerHTML = meso.strength.map(s => buildStrSession(s)).join('');
+}
+
+function buildStrSession(sess) {
+  const today = APP.todayKey();
+  const sessKey = today + '_' + sess.id;
+  const sessDone = APP.completed[sessKey];
+  const gtLabel = { single:'', superset:'Superset', triset:'Tri-Set', giant:'Giant Set' };
+
+  const groupsHtml = sess.groups.map(grp => {
+    const exHtml = APP.isCoach()
+      ? `<div class="ex-hd-coach"><div>Exercise</div><div>Sets</div><div>Reps</div><div>kg</div><div>Tempo</div><div>RPE</div><div></div></div>
+         ${grp.exercises.map(ex => `
+           <div class="ex-row-coach">
+             <div><div class="ex-name">${ex.name}</div>${ex.note?`<div class="ex-note-cl">${ex.note}</div>`:''}</div>
+             <div class="ef"><input type="number" value="${ex.sets}" min="1" onchange="updEx('${sess.id}','${grp.id}','${ex.id}','sets',this.value)"></div>
+             <div class="ef"><input type="number" value="${ex.reps||''}" placeholder="${ex.unit==='time'?(ex.dur+'s'):''}" onchange="updEx('${sess.id}','${grp.id}','${ex.id}','reps',this.value)"></div>
+             <div class="ef"><input type="number" step="0.5" value="${ex.weight||''}" placeholder="kg" onchange="updEx('${sess.id}','${grp.id}','${ex.id}','weight',this.value)"></div>
+             <div class="ef"><input type="text" value="${ex.tempo||''}" placeholder="—" onchange="updEx('${sess.id}','${grp.id}','${ex.id}','tempo',this.value)" style="font-size:11px"></div>
+             <div class="ef"><input type="number" value="${ex.rpe||''}" min="1" max="10" placeholder="—" onchange="updEx('${sess.id}','${grp.id}','${ex.id}','rpe',this.value)"></div>
+             <div style="display:flex;gap:3px">
+               <button class="btn btn-xs btn-g" onclick="mvEx('${sess.id}','${grp.id}','${ex.id}',-1)">↑</button>
+               <button class="btn btn-xs btn-g" onclick="mvEx('${sess.id}','${grp.id}','${ex.id}',1)">↓</button>
+               <button class="btn btn-xs btn-g" style="color:var(--red)" onclick="rmEx('${sess.id}','${grp.id}','${ex.id}')">✕</button>
+             </div>
+           </div>`).join('')}`
+      : `<div class="ex-hd-client"><div>Exercise</div><div>Weight</div><div>Reps</div><div>RPE</div><div></div></div>
+         ${grp.exercises.map(ex => {
+           const sets = parseInt(ex.sets)||3;
+           const logKey = 'log_' + today + '_' + sess.id + '_' + ex.id;
+           const logged = APP.completed[logKey] || {};
+           const setRows = Array.from({length:sets},(_,i) => {
+             const sl = logged['s'+(i+1)] || {};
+             return `<div class="set-row">
+               <div class="set-n">${i+1}</div>
+               <div><input type="number" step="0.5" value="${sl.w||''}" placeholder="${ex.weight||'kg'}" onchange="logSet('${sess.id}','${ex.id}',${i+1},'w',this.value)"></div>
+               <div><input type="number" value="${sl.r||''}" placeholder="${ex.reps||ex.dur+'s'}" onchange="logSet('${sess.id}','${ex.id}',${i+1},'r',this.value)"></div>
+               <div><input type="number" value="${sl.rpe||''}" min="1" max="10" placeholder="RPE" onchange="logSet('${sess.id}','${ex.id}',${i+1},'rpe',this.value)"></div>
+               <div><div class="scheck ${sl.done?'done':''}" onclick="toggleSet('${sess.id}','${ex.id}',${i+1})">${sl.done?'✓':''}</div></div>
+             </div>`;
+           }).join('');
+           return `<div class="ex-row-client">
+             <div class="ex-hd-client" style="background:transparent;border:none;padding:8px 0 3px"><div style="font-weight:600">${ex.name}</div><div>${ex.weight?ex.weight+'kg':'—'}</div><div>${ex.reps||(ex.dur+'s')}</div><div>RPE ${ex.rpe||'—'}</div><div></div></div>
+             ${ex.note?`<div class="ex-note-cl" style="padding:0 0 6px">${ex.note}</div>`:''}
+             <div class="set-hd"><span>Set</span><span>Weight</span><span>Reps</span><span>RPE</span><span>✓</span></div>
+             ${setRows}
+           </div>`;
+         }).join('')}`;
+
+    return `<div class="str-grp">
+      <div class="grp-hd">
+        ${grp.type !== 'single' ? `<span class="gt gt-${grp.type}" onclick="${APP.isCoach()?`cycleGrpType('${sess.id}','${grp.id}')`:''}" title="Click to change type">${gtLabel[grp.type]}</span>` : ''}
+        <span class="grp-label">${grp.label}</span>
+        ${APP.isCoach() ? `<div class="grp-acts">
+          <button class="btn btn-xs btn-s" onclick="openAddEx('${sess.id}','${grp.id}')">+ Ex</button>
+          <button class="btn btn-xs btn-g" onclick="cycleGrpType('${sess.id}','${grp.id}')">Type</button>
+          <button class="btn btn-xs btn-g" style="color:var(--red)" onclick="rmGrp('${sess.id}','${grp.id}')">✕</button>
+        </div>` : ''}
+      </div>
+      ${exHtml}
+    </div>`;
+  }).join('');
+
+  return `<div class="str-sess">
+    <div class="str-hd">
+      <h3>${sess.day} — ${sess.label}</h3>
+      <div style="display:flex;gap:8px;align-items:center">
+        ${sessDone ? '<span style="font-family:\'DM Mono\',monospace;font-size:9px;background:rgba(45,106,79,.5);color:#fff;padding:2px 9px;border-radius:20px">✓ Done</span>' : ''}
+        <button class="btn btn-sm" style="background:rgba(255,255,255,.12);color:#fff" onclick="markStrDone('${sess.id}')">${sessDone?'Unmark':'Mark Complete'}</button>
+        ${APP.isCoach() ? `<button class="btn btn-sm" style="background:rgba(255,255,255,.1);color:#fff" onclick="openAddGrp('${sess.id}')">+ Group</button>` : ''}
+      </div>
+    </div>
+    ${sess.note ? `<div style="padding:8px 16px;font-size:12px;color:var(--mut);background:var(--cream);border-bottom:1px solid var(--bdr)">${sess.note}</div>` : ''}
+    ${groupsHtml}
+  </div>`;
+}
+
+function markStrDone(id) {
+  const key = APP.todayKey() + '_' + id;
+  APP.completed[key] = !APP.completed[key];
+  APP.saveCompletion(); renderStrength(); renderDashboard();
+}
+function logSet(sessId, exId, setNum, field, val) {
+  const key = 'log_' + APP.todayKey() + '_' + sessId + '_' + exId;
+  if (!APP.completed[key]) APP.completed[key] = {};
+  if (!APP.completed[key]['s'+setNum]) APP.completed[key]['s'+setNum] = {};
+  APP.completed[key]['s'+setNum][field] = val;
+  APP.saveCompletion();
+}
+function toggleSet(sessId, exId, setNum) {
+  const key = 'log_' + APP.todayKey() + '_' + sessId + '_' + exId;
+  if (!APP.completed[key]) APP.completed[key] = {};
+  if (!APP.completed[key]['s'+setNum]) APP.completed[key]['s'+setNum] = {};
+  APP.completed[key]['s'+setNum].done = !APP.completed[key]['s'+setNum].done;
+  APP.saveCompletion(); renderStrength();
+}
+
+// ── REHAB ─────────────────────────────────────────────────────────────────────
+function renderRehab() {
+  const meso = APP.getMeso(APP.currentWeek());
+  const today = APP.todayKey();
+  const done = r => APP.rehabDone[today + '_' + r.id];
+  const count = meso.rehab.filter(done).length;
+
+  document.getElementById('rehab-content').innerHTML = `
+    <div class="rlist">
+      ${meso.rehab.map(r => `
+        <div class="ritem ${done(r)?'done':''}" onclick="toggleRehab('${r.id}')">
+          <div class="rcheck ${done(r)?'done':''}">${done(r)?'✓':''}</div>
+          <div>
+            <div class="rname">${r.name}</div>
+            <div class="rdetail">${r.dur} · ${r.note}</div>
+          </div>
+          <div class="rfreq">${r.freq}</div>
+        </div>`).join('')}
+    </div>
+    <div style="background:var(--cream);border-radius:6px;padding:12px 16px;display:flex;align-items:center;gap:14px">
+      <div style="flex:1;background:var(--bdr);border-radius:10px;height:10px;overflow:hidden">
+        <div style="width:${Math.round(count/meso.rehab.length*100)}%;height:100%;border-radius:10px;background:var(--tel);transition:width .4s"></div>
+      </div>
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--mut);white-space:nowrap">${count} / ${meso.rehab.length}</div>
+      ${count===meso.rehab.length?'<div style="color:var(--grn);font-weight:700">🎉 All done!</div>':''}
+    </div>`;
+}
+function toggleRehab(id) {
+  const key = APP.todayKey() + '_' + id;
+  APP.rehabDone[key] = !APP.rehabDone[key];
+  APP.saveCompletion(); renderRehab(); renderDashboard();
+}
+function resetRehab() {
+  const meso = APP.getMeso(APP.currentWeek());
+  const today = APP.todayKey();
+  meso.rehab.forEach(r => delete APP.rehabDone[today + '_' + r.id]);
+  APP.saveCompletion(); renderRehab(); renderDashboard();
+}
+
+// ── OVERVIEW ──────────────────────────────────────────────────────────────────
+function renderOverview() {
+  const p = APP.prog;
+  document.getElementById('overview-content').innerHTML = `
+    <div class="al b"><div><strong>Start:</strong> ${p.startDate} · <strong>2 Mesos planned</strong> · All cardio and strength progressions shown below</div></div>
+    ${p.mesos.map(m => `
+      <div style="background:#fff;border:1px solid var(--bdr);border-radius:8px;margin-bottom:20px;overflow:hidden">
+        <div style="padding:12px 18px;background:var(--ink);color:#fff;display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.04em">Meso ${m.num} — ${m.title}</div>
+            <div style="font-family:'DM Mono',monospace;font-size:9px;opacity:.6;margin-top:2px">Weeks ${m.weeks[0]}-${m.weeks[m.weeks.length-1]} · Deload week ${m.deloadWeek}</div>
+          </div>
+          <div style="font-family:'DM Mono',monospace;font-size:9px;opacity:.6">${m.nutrition.kcal} kcal · -${m.nutrition.deficit} deficit</div>
+        </div>
+        <div style="padding:14px 18px;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">
+          ${m.cardio.map(c=>`<div class="card"><h4>${c.day}: ${c.label}</h4>${c.blocks.map(b=>`<p style="font-size:12px">${b.label}: ${b.dur}min${b.kph?' · '+b.kph+'kph':''}${b.incline!==null&&b.incline!==undefined&&b.incline!==''?' · '+b.incline+'%':''}${b.rpm?' · '+b.rpm+'rpm':''} <span class="zb" style="background:${APP.zoneColor(b.zone)}">${b.zone}</span></p>`).join('')}</div>`).join('')}
+          ${m.strength.map(s=>`<div class="card lr"><h4>${s.day}: ${s.label}</h4><ul>${s.groups.map(g=>`<li>${g.label}: ${g.exercises.map(e=>e.name).join(', ')}</li>`).join('')}</ul></div>`).join('')}
+        </div>
       </div>`).join('')}`;
 }
 
-// ── HISTORY ───────────────────────────────────────────────────────────────────
-function renderHistory() {
-  const tbody = document.getElementById('history-body');
-  const sessions = APP.allSessions();
-  tbody.innerHTML = sessions.length ? sessions.map(s => `
-    <tr>
-      <td class="dy">${APP.formatDate(s.date)}</td>
-      <td>${s.week_num||'—'}</td>
-      <td>${s.session_type||'—'}</td>
-      <td>${s.cardio_distance_km ? s.cardio_distance_km+'km' : '—'}</td>
-      <td>${s.cardio_duration_min ? s.cardio_duration_min+'min' : '—'}</td>
-      <td>${s.cardio_hr_avg||'—'}</td>
-      <td>${s.cardio_power_avg ? s.cardio_power_avg+'W' : '—'}</td>
-      <td>${s.overall_rpe||'—'}</td>
-      <td class="${s.overall_vas_knee!==null?'vas-'+s.overall_vas_knee:''}">${s.overall_vas_knee!==null?s.overall_vas_knee:'—'}</td>
-      <td style="font-size:11.5px;max-width:200px">${s.coach_notes||'—'}</td>
-    </tr>`).join('')
-    : '<tr><td colspan="10" style="color:var(--muted);text-align:center;padding:20px">No sessions logged yet</td></tr>';
-}
-
-// ── PROGRESSION ───────────────────────────────────────────────────────────────
-function renderProgression() {
-  const sessions = APP.allSessions();
-
-  // RPE
-  const rpeData = sessions.filter(s=>s.overall_rpe).slice(0,20).reverse();
-  APP.makeLineChart('chart-rpe', rpeData.map(s=>APP.formatDate(s.date)),
-    [{ label:'RPE', data:rpeData.map(s=>s.overall_rpe), borderColor:APP.CHART_COLORS.amber }]);
-
-  // HR
-  const hrData = sessions.filter(s=>s.cardio_hr_avg).slice(0,20).reverse();
-  APP.makeLineChart('chart-hr', hrData.map(s=>APP.formatDate(s.date)),
-    [{ label:'HR avg (bpm)', data:hrData.map(s=>s.cardio_hr_avg), borderColor:APP.CHART_COLORS.red },
-     { label:'HR max', data:hrData.map(s=>s.cardio_hr_max), borderColor:'rgba(192,57,43,.4)' }]);
-
-  // Volume
-  const volByWeek = {};
-  sessions.forEach(s => { if(s.week_num && s.cardio_distance_km) volByWeek[s.week_num]=(volByWeek[s.week_num]||0)+s.cardio_distance_km; });
-  const weeks = Object.keys(volByWeek).sort((a,b)=>a-b);
-  APP.makeBarChart('chart-vol2', weeks.map(w=>'Wk'+w),
-    [{label:'km',data:weeks.map(w=>volByWeek[w]),backgroundColor:'rgba(44,106,79,.6)',borderColor:'var(--green)',borderWidth:1}]);
-
-  // VAS
-  const vasData = sessions.filter(s=>s.overall_vas_knee!==null).slice(0,20).reverse();
-  APP.makeLineChart('chart-vas2', vasData.map(s=>APP.formatDate(s.date)),
-    [{ label:'VAS L Knee', data:vasData.map(s=>s.overall_vas_knee), borderColor:APP.CHART_COLORS.red, backgroundColor:'rgba(192,57,43,.1)', fill:true }],
-    { yAxis:{ min:0, max:10 } });
-}
-
-function renderExProgression() {
-  const exName = document.getElementById('prog-ex-select').value;
-  if (!exName) return;
-  document.getElementById('prog-chart-title').textContent = exName + ' — Load Progression';
-  const sessions = APP.allSessions();
-  const points = [];
-  sessions.forEach(s => {
-    if (s.exercise_sets) {
-      const exSets = s.exercise_sets.filter(e => e.exercise_name === exName);
-      exSets.forEach(set => {
-        points.push({ date: s.date, weight: set.weight_kg, reps: set.reps, rpe: set.rpe, setNum: set.set_number });
-      });
-    }
-  });
-  points.sort((a,b) => new Date(a.date)-new Date(b.date));
-  APP.makeLineChart('chart-prog-ex', points.map(p=>APP.formatDate(p.date)+' S'+p.setNum), [
-    { label:'Weight (kg)', data:points.map(p=>p.weight), borderColor:APP.CHART_COLORS.blue },
-    { label:'Reps', data:points.map(p=>p.reps), borderColor:APP.CHART_COLORS.green },
-  ]);
-}
-
-
-// ══════════════════════════════════════════════════════
-// PROGRAMME CONTENT
-// ══════════════════════════════════════════════════════
-
-const PC = {
-  clinicalFlags: [
-    { title:'Left Lateral Knee — TFL/ITB', sev:'red', detail:'Active pain VAS 6/10. No running Meso 1. No side plank L. No high-resistance hip abduction until week 8. VAS monitored every session. >3/10 = reduce load. >5/10 = stop, refer to physio.' },
-    { title:'Left Glute Med Inhibition', sev:'red', detail:'No L abductor/adductor engagement. Strong quad activation L leg. Primary driver of all problems. All Meso 1 targets neurological re-education of L glute med before any running.' },
-    { title:'Hip IR Deficit — Bilateral', sev:'amber', detail:'90/90 hip rotation drill every warm-up. Both sides. Note L vs R difference each week. Reassess at weeks 4, 8, 12.' },
-    { title:'Left Ankle Dorsiflexion', sev:'amber', detail:'Ankle DF wall drill every session. Track wall-to-toe distance weekly. Heel elevated on goblet squat until improved. Consider 8-10mm heel drop shoe.' },
-    { title:'Right Hip Stability', sev:'amber', detail:'Split squat hold R = 8 sec vs L = 18 sec. R is collapsing through hip. R = hip stability loading priority alongside L glute med re-education.' },
-  ],
-  baseline: [
-    { test:'Glute Bridge L', val:'36 sec', target:'45 sec (Meso 2)', bar:80, color:'var(--amber)' },
-    { test:'Glute Bridge R', val:'38 sec', target:'45 sec (Meso 2)', bar:84, color:'var(--amber)' },
-    { test:'Split Squat L', val:'18 sec', target:'25 sec (Meso 2)', bar:72, color:'var(--amber)' },
-    { test:'Split Squat R', val:'8 sec', target:'20 sec (Meso 2)', bar:40, color:'var(--red)' },
-    { test:'SL Calf Raise L', val:'10 reps', target:'15 reps (Meso 2)', bar:67, color:'var(--red)' },
-    { test:'SL Calf Raise R', val:'15 reps', target:'22 reps (Meso 3)', bar:68, color:'var(--amber)' },
-    { test:'L Knee VAS', val:'6/10', target:'0-1/10 before running', bar:20, color:'var(--red)' },
-    { test:'L Glute Feel', val:'Quad dominant', target:'Clear glute med activation', bar:10, color:'var(--red)' },
-  ],
-  mesos: [
-    {
-      num:1, title:'Foundation & Rehabilitation', weeks:'1-4', color:'#1a1a2e',
-      tag:'No Running · -300 kcal deficit',
-      overview:'Zero running. Glute neurological re-education. Cardio via uphill walking, cross trainer, assault bike only. Primary goal: get L glute med firing before any running load. L calf eccentric programme begins week 1. All strength is bodyweight only until L glute fires reliably.',
-      weeklyLayout:[
-        { week:1, vol:'No running', lr:'40 min uphill walk', key:'Uphill walk 8% 30 min', strength:'Neural Activation A (coach)', nut:'-300 kcal' },
-        { week:2, vol:'No running', lr:'45 min uphill walk', key:'Cross trainer 35 min + intervals', strength:'Neural Activation A+B (coach)', nut:'-300 kcal' },
-        { week:3, vol:'No running', lr:'50 min uphill walk', key:'Assault bike 20 min (if knee OK)', strength:'Neural Activation A+B (coach)', nut:'-300 kcal' },
-        { week:4, vol:'DELOAD', lr:'30 min easy walk', key:'DELOAD + FULL RETEST', strength:'Mobility only', nut:'-300 kcal' },
-      ],
-      cardio:[
-        { mode:'Uphill Walk (Primary)', detail:'Treadmill incline 8-15%. Build to 50 min by week 3. Drives posterior chain without lateral knee shear. 3x/week.' },
-        { mode:'Cross Trainer (Secondary)', detail:'Elliptical 30-40 min. Low impact, full ROM. Cue: push through heel not quad pull. 2x/week max.' },
-        { mode:'Assault Bike (Conditional)', detail:'ONLY if lateral knee VAS does not increase during or 24hrs after. 20 min: 30s hard/90s easy ×8. Remove if knee responds.' },
-      ],
-      sessionA:{
-        title:'Session A — Glute Med Re-Education', day:'Tuesday with coach',
-        sections:[
-          { label:'WARM-UP (12 min)', color:'var(--red)', exercises:[
-            { ex:'Ankle DF Wall Drill L', sets:'2×15', tempo:'Slow', note:'5cm from wall. Heel flat. Track wall-to-toe distance weekly. Daily rehab Rx.' },
-            { ex:'90/90 Hip Rotation IR', sets:'2×8/side', tempo:'2 sec hold', note:'Drive front shin toward floor. Never force. Breathe into restriction. Note L vs R.' },
-            { ex:'Glute Bridge + Mini Band', sets:'2×12', tempo:'2-1-2', note:'Band above knees. Push knees OUT. Feel glute at top — not lower back.' },
-            { ex:"World's Greatest Stretch", sets:'4/side', tempo:'Flow', note:'Lunge → rotate → reach. Hip flexor + thoracic + hip.' },
-          ]},
-          { label:'ACTIVATION — PRIORITY WORK', color:'var(--red)', exercises:[
-            { ex:'Supine Glute Med — Bent Knee Fall Out', sets:'2×10/side', tempo:'Slow', note:'⭐ KEY EXERCISE. Lying, feet flat, knee falls OUT. Feel outer glute. Coach palpates. Reset if quad fires.' },
-            { ex:'Side-lying Hip Abduction L — NO LOAD', sets:'3×10 L only', tempo:'Slow + 2s hold', note:'⭐ MOST IMPORTANT MESO 1. No band. No weight. Lift to hip height. Stop if L glute not felt. Cue: push heel away not up.' },
-          ]},
-          { label:'MAIN LIFTS', color:'var(--green)', exercises:[
-            { ex:'RDL Bilateral — Bodyweight', sets:'3×12', tempo:'3-1-1', note:'Hip hinge. Push hips back. Feel hamstrings AND glutes. No load until pattern clean and L glute felt.' },
-            { ex:'Glute Bridge Isometric Hold ⏱ RETEST', sets:'3×max hold', tempo:'Hold', note:'Record time every session. Baseline: L 36s, R 38s. Target: 45s by wk 4 retest.' },
-            { ex:'Split Squat Hold L ⏱ RETEST', sets:'3×max hold', tempo:'Hold', note:'L leg forward. Feel L GLUTE not L quad. Cue: push floor with heel. Baseline 18s. Target: 25s.' },
-            { ex:'Split Squat Hold R ⏱ PRIORITY', sets:'3×max hold', tempo:'Hold', note:'R collapses at 8s. Priority. Watch hip adduction/drop. Cue: tall, hips level, back knee heavy. Target: 20s.' },
-            { ex:'Lateral Step-Up BW 15cm', sets:'3×10/side', tempo:'Controlled', note:'Drive through heel. Feel glute — not quad. Lower 3 sec. Coach palpates L glute.' },
-          ]},
-          { label:'CORE — TFL SAFE', color:'var(--purple)', exercises:[
-            { ex:'Dead Bug', sets:'3×8/side', tempo:'4 sec lower', note:'LB flat into floor. Opposite arm+leg. Breathe out on extension.' },
-            { ex:'Right Side Plank ONLY', sets:'3×20-30 sec', tempo:'Hold', note:'RIGHT ONLY. No left side plank Meso 1. Wk 1-2 from knee. Wk 3-4 from feet if comfortable.' },
-            { ex:'Bird Dog — L side emphasis', sets:'3×10/side', tempo:'3 sec hold', note:'Neutral spine. No hip rotation. L: squeeze L glute before moving.' },
-          ]},
-          { label:'CALF PROGRAMME', color:'var(--amber)', exercises:[
-            { ex:'SL Calf Raise Eccentric L ⏱ RETEST', sets:'4×max', tempo:'1-0-3', note:'Rise on 2 feet. Lower on L only. 3 sec eccentric. Step edge. Baseline: 10 reps. Target: 15 reps.' },
-            { ex:'SL Calf Raise R', sets:'2×15', tempo:'1-0-3', note:'Maintain R for comparison.' },
-          ]},
-        ],
-      },
-      sessionB:{
-        title:'Session B — Hip Stability + Single Leg', day:'Thursday with coach',
-        sections:[
-          { label:'WARM-UP (10 min)', color:'var(--red)', exercises:[
-            { ex:'Ankle DF Wall Drill L', sets:'2×15', tempo:'Slow', note:'Every session. Non-negotiable.' },
-            { ex:'Hip IR Pigeon Stretch', sets:'1×60s/side', tempo:'Passive', note:'Figure-4 or modified pigeon. Breathe. Note L vs R.' },
-            { ex:'Hip CAR', sets:'2×5/side', tempo:'Slow circles', note:'Full hip circle: flex → abduct → extend → adduct.' },
-            { ex:'Clamshell — NO BAND, hip <45°', sets:'3×15/side', tempo:'2s hold top', note:'NEUROLOGICAL ONLY. No resistance. Coach palpates. Add lightest band only when glute med confirmed firing.' },
-          ]},
-          { label:'MAIN LIFTS', color:'var(--green)', exercises:[
-            { ex:'Reverse Lunge BW — Slow Eccentric', sets:'3×10/side', tempo:'3-1-2', note:'Step back. Drive through FRONT heel. Feel front glute — not quad. Lean slightly forward from hip if quad dominant.' },
-            { ex:'SL Glute Bridge L + R', sets:'3×12/side', tempo:'2-2-2', note:'Full hip extension. Note L vs R quality of glute contraction every session.' },
-            { ex:'Standing Hip Abduction — Cable/Light Band', sets:'3×12/side', tempo:'2-1-2', note:'Hip neutral. No pelvis hike. Drive outer glute. Front-of-hip = TFL → reduce load immediately.' },
-            { ex:'Lateral Step-Down Eccentric 15cm', sets:'3×8/side', tempo:'3 sec lower', note:'Control hip drop. Feel lateral glute of standing leg. Monitor lateral knee pain closely.' },
-            { ex:'SL Calf Raise L', sets:'3×max', tempo:'1-0-3', note:'Building toward 15 reps. Record each session.' },
-            { ex:'Bent Over Row — Light', sets:'3×12', tempo:'2-1-2', note:'Postural. Retract shoulder blades. Low load.' },
-          ]},
-          { label:'CORE + COOL-DOWN', color:'var(--purple)', exercises:[
-            { ex:'Dead Bug', sets:'2×8/side', tempo:'4 sec lower', note:'Same as Session A.' },
-            { ex:'Pallof Press', sets:'3×10/side', tempo:'2 sec hold', note:'Anti-rotation. Cable or band at chest.' },
-            { ex:'90/90 Hip + Soleus Stretch', sets:'60s/side', tempo:'Passive', note:'End every session. Non-negotiable.' },
-          ]},
-        ],
-      },
-      rehab:[
-        { ex:'Ankle DF Wall Drill L', freq:'Daily', sets:'2×15', note:'Track wall-to-toe distance weekly.' },
-        { ex:'Calf/Soleus Stretch — bent knee', freq:'Daily', sets:'2×45s/side', note:'Bent knee targets soleus. Left side focus.' },
-        { ex:'90/90 Hip Rotation IR', freq:'Daily', sets:'2×8/side', note:'Both sides. Never force.' },
-        { ex:'Hip IR Pigeon Stretch', freq:'Daily', sets:'1×60s/side', note:'Passive. Breathe into restriction.' },
-        { ex:'Foam Roll TFL/outer hip', freq:'Daily', sets:'60s/side', note:'NOT on point of lateral knee pain. Light pressure only.' },
-        { ex:'Standing Hip Abduction activation', freq:'Daily', sets:'2×15/side', note:'Drive outer glute. Front-of-hip = reduce load.' },
-        { ex:'Ice + compression L knee', freq:'Post cardio >30 min', sets:'10-15 min', note:'Track VAS before and after every session.' },
-      ],
-      gate:[
-        { test:'Glute Bridge Hold L', baseline:36, target:45, unit:'sec' },
-        { test:'Glute Bridge Hold R', baseline:38, target:45, unit:'sec' },
-        { test:'Split Squat Hold L', baseline:18, target:25, unit:'sec' },
-        { test:'Split Squat Hold R', baseline:8, target:20, unit:'sec' },
-        { test:'SL Calf Raise L', baseline:10, target:15, unit:'reps' },
-        { test:'L Glute Med Feel', baseline:'Quad dominant', target:'Clear glute med activation', unit:'' },
-        { test:'Lateral Knee VAS', baseline:6, target:1, unit:'/10' },
-        { test:'Ankle DF L', baseline:'Measure wk 1', target:'2+ cm improvement', unit:'' },
-      ],
-    },
-    {
-      num:2, title:'Base Build', weeks:'5-8', color:'#1a4a72',
-      tag:'Running Returns · -250 kcal deficit',
-      overview:'Running re-introduced ONLY if Meso 1 gate criteria met. All Meso 2 running is easy RPE 3-4 only — no tempo, no intervals. Cadence cued 170+ spm from first run back. Running cue: push ground away behind you (glute) not lift the knee (quad/TFL). Strength progresses to loaded single-leg work.',
-      weeklyLayout:[
-        { week:5, vol:'30 km', lr:'14 km easy', key:'Easy run only — gate check', strength:'Loaded SL Strength A (coach)', nut:'-250 kcal' },
-        { week:6, vol:'34 km', lr:'16 km easy', key:'4×strides + easy runs', strength:'Strength A+B (coach)', nut:'-250 kcal' },
-        { week:7, vol:'38 km', lr:'18 km easy', key:'25 min easy tempo', strength:'Strength A+B (coach)', nut:'-250 kcal' },
-        { week:8, vol:'DELOAD 24 km', lr:'12 km easy', key:'DELOAD + RETEST', strength:'Deload (coach)', nut:'-250 kcal' },
-      ],
-      keyExercises:[
-        { ex:'RDL loaded (8-12kg)', note:'Progress from BW. Add load when L glute felt. Hip hinge.' },
-        { ex:'Hip Thrust loaded', note:'Add load. Compare L vs R glute quality at top.' },
-        { ex:'Split Squat — full reps', note:'Progress from Meso 1 static holds. Load only when L glute drives.' },
-        { ex:'Clamshell — lightest band', note:'First use of band. Hip <45°. L glute must be felt. Remove if TFL fires.' },
-        { ex:'Nordic Hamstring Curl (introduced)', note:'Start wk 5. 2×5-6 only. Eccentric focus. Resist the fall.' },
-        { ex:'SL Calf Raise L — 15 reps', note:'Maintain gate target. Build toward 20 reps.' },
-      ],
-      gate:[
-        { test:'Glute Bridge Hold L', baseline:45, target:55, unit:'sec' },
-        { test:'Split Squat Hold R', baseline:20, target:30, unit:'sec' },
-        { test:'SL Calf Raise L', baseline:15, target:20, unit:'reps' },
-        { test:'L Glute Feel During Run', baseline:'Quad dominant', target:'Glute push-off felt running', unit:'' },
-        { test:'Running Lateral Knee VAS', baseline:6, target:2, unit:'/10' },
-      ],
-    },
-    {
-      num:3, title:'Development', weeks:'9-13', color:'#2d6a4f',
-      tag:'Tempo + Long Run · Maintenance calories',
-      overview:'Running is now primary stimulus. Glute med should fire reliably (confirmed at Meso 2 retest). Tempo runs introduced short and built carefully. First 30km+ long run week 11. Gel practice from week 9 every long run. Strength shifts to power endurance. Ice after every long run >20km.',
-      weeklyLayout:[
-        { week:9, vol:'46 km', lr:'23 km', key:'5 km tempo @ 5:20/km', strength:'Strength C (coach)', nut:'Maintenance' },
-        { week:10, vol:'52 km', lr:'26 km', key:'6×800m intervals', strength:'Strength C (coach)', nut:'Maintenance' },
-        { week:11, vol:'58 km', lr:'29 km', key:'8 km @ MP 5:41/km', strength:'Strength C (coach)', nut:'Maint +50 kcal' },
-        { week:12, vol:'DELOAD 36 km', lr:'18 km', key:'DELOAD + RETEST', strength:'Deload (coach)', nut:'Maintenance' },
-        { week:13, vol:'62 km', lr:'32 km', key:'10 km tempo', strength:'Strength C light (coach)', nut:'Maint +100 kcal' },
-      ],
-      keyExercises:[
-        { ex:'SL RDL loaded', note:'3×8/side. 10-14kg. L glute must drive hip extension.' },
-        { ex:'Bulgarian Split Squat', note:'3×8/side. Watch L quad dominance. R watch hip drop.' },
-        { ex:'Hip Thrust heavy', note:'3×10. Barbell or heavy DBs. Compare L vs R.' },
-        { ex:'Nordic Hamstring Curl — build', note:'3×6-8. Build from Meso 2.' },
-        { ex:'SL Calf Raise L — 20+ reps', note:'If consistent 20: add small load.' },
-        { ex:'SL Hop L (wk 10+)', note:'Only if VAS 0-1. Soft landing. Glute push-off cue.' },
-        { ex:'Bounding', note:'4×20m. Exaggerated stride. Feel glute drive at push-off.' },
-      ],
-      gate:[
-        { test:'SL Calf Raise L', baseline:20, target:22, unit:'reps' },
-        { test:'Split Squat Hold R', baseline:30, target:40, unit:'sec' },
-        { test:'Running VAS L knee 30km+', baseline:4, target:2, unit:'/10' },
-        { test:'L side plank', baseline:'Excluded', target:'Full L side plank pain-free', unit:'' },
-      ],
-    },
-    {
-      num:4, title:'Peak', weeks:'14-17', color:'#c0392b',
-      tag:'Max Mileage · Maint +100 kcal',
-      overview:'Maximum mileage. Race-specific tempo at 5:41/km. Strength drops to 1 maintenance session/week — nothing new. Ice + compress L knee after every long run. If VAS above 3 during any run: reduce mileage 20% immediately. Peak physical stress — protect the knee.',
-      weeklyLayout:[
-        { week:14, vol:'66 km', lr:'34 km', key:'2×6km @ MP (5:41/km)', strength:'Maintenance (coach)', nut:'Maint +100' },
-        { week:15, vol:'70 km', lr:'36 km', key:'14 km @ MP', strength:'Maintenance (coach)', nut:'Maint +100' },
-        { week:16, vol:'72 km', lr:'38 km PEAK', key:'3×5km @ MP', strength:'Maintenance (coach)', nut:'Maint +100' },
-        { week:17, vol:'DELOAD 46 km', lr:'22 km', key:'DELOAD + FINAL RETEST', strength:'Rest', nut:'Maintenance' },
-      ],
-      maintenanceSession:[
-        { ex:'SL Glute Bridge / Hip Thrust', sets:'2×10/side', note:'Confirm L glute still firing under fatigue.' },
-        { ex:'SL RDL', sets:'2×8/side', note:'Moderate load. No increase. Maintenance only.' },
-        { ex:'SL Calf Raise L', sets:'3×20', note:'Non-negotiable even in peak. Ankle stability at 70+km/week.' },
-        { ex:'Standing Hip Abduction', sets:'2×12/side', note:'Maintain glute med. TFL management continues.' },
-        { ex:'Dead Bug + Bird Dog', sets:'2×8/side each', note:'Core maintenance. Pelvic stability.' },
-      ],
-      gate:[
-        { test:'Running VAS L knee', baseline:2, target:1, unit:'/10' },
-        { test:'SL Calf Raise L', baseline:22, target:22, unit:'reps — maintain' },
-      ],
-    },
-    {
-      num:5, title:'Taper & Race', weeks:'18-20', color:'#6c3483',
-      tag:'Race Day · Carb Load',
-      overview:'Volume drops 40% week 18, 60% week 19. Intensity maintained — pace stays sharp. No strength weeks 19-20. Taper madness is normal — heavy legs, anxiety, feeling unfit. This means it is working. Trust the 20 weeks.',
-      weeklyLayout:[
-        { week:18, vol:'42 km', lr:'20 km easy', key:'10 km @ MP', strength:'None', nut:'Maintenance' },
-        { week:19, vol:'26 km', lr:'12 km easy', key:'5 km @ MP + strides', strength:'None', nut:'Carb load begins' },
-        { week:20, vol:'RACE', lr:'—', key:'NY MARATHON — Target 3:59:59', strength:'None', nut:'Race fuelling' },
-      ],
-      racePacing:[
-        { seg:'Staten Island', km:'0-5', pace:'5:50-6:00/km', effort:'Easy RPE 4', note:'Ignore crowd. Verrazano hill — shorten stride, relax.' },
-        { seg:'Brooklyn', km:'5-20', pace:'5:43-5:48/km', effort:'Controlled RPE 5', note:'Most runners blow up here. Keep lid on it. Should feel easy.' },
-        { seg:'Queensboro Bridge', km:'~25', pace:'6:00-6:10/km', effort:'Manage RPE 5', note:'Biggest hill. Silence on bridge. Hip stability work pays here.' },
-        { seg:'1st Avenue', km:'25-32', pace:'5:41-5:46/km', effort:'MP RPE 6-7', note:'Massive crowds. Feed off it — do not race it. Gel at km 27.' },
-        { seg:'The Bronx', km:'32-36', pace:'5:41/km', effort:'MP RPE 7', note:'Wall zone. Gel at km 32 + 36. Trust the training.' },
-        { seg:'Central Park', km:'36-42.2', pace:'5:35-5:41/km', effort:'Race it RPE 8+', note:'Final hill km 40 then downhill. Empty the tank after km 41.' },
-      ],
-      gels:['km 10','km 20','km 27','km 32','km 37'],
-    },
-  ],
-  nutrition:{
-    phases:[
-      { phase:'Meso 1-2 (Wks 1-8)', kcal:'~1,900-2,100', mode:'-250-300 kcal', carbP:'50%', protP:'28%', fatP:'22%', carbG:244, protG:137, fatG:48 },
-      { phase:'Meso 3-4 (Wks 9-17)', kcal:'~2,400-2,600', mode:'Maintenance+', carbP:'55%', protP:'25%', fatP:'20%', carbG:337, protG:153, fatG:54 },
-      { phase:'Race Week', kcal:'~2,600+', mode:'Carb load', carbP:'65%', protP:'20%', fatP:'15%', carbG:423, protG:130, fatG:43 },
-    ],
-    supps:[
-      { name:'Vitamin D3', dose:'2,000 IU/day', timing:'Morning', ev:'Strong' },
-      { name:'Omega-3 EPA+DHA', dose:'1-2g/day', timing:'With food', ev:'Strong' },
-      { name:'Magnesium glycinate', dose:'300mg', timing:'Before bed', ev:'Moderate' },
-      { name:'Collagen + Vit C', dose:'15g', timing:'Pre-training', ev:'Moderate' },
-      { name:'Beetroot/nitrate', dose:'400mg nitrate', timing:'3hrs before key run', ev:'Good' },
-      { name:'Caffeine', dose:'3-6mg/kg', timing:'45min pre-race', ev:'Strong' },
-      { name:'Creatine', dose:'5g/day', timing:'Anytime', ev:'Strong — Meso 1-2 only' },
-    ],
-  },
-};
-
-// ── PROGRAMME RENDER HELPERS ──────────────────────────────────────────────────
-function renderProgrammePages() {
-  renderProgOverview();
-  renderMeso(0, 'meso1-content');
-  renderMeso(1, 'meso2-content');
-  renderMeso(2, 'meso3-content');
-  renderMeso(3, 'meso4-content');
-  renderMeso(4, 'meso5-content');
-  renderNutrition();
-}
-
-function renderProgOverview() {
-  // Baseline grid
-  const bg = document.getElementById('prog-baseline-grid');
-  if (bg) bg.innerHTML = PC.baseline.map(b => `
-    <div class="card">
-      <div style="font-weight:600;font-size:13px;margin-bottom:6px">${b.test}</div>
-      <div style="background:var(--cream);border-radius:10px;height:8px;margin:6px 0;overflow:hidden">
-        <div style="width:${b.bar}%;height:100%;border-radius:10px;background:${b.color}"></div>
-      </div>
-      <div style="display:flex;justify-content:space-between;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">
-        <span>Current: <strong style="color:var(--ink)">${b.val}</strong></span>
-        <span>${b.target}</span>
-      </div>
-    </div>`).join('');
-
-  // Macro schedule table
-  const head = document.getElementById('macro-sched-head');
-  const body = document.getElementById('macro-sched-body');
-  if (head) head.innerHTML = ['Wk','Meso','Volume','Long Run/Cardio','Key Session','Strength','Nutrition'].map(h =>
-    `<th style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.13em;text-transform:uppercase;background:var(--ink);color:var(--paper);padding:8px 11px;text-align:left;white-space:nowrap">${h}</th>`).join('');
-  if (body) body.innerHTML = APP.PROGRAMME.map(w => {
-    const meso = PC.mesos[w.meso-1];
-    const isDl = w.type==='deload', isRace = w.type==='race', isGate = w.type==='gate';
-    const bg = isRace?'background:var(--red);color:white':isDl?'background:#e4edf6;color:#185fa5;font-style:italic':isGate?'background:#fdf3e0':'';
-    return `<tr style="${bg}">
-      <td style="padding:7px 11px;border-bottom:1px solid var(--border);font-weight:700">${w.week}</td>
-      <td style="padding:7px 11px;border-bottom:1px solid var(--border)">M${w.meso}</td>
-      <td style="padding:7px 11px;border-bottom:1px solid var(--border)">${w.km>0?w.km+' km':'No run'}</td>
-      <td style="padding:7px 11px;border-bottom:1px solid var(--border)">${w.lr}</td>
-      <td style="padding:7px 11px;border-bottom:1px solid var(--border)">${w.key}</td>
-      <td style="padding:7px 11px;border-bottom:1px solid var(--border)">${w.strength}</td>
-      <td style="padding:7px 11px;border-bottom:1px solid var(--border)">${w.nut}</td>
-    </tr>`;
-  }).join('');
-
-  // Clinical flags
-  const cf = document.getElementById('clinical-flags-grid');
-  if (cf) cf.innerHTML = PC.clinicalFlags.map(f => `
-    <div class="card ${f.sev==='red'?'lr':'la'}">
-      <div style="font-weight:700;font-size:12.5px;margin-bottom:6px">${f.title}</div>
-      <div style="font-size:12px;color:#444;line-height:1.55">${f.detail}</div>
-    </div>`).join('');
-}
-
-function renderMeso(idx, containerId) {
-  const m = PC.mesos[idx];
-  const container = document.getElementById(containerId);
-  if (!container) return;
-
-  let html = `
-    <div style="background:${m.color};color:white;padding:14px 20px;border-radius:8px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px">
-      <div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:.04em">Meso ${m.num} — ${m.title}</div>
-        <div style="font-family:'DM Mono',monospace;font-size:9.5px;opacity:.7;margin-top:3px">Weeks ${m.weeks} · ${m.tag}</div>
-      </div>
-    </div>
-    <div class="alert b" style="display:flex;gap:11px;padding:12px 15px;border-radius:5px;margin-bottom:18px;font-size:13px;line-height:1.55;background:#e4edf6;border-left:4px solid var(--blue)">
-      <div>${m.overview}</div>
-    </div>`;
-
-  // Weekly layout table
-  html += `<div class="section"><div class="section-title">Weekly Layout</div>
-    <div style="overflow-x:auto;margin-bottom:20px"><table style="width:100%;border-collapse:collapse;font-size:12px">
-    <thead><tr>${['Week','Volume','Long Run','Key Session','Strength','Nutrition'].map(h=>`<th style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.13em;text-transform:uppercase;background:var(--ink);color:var(--paper);padding:8px 11px;text-align:left;white-space:nowrap">${h}</th>`).join('')}</tr></thead>
-    <tbody>${m.weeklyLayout.map(w=>{
-      const isDl = w.week===4||w.week===8||w.week===12||w.week===17||String(w.vol).includes('DELOAD');
-      const isRace = w.week===20;
-      const s = isRace?'background:var(--red);color:white':isDl?'background:#e4edf6;color:#185fa5;font-style:italic':'';
-      return `<tr style="${s}">${[w.week,w.vol,w.lr,w.key,w.strength,w.nut].map(v=>`<td style="padding:7px 11px;border-bottom:1px solid var(--border)">${v}</td>`).join('')}</tr>`;
-    }).join('')}</tbody></table></div></div>`;
-
-  // Cardio (meso 1)
-  if (m.cardio) {
-    html += `<div class="section"><div class="section-title">Cardio Prescription</div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-bottom:20px">
-      ${m.cardio.map(c=>`<div class="card lt" style="border-left:4px solid var(--teal)"><h4>${c.mode}</h4><p>${c.detail}</p></div>`).join('')}
-      </div></div>`;
-  }
-
-  // Session A
-  if (m.sessionA) {
-    html += renderSession(m.sessionA);
-  }
-  // Session B
-  if (m.sessionB) {
-    html += renderSession(m.sessionB);
-  }
-
-  // Key exercises (meso 2+)
-  if (m.keyExercises) {
-    html += `<div class="section"><div class="section-title">Key Exercises This Meso</div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;margin-bottom:20px">
-      ${m.keyExercises.map(e=>`<div class="card"><div style="font-weight:600;font-size:13px;margin-bottom:4px">${e.ex}</div><div style="font-size:12px;color:#444">${e.note}</div></div>`).join('')}
-      </div></div>`;
-  }
-
-  // Maintenance session (meso 4)
-  if (m.maintenanceSession) {
-    html += `<div class="section"><div class="section-title">Maintenance Strength Session (1×/week)</div>
-      ${renderExTable(m.maintenanceSession)}</div>`;
-  }
-
-  // Race pacing (meso 5)
-  if (m.racePacing) {
-    html += `<div class="section"><div class="section-title">Race Pacing Plan</div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-bottom:20px">
-      ${m.racePacing.map(r=>`<div class="card ${r.seg==='Central Park'?'lr':''}">
-        <div style="font-weight:700;font-size:13px;margin-bottom:2px">${r.seg}</div>
-        <div style="font-family:'DM Mono',monospace;font-size:9.5px;color:var(--muted);margin-bottom:6px">${r.km}</div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:${r.seg==='Central Park'?'var(--red)':'var(--ink)'}">${r.pace}</div>
-        <div style="font-size:11px;color:var(--muted);margin-bottom:6px">${r.effort}</div>
-        <div style="font-size:12px;color:#444">${r.note}</div>
-      </div>`).join('')}
-      </div>
-      <div style="background:#e4edf6;border-radius:6px;padding:12px 16px;font-size:13px;margin-bottom:20px">
-        <strong>Gel Strategy:</strong> ${m.gels.join(' · ')} — always with water at station. Same brands practised in training from week 9.
-      </div></div>`;
-  }
-
-  // Rehab (meso 1)
-  if (m.rehab) {
-    html += `<div class="section"><div class="section-title">Daily Rehab Routine</div>
-      ${renderExTable(m.rehab, ['Exercise','Frequency','Sets','Note'])}</div>`;
-  }
-
-  // Gate criteria
-  if (m.gate) {
-    html += `<div class="gate-box" style="background:#fdf3e0;border:1px solid #f0c060;border-radius:6px;padding:14px 16px;margin:14px 0">
-      <div style="font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--amber);font-weight:500;margin-bottom:10px">Gate Criteria — Must Meet Before Next Meso</div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px">
-      ${m.gate.map(g=>{
-        const isNum = typeof g.baseline === 'number' && typeof g.target === 'number';
-        const pct = isNum ? Math.max(0,Math.min(100,(g.baseline/(g.target||1))*100)) : 30;
-        return `<div style="background:white;border-radius:4px;padding:9px 11px">
-          <div style="font-size:12px;font-weight:600;margin-bottom:3px">${g.test}</div>
-          ${isNum?`<div style="background:var(--cream);border-radius:10px;height:6px;margin:5px 0;overflow:hidden"><div style="width:${pct}%;height:100%;border-radius:10px;background:var(--amber)"></div></div>`:''}
-          <div style="display:flex;justify-content:space-between;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">
-            <span>Now: ${g.baseline}${g.unit}</span><span>Need: ${g.target}${g.unit}</span>
+// ── NUTRITION ─────────────────────────────────────────────────────────────────
+function renderNutrition() {
+  document.getElementById('nut-content').innerHTML = `
+    <div class="al a"><div><strong>Goal:</strong> 73kg → 65-70kg · Moderate deficit only · High protein throughout · VO2max 41 = solid base for Norwegian protocol</div></div>
+    <div class="sec">Phased Caloric Targets</div>
+    <div class="cg">
+      ${APP.prog.mesos.map(m => `
+        <div class="card lb">
+          <h4>Meso ${m.num} — ${m.title} (Wks ${m.weeks[0]}-${m.weeks[m.weeks.length-1]})</h4>
+          <p><strong>${m.nutrition.kcal} kcal/day</strong></p>
+          <p>Deficit: -${m.nutrition.deficit} kcal</p>
+          <div class="mbar" style="margin-top:8px">
+            <div style="width:${Math.round(m.nutrition.carb*4/m.nutrition.kcal*100)}%;background:var(--amb)">C</div>
+            <div style="width:${Math.round(m.nutrition.protein*4/m.nutrition.kcal*100)}%;background:var(--red)">P</div>
+            <div style="width:${Math.round(m.nutrition.fat*9/m.nutrition.kcal*100)}%;background:var(--blu)">F</div>
           </div>
-        </div>`;
-      }).join('')}
-      </div>
-      <p style="font-size:11.5px;color:var(--muted);margin-top:10px">If gate not met: extend this meso 1-2 weeks. Do not rush to the next phase.</p>
+          <p style="font-size:11px;color:var(--mut)">Carb ${m.nutrition.carb}g · Protein ${m.nutrition.protein}g · Fat ${m.nutrition.fat}g</p>
+        </div>`).join('')}
+    </div>
+    <div class="sec">Key Rules</div>
+    <div class="cg">
+      <div class="card lr"><h4>Protein Priority</h4><p>1.8-2.2g/kg = 131-161g/day at 73kg. 4-5 meals. 30-40g per sitting. Post-strength within 45 min. Pre-bed casein.</p></div>
+      <div class="card lg"><h4>Carb Timing</h4><p>Higher carbs around training days. Pre-cardio: light snack if morning session. Post-Norwegian: replenish glycogen within 30 min.</p></div>
+      <div class="card la"><h4>Fat Loss Rate</h4><p>0.3-0.5kg/week is optimal for this deficit. Scale should trend down over 2-week blocks, not necessarily every week.</p></div>
+      <div class="card lb"><h4>Hydration</h4><p>2.5-3L/day. Electrolytes on cardio days. Tart cherry juice pre-bed for recovery. Pale yellow urine = adequate.</p></div>
+    </div>
+    <div class="sec">Supplements</div>
+    <div class="cg">
+      <div class="card"><h4>Core Stack</h4><ul><li>Vitamin D3: 2,000 IU/day</li><li>Omega-3: 1-2g EPA+DHA/day</li><li>Magnesium glycinate: 300mg before bed</li><li>Collagen + Vit C: 15g pre-training</li></ul></div>
+      <div class="card"><h4>Performance</h4><ul><li>Caffeine: 3-6mg/kg pre-Norwegian sessions</li><li>Beetroot/nitrate: 400mg pre-key cardio</li><li>Creatine 5g/day during strength phases</li></ul></div>
     </div>`;
-  }
-
-  container.innerHTML = html;
 }
 
-function renderSession(s) {
-  return `<div class="section"><div class="section-title">${s.title} <span>${s.day}</span></div>
-    <div style="background:white;border:1px solid var(--border);border-radius:6px;margin-bottom:20px;overflow:hidden">
-    ${s.sections.map(sec => `
-      <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:white;padding:7px 16px;background:${sec.color}">
-        ${sec.label}
-      </div>
-      <div style="padding:0 16px">
-        <div style="display:grid;grid-template-columns:2fr 80px 75px 1fr;gap:9px;padding:5px 0 7px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.11em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border)">
-          <span>Exercise</span><span>Sets×Reps</span><span>Tempo</span><span>Coaching Note</span>
+// ── EDITOR ────────────────────────────────────────────────────────────────────
+function renderEditor() {
+  if (!APP.isCoach()) return;
+  const meso = APP.getMeso(APP.currentWeek());
+  document.getElementById('editor-content').innerHTML = `
+    <div class="al a"><div>Changes are live immediately. Hit Save Programme to persist. Use the cardio and strength pages to see changes in real time.</div></div>
+
+    <div class="sec">Cardio Sessions <span><button class="btn btn-sm btn-s" onclick="addCardioSess()">+ Add Day</button></span></div>
+    ${meso.cardio.map(sess => `
+      <div class="card" style="margin-bottom:14px">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px">
+          <input type="text" value="${sess.day}" onchange="updCF('${sess.id}','day',this.value)" style="width:70px;padding:5px 8px;border:1px solid var(--bdr);border-radius:4px;font-size:13px;font-weight:600">
+          <input type="text" value="${sess.label}" onchange="updCF('${sess.id}','label',this.value)" style="flex:1;min-width:150px;padding:5px 8px;border:1px solid var(--bdr);border-radius:4px;font-size:13px">
+          <select onchange="updCF('${sess.id}','type',this.value)" style="padding:5px 8px;border:1px solid var(--bdr);border-radius:4px;font-size:12px">
+            <option value="walk" ${sess.type==='walk'?'selected':''}>Walk</option>
+            <option value="bike" ${sess.type==='bike'?'selected':''}>Assault Bike</option>
+            <option value="norwegian" ${sess.type==='norwegian'?'selected':''}>Norwegian</option>
+            <option value="zone2" ${sess.type==='zone2'?'selected':''}>Zone 2</option>
+          </select>
+          <button class="btn btn-xs btn-s" onclick="addBlk('${sess.id}')">+ Block</button>
+          <button class="btn btn-xs btn-g" style="color:var(--red)" onclick="rmSess('${sess.id}','cardio')">Remove</button>
         </div>
-        ${sec.exercises.map(e=>`
-          <div style="display:grid;grid-template-columns:2fr 80px 75px 1fr;gap:9px;padding:9px 0;border-bottom:1px solid var(--border);font-size:12px;align-items:start">
-            <div style="font-weight:600;line-height:1.4">${e.ex}</div>
-            <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)">${e.sets}</div>
-            <div style="font-family:'DM Mono',monospace;font-size:10.5px;color:#888">${e.tempo}</div>
-            <div style="font-size:11.5px;color:#555;line-height:1.5">${e.note}</div>
+        <div style="font-size:11.5px;font-weight:600;color:var(--mut);margin-bottom:6px">Warmup</div>
+        <div style="display:flex;gap:7px;flex-wrap:wrap;background:var(--cream);padding:8px;border-radius:4px;margin-bottom:10px">
+          <div class="field" style="width:65px"><label>Min</label><input type="number" value="${sess.warmup.dur}" onchange="updWU('${sess.id}','dur',this.value)"></div>
+          <div class="field" style="width:65px"><label>kph</label><input type="number" step="0.5" value="${sess.warmup.kph||''}" placeholder="—" onchange="updWU('${sess.id}','kph',this.value)"></div>
+          <div class="field" style="width:65px"><label>Incline%</label><input type="number" value="${sess.warmup.incline||''}" placeholder="—" onchange="updWU('${sess.id}','incline',this.value)"></div>
+          <div class="field" style="width:60px"><label>RPM</label><input type="number" value="${sess.warmup.rpm||''}" placeholder="—" onchange="updWU('${sess.id}','rpm',this.value)"></div>
+          <div class="field" style="flex:1;min-width:160px"><label>Note</label><input type="text" value="${sess.warmup.note||''}" onchange="updWU('${sess.id}','note',this.value)"></div>
+        </div>
+        <div style="font-size:11.5px;font-weight:600;color:var(--mut);margin-bottom:6px">Blocks</div>
+        ${sess.blocks.map((blk,i) => `
+          <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:flex-start;padding:7px 8px;background:${i%2===0?'#f9f7f4':'#fff'};border-radius:4px;margin-bottom:5px">
+            <div class="field" style="flex:1;min-width:100px"><label>Label</label><input type="text" value="${blk.label}" onchange="updBlk('${sess.id}','${blk.id}','label',this.value)"></div>
+            <div class="field" style="width:58px"><label>Min</label><input type="number" step="0.5" value="${blk.dur}" onchange="updBlk('${sess.id}','${blk.id}','dur',this.value)"></div>
+            <div class="field" style="width:60px"><label>kph</label><input type="number" step="0.5" value="${blk.kph||''}" placeholder="—" onchange="updBlk('${sess.id}','${blk.id}','kph',this.value)"></div>
+            <div class="field" style="width:62px"><label>Incline%</label><input type="number" value="${blk.incline!==null&&blk.incline!==undefined?blk.incline:''}" placeholder="—" onchange="updBlk('${sess.id}','${blk.id}','incline',this.value)"></div>
+            <div class="field" style="width:55px"><label>RPM</label><input type="number" value="${blk.rpm||''}" placeholder="—" onchange="updBlk('${sess.id}','${blk.id}','rpm',this.value)"></div>
+            <div class="field" style="width:58px"><label>HR Lo</label><input type="number" value="${blk.hrLo||''}" placeholder="—" onchange="updBlk('${sess.id}','${blk.id}','hrLo',this.value)"></div>
+            <div class="field" style="width:58px"><label>HR Hi</label><input type="number" value="${blk.hrHi||''}" placeholder="—" onchange="updBlk('${sess.id}','${blk.id}','hrHi',this.value)"></div>
+            <div class="field" style="width:80px"><label>Zone</label>
+              <select onchange="updBlk('${sess.id}','${blk.id}','zone',this.value)">
+                ${['Z1','Z2','Z3','Z4','Z5'].map(z=>`<option value="${z}" ${blk.zone===z?'selected':''}>${z}</option>`).join('')}
+              </select>
+            </div>
+            <div class="field" style="flex:1;min-width:130px"><label>Note</label><input type="text" value="${blk.note||''}" onchange="updBlk('${sess.id}','${blk.id}','note',this.value)"></div>
+            <button class="btn btn-xs btn-g" style="color:var(--red);margin-top:17px" onclick="rmBlk('${sess.id}','${blk.id}')">✕</button>
           </div>`).join('')}
       </div>`).join('')}
-    </div></div>`;
+
+    <div class="sec" style="margin-top:22px">Strength Sessions <span><button class="btn btn-sm btn-s" onclick="addStrSess()">+ Add Session</button></span></div>
+    ${meso.strength.map(sess => `
+      <div class="card" style="margin-bottom:14px">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px">
+          <input type="text" value="${sess.day}" onchange="updSF('${sess.id}','day',this.value)" style="width:100px;padding:5px 8px;border:1px solid var(--bdr);border-radius:4px;font-size:13px;font-weight:600">
+          <input type="text" value="${sess.label}" onchange="updSF('${sess.id}','label',this.value)" style="flex:1;min-width:180px;padding:5px 8px;border:1px solid var(--bdr);border-radius:4px;font-size:13px">
+          <button class="btn btn-xs btn-s" onclick="openAddGrp('${sess.id}')">+ Group</button>
+          <button class="btn btn-xs btn-g" style="color:var(--red)" onclick="rmSess('${sess.id}','strength')">Remove</button>
+        </div>
+        <div class="field" style="margin-bottom:10px"><label>Session Note</label><input type="text" value="${sess.note||''}" onchange="updSF('${sess.id}','note',this.value)" style="width:100%"></div>
+        ${sess.groups.map(grp => `
+          <div style="border:1px solid var(--bdr);border-radius:5px;margin-bottom:8px;overflow:hidden">
+            <div style="display:flex;align-items:center;gap:8px;padding:7px 12px;background:var(--cream);flex-wrap:wrap">
+              <span class="gt gt-${grp.type}" style="cursor:pointer" onclick="cycleGrpType('${sess.id}','${grp.id}')" title="Click to cycle">${grp.type}</span>
+              <input type="text" value="${grp.label}" onchange="updGrpLabel('${sess.id}','${grp.id}',this.value)" style="flex:1;min-width:120px;padding:4px 8px;border:1px solid var(--bdr);border-radius:3px;font-size:12px">
+              <button class="btn btn-xs btn-s" onclick="openAddEx('${sess.id}','${grp.id}')">+ Ex</button>
+              <button class="btn btn-xs btn-g" style="color:var(--red)" onclick="rmGrp('${sess.id}','${grp.id}')">✕</button>
+            </div>
+            ${grp.exercises.map(ex => `
+              <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:flex-start;padding:7px 12px;border-top:1px solid var(--bdr)">
+                <input type="text" value="${ex.name}" onchange="updEx('${sess.id}','${grp.id}','${ex.id}','name',this.value)" style="flex:1;min-width:130px;padding:4px 8px;border:1px solid var(--bdr);border-radius:3px;font-size:12px;font-weight:600">
+                <div class="field" style="width:48px"><label>Sets</label><input type="number" value="${ex.sets}" min="1" onchange="updEx('${sess.id}','${grp.id}','${ex.id}','sets',this.value)"></div>
+                <div class="field" style="width:52px"><label>Reps</label><input type="number" value="${ex.reps||''}" placeholder="—" onchange="updEx('${sess.id}','${grp.id}','${ex.id}','reps',this.value)"></div>
+                <div class="field" style="width:50px"><label>Sec</label><input type="number" value="${ex.dur||''}" placeholder="—" onchange="updEx('${sess.id}','${grp.id}','${ex.id}','dur',this.value)"></div>
+                <div class="field" style="width:55px"><label>kg</label><input type="number" step="0.5" value="${ex.weight||''}" placeholder="—" onchange="updEx('${sess.id}','${grp.id}','${ex.id}','weight',this.value)"></div>
+                <div class="field" style="width:62px"><label>Tempo</label><input type="text" value="${ex.tempo||''}" placeholder="—" onchange="updEx('${sess.id}','${grp.id}','${ex.id}','tempo',this.value)"></div>
+                <div class="field" style="width:44px"><label>RPE</label><input type="number" value="${ex.rpe||''}" min="1" max="10" placeholder="—" onchange="updEx('${sess.id}','${grp.id}','${ex.id}','rpe',this.value)"></div>
+                <div class="field" style="flex:1;min-width:130px"><label>Note</label><input type="text" value="${ex.note||''}" placeholder="Coaching note…" onchange="updEx('${sess.id}','${grp.id}','${ex.id}','note',this.value)"></div>
+                <div style="display:flex;gap:3px;margin-top:17px">
+                  <button class="btn btn-xs btn-g" onclick="mvEx('${sess.id}','${grp.id}','${ex.id}',-1)">↑</button>
+                  <button class="btn btn-xs btn-g" onclick="mvEx('${sess.id}','${grp.id}','${ex.id}',1)">↓</button>
+                  <button class="btn btn-xs btn-g" style="color:var(--red)" onclick="rmEx('${sess.id}','${grp.id}','${ex.id}')">✕</button>
+                </div>
+              </div>`).join('')}
+          </div>`).join('')}
+      </div>`).join('')}
+
+    <div class="sec" style="margin-top:22px">Rehab Items <span><button class="btn btn-sm btn-s" onclick="addRehabItem()">+ Add Item</button></span></div>
+    ${meso.rehab.map(r => `
+      <div style="display:flex;gap:7px;align-items:flex-start;margin-bottom:7px;padding:8px;background:#fff;border:1px solid var(--bdr);border-radius:5px;flex-wrap:wrap">
+        <div class="field" style="flex:1;min-width:140px"><label>Name</label><input type="text" value="${r.name}" onchange="updR('${r.id}','name',this.value)"></div>
+        <div class="field" style="width:120px"><label>Duration</label><input type="text" value="${r.dur}" onchange="updR('${r.id}','dur',this.value)"></div>
+        <div class="field" style="width:80px"><label>Freq</label><input type="text" value="${r.freq}" onchange="updR('${r.id}','freq',this.value)"></div>
+        <div class="field" style="flex:1;min-width:150px"><label>Note</label><input type="text" value="${r.note}" onchange="updR('${r.id}','note',this.value)"></div>
+        <button class="btn btn-xs btn-g" style="color:var(--red);margin-top:17px" onclick="rmR('${r.id}')">✕</button>
+      </div>`).join('')}`;
 }
 
-function renderExTable(rows, headers) {
-  const h = headers || ['Exercise','Sets','Tempo','Note'];
-  return `<div style="overflow-x:auto;margin-bottom:20px">
-    <table style="width:100%;border-collapse:collapse;font-size:12px">
-    <thead><tr>${h.map(hh=>`<th style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.13em;text-transform:uppercase;background:var(--ink);color:var(--paper);padding:8px 11px;text-align:left">${hh}</th>`).join('')}</tr></thead>
-    <tbody>${rows.map((r,i)=>`<tr style="${i%2===0?'background:rgba(0,0,0,.018)':''}">
-      ${Object.values(r).map(v=>`<td style="padding:8px 11px;border-bottom:1px solid var(--border);line-height:1.5">${v}</td>`).join('')}
-    </tr>`).join('')}</tbody>
-    </table></div>`;
+// ── EDITOR HELPERS ────────────────────────────────────────────────────────────
+function getMeso() { return APP.getMeso(APP.currentWeek()); }
+function getCF(id) { return getMeso().cardio.find(c=>c.id===id); }
+function getSF(id) { return getMeso().strength.find(s=>s.id===id); }
+function getGrp(sessId,grpId) { return getSF(sessId)?.groups.find(g=>g.id===grpId); }
+function getEx(sessId,grpId,exId) { return getGrp(sessId,grpId)?.exercises.find(e=>e.id===exId); }
+
+function updCF(id,f,v) { const s=getCF(id); if(s) s[f]=v; }
+function updWU(id,f,v) { const s=getCF(id); if(s) s.warmup[f]=['dur','kph','incline','rpm'].includes(f)?(parseFloat(v)||null):v; }
+function updBlk(sid,bid,f,v) { const b=getCF(sid)?.blocks.find(b=>b.id===bid); if(b) b[f]=['dur','kph','incline','rpm','hrLo','hrHi'].includes(f)?(parseFloat(v)||null):v; }
+function addBlk(sid) { const s=getCF(sid); if(s) s.blocks.push({id:APP.uid(),label:'New block',dur:5,kph:null,incline:null,rpm:null,hrLo:null,hrHi:null,zone:'Z2',note:''}); renderEditor(); renderCardio(); }
+function rmBlk(sid,bid) { const s=getCF(sid); if(s) s.blocks=s.blocks.filter(b=>b.id!==bid); renderEditor(); renderCardio(); }
+function addCardioSess() { const m=getMeso(); m.cardio.push({id:APP.uid(),day:'Day '+(m.cardio.length+1),label:'New Cardio',type:'walk',warmup:{dur:10,kph:4.5,incline:0,rpm:null,note:'Easy warmup'},blocks:[{id:APP.uid(),label:'Main',dur:30,kph:5.5,incline:8,rpm:null,hrLo:100,hrHi:118,zone:'Z2',note:''}]}); renderEditor(); renderCardio(); }
+
+function updSF(id,f,v) { const s=getSF(id); if(s) s[f]=v; }
+function updGrpLabel(sid,gid,v) { const g=getGrp(sid,gid); if(g) g.label=v; }
+function cycleGrpType(sid,gid) { const g=getGrp(sid,gid); if(!g) return; const t=['single','superset','triset','giant']; g.type=t[(t.indexOf(g.type)+1)%t.length]; renderStrength(); renderEditor(); }
+function updEx(sid,gid,eid,f,v) { const e=getEx(sid,gid,eid); if(e) e[f]=['sets','reps','dur','weight','rpe'].includes(f)?(parseFloat(v)||null):v; }
+function mvEx(sid,gid,eid,dir) { const g=getGrp(sid,gid); if(!g) return; const i=g.exercises.findIndex(e=>e.id===eid); const ni=i+dir; if(ni<0||ni>=g.exercises.length) return; [g.exercises[i],g.exercises[ni]]=[g.exercises[ni],g.exercises[i]]; renderStrength(); renderEditor(); }
+function rmEx(sid,gid,eid) { const g=getGrp(sid,gid); if(g) g.exercises=g.exercises.filter(e=>e.id!==eid); renderStrength(); renderEditor(); }
+function rmGrp(sid,gid) { const s=getSF(sid); if(s) s.groups=s.groups.filter(g=>g.id!==gid); renderStrength(); renderEditor(); }
+function addStrSess() { const m=getMeso(); const n=m.strength.length+1; m.strength.push({id:APP.uid(),day:'Session '+String.fromCharCode(64+n),label:'New Session',note:'',groups:[{id:APP.uid(),type:'single',label:'Warm-Up',exercises:[]}]}); renderStrength(); renderEditor(); }
+function rmSess(id,type) { const m=getMeso(); if(type==='cardio') m.cardio=m.cardio.filter(c=>c.id!==id); else m.strength=m.strength.filter(s=>s.id!==id); renderEditor(); renderCardio(); renderStrength(); }
+function updR(id,f,v) { const r=getMeso().rehab.find(r=>r.id===id); if(r) r[f]=v; }
+function rmR(id) { const m=getMeso(); m.rehab=m.rehab.filter(r=>r.id!==id); renderEditor(); renderRehab(); }
+function addRehabItem() { const m=getMeso(); m.rehab.push({id:APP.uid(),name:'New exercise',dur:'30 sec/side',freq:'Daily',note:'Note…'}); renderEditor(); renderRehab(); }
+function resetProg() { if(!confirm('Reset to default? All edits lost.')) return; localStorage.removeItem('casey_prog_v3'); APP.loadProg(); renderAll(); APP.toast('Reset to default','success'); }
+
+// Add exercise modal
+let _exTarget=null, _grpTarget=null;
+function openAddEx(sid,gid) { _exTarget={sid,gid}; ['me-name','me-tempo','me-note'].forEach(id=>document.getElementById(id).value=''); ['me-sets','me-reps','me-dur','me-wt','me-rpe'].forEach(id=>document.getElementById(id).value=''); document.getElementById('me-sets').value=3; document.getElementById('me-reps').value=12; openM('modal-ex'); }
+function confirmAddEx() { if(!_exTarget) return; const {sid,gid}=_exTarget; const g=getGrp(sid,gid); if(!g) return; const name=document.getElementById('me-name').value.trim(); if(!name){APP.toast('Enter a name','error');return;} const dur=parseInt(document.getElementById('me-dur').value)||null; g.exercises.push({id:APP.uid(),name,sets:parseInt(document.getElementById('me-sets').value)||3,reps:dur?null:(parseInt(document.getElementById('me-reps').value)||12),dur,weight:parseFloat(document.getElementById('me-wt').value)||null,unit:dur?'time':'reps',tempo:document.getElementById('me-tempo').value||null,rpe:parseInt(document.getElementById('me-rpe').value)||null,note:document.getElementById('me-note').value||null}); closeM('modal-ex'); renderStrength(); renderEditor(); APP.toast('Exercise added','success'); }
+function openAddGrp(sid) { _grpTarget=sid; document.getElementById('mg-label').value=''; openM('modal-grp'); }
+function confirmAddGrp() { if(!_grpTarget) return; const s=getSF(_grpTarget); if(!s) return; s.groups.push({id:APP.uid(),type:document.getElementById('mg-type').value,label:document.getElementById('mg-label').value||'New Group',exercises:[]}); closeM('modal-grp'); renderStrength(); renderEditor(); APP.toast('Group added — add exercises to it','success'); }
+
+// Edit block modal
+let _blkTarget=null;
+function openEditBlock(sid,bid) {
+  _blkTarget={sid,bid};
+  if(bid==='warmup') { const s=getCF(sid); if(!s) return; document.getElementById('mb-title').textContent='Edit Warmup: '+s.label; document.getElementById('mb-label').value='Warmup'; document.getElementById('mb-dur').value=s.warmup.dur||''; document.getElementById('mb-kph').value=s.warmup.kph||''; document.getElementById('mb-inc').value=s.warmup.incline||''; document.getElementById('mb-rpm').value=s.warmup.rpm||''; document.getElementById('mb-hrlo').value=''; document.getElementById('mb-hrhi').value=''; document.getElementById('mb-zone').value='Z1'; document.getElementById('mb-note').value=s.warmup.note||''; }
+  else { const b=getCF(sid)?.blocks.find(b=>b.id===bid); if(!b) return; document.getElementById('mb-title').textContent='Edit Block: '+b.label; document.getElementById('mb-label').value=b.label||''; document.getElementById('mb-dur').value=b.dur||''; document.getElementById('mb-kph').value=b.kph||''; document.getElementById('mb-inc').value=b.incline!==null&&b.incline!==undefined?b.incline:''; document.getElementById('mb-rpm').value=b.rpm||''; document.getElementById('mb-hrlo').value=b.hrLo||''; document.getElementById('mb-hrhi').value=b.hrHi||''; document.getElementById('mb-zone').value=b.zone||'Z2'; document.getElementById('mb-note').value=b.note||''; }
+  openM('modal-block');
+}
+function saveBlock() {
+  if(!_blkTarget) return; const {sid,bid}=_blkTarget;
+  if(bid==='warmup') { const s=getCF(sid); if(!s) return; s.warmup.dur=parseFloat(document.getElementById('mb-dur').value)||s.warmup.dur; s.warmup.kph=parseFloat(document.getElementById('mb-kph').value)||null; s.warmup.incline=parseFloat(document.getElementById('mb-inc').value)||null; s.warmup.rpm=parseInt(document.getElementById('mb-rpm').value)||null; s.warmup.note=document.getElementById('mb-note').value; }
+  else { const b=getCF(sid)?.blocks.find(b=>b.id===bid); if(!b) return; b.label=document.getElementById('mb-label').value; b.dur=parseFloat(document.getElementById('mb-dur').value)||b.dur; b.kph=parseFloat(document.getElementById('mb-kph').value)||null; b.incline=document.getElementById('mb-inc').value!==''?parseFloat(document.getElementById('mb-inc').value):null; b.rpm=parseInt(document.getElementById('mb-rpm').value)||null; b.hrLo=parseInt(document.getElementById('mb-hrlo').value)||null; b.hrHi=parseInt(document.getElementById('mb-hrhi').value)||null; b.zone=document.getElementById('mb-zone').value; b.note=document.getElementById('mb-note').value; }
+  closeM('modal-block'); renderCardio(); APP.toast('Block updated','success');
 }
 
-function renderNutrition() {
-  const n = PC.nutrition;
-  const c = document.getElementById('nutrition-content');
-  if (!c) return;
-
-  const phaseCards = n.phases.map(p => `
-    <div class="card" style="border:1px solid var(--border)">
-      <div class="bdg b" style="margin-bottom:8px">${p.phase}</div>
-      <h4>${p.kcal}</h4>
-      <p style="margin-bottom:8px">${p.mode}</p>
-      <div style="display:flex;height:22px;border-radius:4px;overflow:hidden;margin-bottom:4px">
-        <div style="width:${p.carbP};background:var(--amber);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:8.5px;color:white">${p.carbP} Carb</div>
-        <div style="width:${p.protP};background:var(--red);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:8.5px;color:white">${p.protP} Prot</div>
-        <div style="width:${p.fatP};background:var(--blue);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:8.5px;color:white">${p.fatP} Fat</div>
-      </div>
-      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">Carb ${p.carbG}g · Prot ${p.protG}g · Fat ${p.fatG}g</div>
-    </div>`).join('');
-
-  const suppTable = `<table style="width:100%;border-collapse:collapse;font-size:12px">
-    <thead><tr>${['Supplement','Dose','Timing','Evidence'].map(h=>`<th style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.13em;text-transform:uppercase;background:var(--ink);color:var(--paper);padding:8px 11px;text-align:left">${h}</th>`).join('')}</tr></thead>
-    <tbody>${n.supps.map((s,i)=>`<tr style="${i%2===0?'background:rgba(0,0,0,.018)':''}">
-      <td style="padding:8px 11px;border-bottom:1px solid var(--border);font-weight:600">${s.name}</td>
-      <td style="padding:8px 11px;border-bottom:1px solid var(--border)">${s.dose}</td>
-      <td style="padding:8px 11px;border-bottom:1px solid var(--border)">${s.timing}</td>
-      <td style="padding:8px 11px;border-bottom:1px solid var(--border)"><span class="bdg g">${s.ev}</span></td>
-    </tr>`).join('')}</tbody></table>`;
-
-  c.innerHTML = `
-    <div class="alert a" style="display:flex;gap:11px;padding:12px 15px;border-radius:5px;margin-bottom:18px;font-size:13px;line-height:1.55;background:#fdf3e0;border-left:4px solid var(--amber)">
-      <div><strong>Dual Goal:</strong> Weight loss 73→65-70kg AND sub-4:00 marathon. Moderate deficit Meso 1-2 only. Maintenance from Meso 3. Never deficit in peak mileage weeks. Performance before aesthetics from week 9 onwards.</div>
-    </div>
-    <div class="section"><div class="section-title">Caloric Targets by Phase</div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-bottom:20px">${phaseCards}</div>
-    </div>
-    <div class="section"><div class="section-title">Supplements — Evidence Based Only</div>
-      <div style="overflow-x:auto;margin-bottom:20px">${suppTable}</div>
-    </div>
-    <div class="section"><div class="section-title">In-Run Nutrition</div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:20px">
-        <div class="card lg"><h4>Under 60 min</h4><p>Water only. No gels needed.</p></div>
-        <div class="card la"><h4>60-90 min</h4><p>500-750ml water + 1 gel at 45 min mark.</p></div>
-        <div class="card lr"><h4>90 min+</h4><p>1 gel every 40-45 min from 45 min. 500-750ml water/hr. Electrolyte tab.</p></div>
-        <div class="card lb"><h4>Race Day</h4><p>Gels at km 10, 20, 27, 32, 37. Always with water. Same brands trained with.</p></div>
-      </div>
-    </div>`;
-}
-
+function openM(id) { document.getElementById(id).classList.add('open'); }
+function closeM(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.mov').forEach(m => m.addEventListener('click', e => { if(e.target===m) m.classList.remove('open'); }));
 </script>
 </body>
 </html>
