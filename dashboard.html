@@ -6,6 +6,7 @@
 <title>Casey — Training Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
+
 :root{--ink:#0f0e0d;--paper:#f5f2ee;--cream:#ede9e3;--red:#c0392b;--rlt:#e74c3c;--amb:#d4820a;--grn:#2d6a4f;--blu:#1a4a72;--pur:#6c3483;--tel:#1a7a6a;--mut:#7a7268;--bdr:#d5cfc6;--wh:#fff;--sb:230px}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);font-size:14px;line-height:1.6}
@@ -175,11 +176,171 @@ body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);f
   .ex-hd-coach,.ex-row-coach{grid-template-columns:1fr 58px 58px 58px}
   .ex-hd-coach>:nth-child(n+5),.ex-row-coach>:nth-child(n+5){display:none}
 }
+
+
+/* Programme content styles */
+
+:root{
+  --ink:#0f0e0d;--paper:#f5f2ee;--cream:#ede9e3;
+  --red:#c0392b;--red-lt:#e74c3c;--amber:#d4820a;
+  --green:#2d6a4f;--blue:#1a4a72;--purple:#6c3483;
+  --teal:#1a7a6a;--muted:#7a7268;--border:#d5cfc6;--white:#fff;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);font-size:14px;line-height:1.6}
+
+/* HERO */
+.hero{background:var(--ink);color:var(--paper);padding:52px 48px 40px;position:relative;overflow:hidden}
+.hero::before{content:'20W';font-family:'Bebas Neue',sans-serif;font-size:380px;position:absolute;right:-30px;top:-60px;opacity:.04;line-height:1;pointer-events:none}
+.hero-sup{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--red-lt);margin-bottom:12px}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(48px,8vw,88px);line-height:.92;margin-bottom:20px}
+.hero h1 em{color:var(--red-lt);font-style:normal}
+.hero-meta{display:flex;gap:26px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.1);padding-top:20px}
+.m-lbl{font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:2px}
+.m-val{font-weight:700;font-size:14px}
+.m-val.hi{color:var(--red-lt)}
+
+/* NAV */
+.nav{display:flex;background:var(--ink);border-top:1px solid rgba(255,255,255,.07);overflow-x:auto;scrollbar-width:none;position:sticky;top:0;z-index:50}
+.nav::-webkit-scrollbar{display:none}
+.nb{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;background:none;border:none;color:rgba(255,255,255,.38);padding:12px 16px;cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;transition:all .2s}
+.nb:hover{color:rgba(255,255,255,.7)}
+.nb.on{color:var(--red-lt);border-bottom-color:var(--red-lt)}
+
+/* PANELS */
+.pnl{display:none;padding:38px 44px 60px;max-width:1140px;margin:0 auto}
+.pnl.on{display:block}
+
+/* TYPE */
+.sec{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:.04em;border-bottom:3px solid var(--ink);padding-bottom:6px;margin-bottom:26px}
+.sec.r{border-color:var(--red)}.sec.a{border-color:var(--amber)}.sec.g{border-color:var(--green)}.sec.b{border-color:var(--blue)}.sec.t{border-color:var(--teal)}.sec.p{border-color:var(--purple)}
+.sub{font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin:20px 0 11px;display:flex;align-items:center;gap:8px}
+.sub::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* ALERT */
+.al{display:flex;gap:11px;padding:12px 15px;border-radius:5px;margin-bottom:18px;font-size:13px;line-height:1.55}
+.al.r{background:#fde8e6;border-left:4px solid var(--red)}
+.al.a{background:#fdf3e0;border-left:4px solid var(--amber)}
+.al.g{background:#e6f4ed;border-left:4px solid var(--green)}
+.al.b{background:#e4edf6;border-left:4px solid var(--blue)}
+.al.t{background:#e4f4f0;border-left:4px solid var(--teal)}
+.al-i{font-size:16px;flex-shrink:0;margin-top:1px}
+
+/* CARDS */
+.cg{display:grid;grid-template-columns:repeat(auto-fill,minmax(225px,1fr));gap:12px;margin-bottom:24px}
+.card{background:var(--white);border:1px solid var(--border);border-radius:6px;padding:16px}
+.card.lr{border-left:4px solid var(--red)}.card.la{border-left:4px solid var(--amber)}.card.lg{border-left:4px solid var(--green)}.card.lb{border-left:4px solid var(--blue)}.card.lt{border-left:4px solid var(--teal)}.card.lp{border-left:4px solid var(--purple)}
+.card h4{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
+.card p,.card li{font-size:12.5px;color:#333;line-height:1.55}
+.card ul{padding-left:14px}.card li{margin-bottom:3px}
+
+/* BADGE */
+.bdg{display:inline-block;font-family:'DM Mono',monospace;font-size:9px;font-weight:500;letter-spacing:.09em;text-transform:uppercase;padding:2px 7px;border-radius:3px;margin-bottom:5px}
+.bdg.r{background:#fde8e6;color:var(--red)}.bdg.a{background:#fdf3e0;color:var(--amber)}.bdg.g{background:#e6f4ed;color:var(--green)}.bdg.b{background:#e4edf6;color:var(--blue)}.bdg.t{background:#e4f4f0;color:var(--teal)}.bdg.p{background:#f3eafd;color:var(--purple)}.bdg.x{background:#f0ede9;color:var(--muted)}
+
+/* TABLES */
+.tw{overflow-x:auto;margin-bottom:24px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.13em;text-transform:uppercase;background:var(--ink);color:var(--paper);padding:8px 11px;text-align:left;white-space:nowrap}
+td{padding:8px 11px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.5}
+tr:nth-child(even) td{background:rgba(0,0,0,.018)}
+.dy{font-weight:700;white-space:nowrap}
+.tg{display:inline-block;font-family:'DM Mono',monospace;font-size:8.5px;padding:1px 5px;border-radius:3px;margin:1px 2px 1px 0;font-weight:500;white-space:nowrap}
+.tg.ez{background:#e6f4ed;color:var(--green)}.tg.tm{background:#fdf3e0;color:var(--amber)}.tg.wk{background:#e4edf6;color:var(--blue)}.tg.rs{background:#f0ede9;color:var(--muted)}.tg.st{background:#f3eafd;color:var(--purple)}.tg.rh{background:#fde8e6;color:var(--red)}.tg.cr{background:#e4f4f0;color:var(--teal)}
+tr.dl td{background:#e4edf6!important;color:#185fa5;font-style:italic}
+tr.re td{background:#f0ede9!important;font-style:italic;color:#555}
+tr.race td{background:var(--red)!important;color:var(--white)!important;font-weight:700}
+tr.gate td{background:#fdf3e0!important}
+tr.flag td{background:#fde8e6!important}
+
+/* MESO BLOCKS */
+.meso{border:1px solid var(--border);border-radius:8px;margin-bottom:28px;overflow:hidden}
+.meso-hd{padding:14px 20px;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px}
+.meso-hd.m1{background:#1a1a2e;color:var(--paper)}
+.meso-hd.m2{background:#1a4a72;color:var(--paper)}
+.meso-hd.m3{background:#2d6a4f;color:var(--paper)}
+.meso-hd.m4{background:#c0392b;color:var(--paper)}
+.meso-hd.m5{background:#6c3483;color:var(--paper)}
+.meso-title{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:.04em}
+.meso-sub{font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.12em;opacity:.65;margin-top:2px}
+.meso-pills{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.pill{font-family:'DM Mono',monospace;font-size:9px;padding:3px 9px;border-radius:20px;background:rgba(255,255,255,.15);color:rgba(255,255,255,.9);letter-spacing:.08em}
+.meso-body{padding:18px 20px}
+.meso-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:14px}
+.meso-stat{background:var(--cream);border-radius:5px;padding:11px 13px}
+.ms-lbl{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:3px}
+.ms-val{font-size:13px;font-weight:600;color:var(--ink)}
+
+/* GATE */
+.gate-box{background:#fdf3e0;border:1px solid #f0c060;border-radius:6px;padding:14px 16px;margin:14px 0}
+.gate-title{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--amber);font-weight:500;margin-bottom:8px}
+.gate-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px}
+.gate-item{background:var(--white);border-radius:4px;padding:9px 11px}
+.gi-test{font-size:12px;font-weight:600;margin-bottom:2px}
+.gi-tgt{font-family:'DM Mono',monospace;font-size:10.5px;color:var(--green)}
+.gi-curr{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)}
+
+/* ASSESSMENT BOX */
+.assess{background:var(--white);border:1px solid var(--border);border-radius:6px;margin-bottom:20px;overflow:hidden}
+.assess-hd{background:var(--ink);color:var(--paper);padding:10px 16px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase}
+.assess-body{padding:14px 16px}
+.assess-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.assess-item{border-left:3px solid var(--border);padding-left:10px}
+.ai-test{font-size:12px;font-weight:600;margin-bottom:4px}
+.ai-data{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)}
+.ai-flag{font-size:11.5px;color:var(--red);margin-top:4px}
+.ai-flag.a{color:var(--amber)}
+.ai-flag.g{color:var(--green)}
+
+/* EX ROWS */
+.str-blk{background:var(--white);border:1px solid var(--border);border-radius:6px;margin-bottom:18px;overflow:hidden}
+.str-hd{background:var(--ink);color:var(--paper);padding:10px 16px;display:flex;justify-content:space-between;align-items:center}
+.str-hd h4{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.04em}
+.str-hd span{font-family:'DM Mono',monospace;font-size:9px;opacity:.45;letter-spacing:.12em;text-transform:uppercase}
+.str-body{padding:0 16px 13px}
+.ssl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--white);padding:6px 16px;margin:0 -16px 9px;display:block}
+.ssl.r{background:var(--red)}.ssl.g{background:var(--green)}.ssl.t{background:var(--teal)}.ssl.p{background:var(--purple)}.ssl.a{background:var(--amber)}
+.ssl+.ssl,.exr+.ssl{margin-top:12px}
+.exhd{display:grid;grid-template-columns:2fr 85px 75px 1fr;gap:9px;padding:4px 0 7px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.11em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border)}
+.exr{display:grid;grid-template-columns:2fr 85px 75px 1fr;gap:9px;padding:9px 0;border-bottom:1px solid var(--border);font-size:12px;align-items:start}
+.exr:last-child{border-bottom:none}
+.exn{font-weight:600;line-height:1.4}
+.exm{font-size:10.5px;color:var(--red);margin-top:2px}
+.exm.a{color:var(--amber)}
+.exs{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)}
+.ext{font-family:'DM Mono',monospace;font-size:10px;color:#888}
+.exno{font-size:11.5px;color:#555;line-height:1.5}
+
+/* WEEK CARD */
+.wk-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-bottom:20px}
+.wk-card{background:var(--white);border:1px solid var(--border);border-radius:6px;overflow:hidden}
+.wk-hd{padding:10px 14px;display:flex;justify-content:space-between;align-items:center}
+.wk-n{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.04em}
+.wk-type{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase}
+.wk-body{padding:0 14px 12px}
+.wk-day{display:grid;grid-template-columns:70px 1fr;gap:6px;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px}
+.wk-day:last-child{border-bottom:none}
+.wk-day-lbl{font-weight:700;font-size:11px;padding-top:1px}
+.wk-day-con{color:#333;line-height:1.5}
+
+/* PROG BAR */
+.prog-wrap{margin-bottom:20px}
+.prog-lbl{font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.12em;color:var(--muted);margin-bottom:5px}
+.prog-bar{display:flex;height:24px;border-radius:4px;overflow:hidden;margin-bottom:8px}
+.prog-bar div{display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:9px;font-weight:500;color:var(--white);letter-spacing:.04em}
+.bc{background:var(--amber)}.bp{background:var(--red)}.bf{background:var(--blue)}
+
+.ftr{background:var(--cream);border-top:1px solid var(--border);padding:20px 44px;font-size:11.5px;color:var(--muted);text-align:center;line-height:1.7}
+@media(max-width:680px){.hero{padding:32px 18px 26px}.pnl{padding:20px 14px 46px}.exr,.exhd{grid-template-columns:1fr 76px}.ext{display:none}.ftr{padding:16px}}
+
+/* Extra unified styles */
+.pnl { display: none; }
+.pnl.on { display: block; }
 </style>
 </head>
 <body>
 <div class="app">
-
 <aside class="sb">
   <div class="sb-logo">
     <div class="sb-logo-name">Casey<br>Training</div>
@@ -195,19 +356,24 @@ body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);f
     <div class="ni" onclick="nav('cardio')"><span class="ic">♥</span> Cardio Workouts</div>
     <div class="ni" onclick="nav('strength')"><span class="ic">◉</span> Strength Sessions</div>
     <div class="ni" onclick="nav('rehab')"><span class="ic">✓</span> Rehab Checklist</div>
-    <div class="nav-sec">Programme</div>
-    <div class="ni" onclick="nav('overview')"><span class="ic">▦</span> Programme Overview</div>
+    <div class="nav-sec">Full Programme</div>
+    <div class="ni" onclick="nav('assess')"><span class="ic">◎</span> Assessment</div>
+    <div class="ni" onclick="nav('macro')"><span class="ic">▦</span> Macro Overview</div>
+    <div class="ni" onclick="nav('meso1')"><span class="ic">①</span> Meso 1 — Foundation</div>
+    <div class="ni" onclick="nav('meso2')"><span class="ic">②</span> Meso 2 — Base Build</div>
+    <div class="ni" onclick="nav('meso3')"><span class="ic">③</span> Meso 3 — Development</div>
+    <div class="ni" onclick="nav('meso4')"><span class="ic">④</span> Meso 4 — Peak</div>
+    <div class="ni" onclick="nav('meso5')"><span class="ic">⑤</span> Meso 5 — Taper</div>
     <div class="ni" onclick="nav('nutrition')"><span class="ic">◑</span> Nutrition Plan</div>
+    <div class="ni" onclick="nav('race')"><span class="ic">★</span> Goals &amp; Strategy</div>
     <div class="nav-sec" id="coach-sec" style="display:none">Coach</div>
     <div class="ni" id="editor-link" style="display:none" onclick="nav('editor')"><span class="ic">✎</span> Programme Editor</div>
   </nav>
   <div class="sb-foot"><button class="btn-out" onclick="APP.logout()">Sign Out</button></div>
 </aside>
-
 <main class="main">
 
-<!-- DASHBOARD -->
-<div id="page-dashboard" class="page on">
+id="page-dashboard" class="page on">
   <div class="topbar">
     <div>
       <div class="page-title">Dashboard</div>
@@ -234,7 +400,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);f
 </div>
 
 <!-- CARDIO -->
-<div id="page-cardio" class="page">
+<div
+
+id="page-cardio" class="page">
   <div class="topbar">
     <div>
       <div class="page-title">Cardio <span>Workouts</span></div>
@@ -242,11 +410,16 @@ body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);f
     </div>
     <div class="acts" id="cardio-acts"></div>
   </div>
+  <!-- STRAVA -->
+  <div id="strava-section" style="margin-bottom:20px"></div>
+  <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--mut);margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid var(--ink)">Prescribed Sessions</div>
   <div id="cardio-content"></div>
 </div>
 
 <!-- STRENGTH -->
-<div id="page-strength" class="page">
+<div
+
+id="page-strength" class="page">
   <div class="topbar">
     <div>
       <div class="page-title">Strength <span>Sessions</span></div>
@@ -258,7 +431,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);f
 </div>
 
 <!-- REHAB -->
-<div id="page-rehab" class="page">
+<div
+
+id="page-rehab" class="page">
   <div class="topbar">
     <div>
       <div class="page-title">Rehab <span>Checklist</span></div>
@@ -271,19 +446,578 @@ body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);f
 </div>
 
 <!-- OVERVIEW -->
-<div id="page-overview" class="page">
-  <div class="topbar"><div class="page-title">Programme <span>Overview</span></div></div>
-  <div id="overview-content"></div>
+<div
+
+
+<div id="page-assess" class="page">
+id="assess" class="pnl on">
+  <div class="sec r">Baseline Assessment — Clinical Findings</div>
+
+  <div class="al r"><div class="al-i">⚕</div><div><strong>Clinical Interpretation:</strong> The picture is clear. Left glute medius is neurologically inhibited — not just weak. Casey is quad-dominant on the left because the primary hip stabiliser is not firing. The TFL is overcompensating for absent glute med, causing lateral chain overload and ITB irritation. The right split squat collapse (8s vs 18s left) tells us right hip stability is also compromised but differently — likely global hip stabiliser weakness bilateral with left glute med inhibition as the primary driver. The left calf deficit (10 vs 15) feeds directly into the DF restriction and lateral knee loading pattern. This must be corrected before running loads are introduced.</div></div>
+
+  <div class="sub">Post-Meso-1 Test Results</div>
+  <div class="assess">
+    <div class="assess-hd">Strength and Capacity Assessment — Post Meso 1</div>
+    <div class="assess-body">
+      <div class="assess-grid">
+        <div class="assess-item" style="border-color:var(--amber)">
+          <div class="ai-test">Glute Bridge Isometric Hold</div>
+          <div class="ai-data">Left: 36 sec &nbsp;|&nbsp; Right: 38 sec</div>
+          <div class="ai-flag a">Near-symmetrical. Global glute endurance adequate baseline. L glute IS contracting but not neurologically dominant in dynamic tasks.</div>
+        </div>
+        <div class="assess-item" style="border-color:var(--red)">
+          <div class="ai-test">Split Squat Isometric Hold</div>
+          <div class="ai-data">Left: 18 sec &nbsp;|&nbsp; Right: 8 sec</div>
+          <div class="ai-flag">Severe R hip stability deficit. L overcompensating through quad dominance — 18s left is deceiving; she is holding via quad not glute. R is collapsing through hip, likely glute med + glute max insufficiency.</div>
+        </div>
+        <div class="assess-item" style="border-color:var(--red)">
+          <div class="ai-test">Single Leg Calf Raise Capacity</div>
+          <div class="ai-data">Left: 10 reps &nbsp;|&nbsp; Right: 15 reps</div>
+          <div class="ai-flag">33% asymmetry. L calf/Achilles significantly weaker — directly contributes to L ankle instability, compensatory pronation, and increased proximal chain loading (knee + TFL).</div>
+        </div>
+        <div class="assess-item" style="border-color:var(--red)">
+          <div class="ai-test">Subjective — L Glute/Abductor Engagement</div>
+          <div class="ai-data">No L abductor or adductor felt. Strong quad activation L.</div>
+          <div class="ai-flag">Confirms glute med neurological inhibition. TFL overactivation pattern. Must be the primary target of Meso 1 before any loaded movement is introduced.</div>
+        </div>
+        <div class="assess-item" style="border-color:var(--red)">
+          <div class="ai-test">Lateral Knee Pain</div>
+          <div class="ai-data">Left ITB / knee pain present</div>
+          <div class="ai-flag">Active tissue irritation. No running in Meso 1. Cardio via uphill walking, cross trainer, or assault bike (low-impact, no lateral knee shear).</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sub">What This Changes</div>
+  <div class="cg">
+    <div class="card lr"><span class="bdg r">No Running — Meso 1</span><h4>Cardio Prescription</h4><p>Uphill walking (treadmill incline 8-15%). Cross trainer (elliptical). Assault bike — if lateral knee pain does not increase during or after. All aerobic capacity development must be zero lateral knee shear in Meso 1.</p></div>
+    <div class="card lr"><span class="bdg r">L Glute Med Inhibition</span><h4>Primary Target</h4><p>All Meso 1 strength work is built around neurological re-education of the left glute medius and glute max. No heavy loading until the muscle fires. Proprioceptive and activation work comes first.</p></div>
+    <div class="card la"><span class="bdg a">R Hip Instability</span><h4>Secondary Target</h4><p>Right split squat collapse at 8s means right hip stabilisers are severely undertrained. Both sides need glute work but with different focus: L = neural activation, R = hip stability loading.</p></div>
+    <div class="card la"><span class="bdg a">L Calf Weakness</span><h4>Ankle Programme</h4><p>33% calf asymmetry. Left calf eccentric programme begins week 1 alongside ankle DF mobility. Target: L calf raise at 15+ before running loads are introduced in Meso 2.</p></div>
+    <div class="card lg"><span class="bdg g">Gate System</span><h4>Progress-Gated Mesos</h4><p>Each meso is gated. Casey must hit retesting criteria before progressing to the next meso's loads. If not met, the current meso extends by 1-2 weeks. No rushing.</p></div>
+    <div class="card lb"><span class="bdg b">Quad Dominance Pattern</span><h4>Re-Education Focus</h4><p>Every exercise in Meso 1 has a glute-drive cue. If Casey feels quad, she resets and goes lighter. Quad dominance on left is the movement dysfunction driving all downstream problems.</p></div>
+  </div>
+
+  <div class="sub">Meso 1 Retest Targets (Gate to Meso 2)</div>
+  <div class="gate-box">
+    <div class="gate-title">Gate Criteria — Must achieve before Meso 2 loading begins</div>
+    <div class="gate-grid">
+      <div class="gate-item"><div class="gi-test">Glute Bridge Hold — L</div><div class="gi-tgt">Target: 45+ sec</div><div class="gi-curr">Current: 36 sec</div></div>
+      <div class="gate-item"><div class="gi-test">Glute Bridge Hold — R</div><div class="gi-tgt">Target: 45+ sec</div><div class="gi-curr">Current: 38 sec</div></div>
+      <div class="gate-item"><div class="gi-test">Split Squat Hold — L</div><div class="gi-tgt">Target: 25+ sec</div><div class="gi-curr">Current: 18 sec</div></div>
+      <div class="gate-item"><div class="gi-test">Split Squat Hold — R</div><div class="gi-tgt">Target: 20+ sec</div><div class="gi-curr">Current: 8 sec — priority</div></div>
+      <div class="gate-item"><div class="gi-test">SL Calf Raise — L</div><div class="gi-tgt">Target: 15 reps</div><div class="gi-curr">Current: 10 reps</div></div>
+      <div class="gate-item"><div class="gi-test">L Glute Activation</div><div class="gi-tgt">Casey feels L glute medius firing in SL drills</div><div class="gi-curr">Currently: quad dominant, no abductor feel</div></div>
+      <div class="gate-item"><div class="gi-test">Lateral Knee VAS</div><div class="gi-tgt">0-1 at rest and walking</div><div class="gi-curr">Currently: pain present</div></div>
+      <div class="gate-item"><div class="gi-test">Ankle DF — L</div><div class="gi-tgt">Knee to wall at 8+ cm</div><div class="gi-curr">Measure and record at baseline</div></div>
+    </div>
+  </div>
 </div>
 
-<!-- NUTRITION -->
+<!-- ═══ MACRO OVERVIEW ═══ -->
+<div
+</div>
+
+<div id="page-macro" class="page">
+id="macro" class="pnl">
+  <div class="sec a">Macro Programme — 20 Weeks</div>
+
+  <div class="al t"><div class="al-i">&#9881;</div><div><strong>Programme Architecture:</strong> 5 mesocycles, each gated by retest criteria from the previous block. Meso 1 is rehabilitative — no running, glute neurological re-education, cross-training cardio only. Running begins in Meso 2 only when gate criteria are met. Peak mileage reached in Meso 4. Taper in Meso 5. Every cardio, strength, and nutrition decision is tied to Casey's dual goals: sub-4:00 Weight Loss Programme + 65-70 kg bodyweight.</div></div>
+
+  <div class="sub">Macro Structure at a Glance</div>
+  <div class="tw"><table>
+    <thead><tr><th>Meso</th><th>Weeks</th><th>Focus</th><th>Cardio Mode</th><th>Weekly Vol</th><th>Strength Goal</th><th>Nutrition</th><th>Gate</th></tr></thead>
+    <tbody>
+      <tr><td class="dy">M1 Foundation</td><td>1-4</td><td>Glute neuro re-ed. Rehab. Cardio base.</td><td>Walk/Cross trainer/Bike</td><td>0 km running</td><td>Neural activation — no load</td><td>-400 kcal deficit</td><td>Retest wk 4</td></tr>
+      <tr class="gate"><td class="dy">M2 Base Build</td><td>5-8</td><td>Running re-introduction. Glute loading. Hip stability.</td><td>Running re-enters</td><td>30-42 km</td><td>Loaded SL strength</td><td>-250 kcal deficit</td><td>Retest wk 8</td></tr>
+      <tr><td class="dy">M3 Development</td><td>9-13</td><td>Tempo, long run build, power endurance.</td><td>Running primary</td><td>46-65 km</td><td>Power endurance</td><td>Maintenance</td><td>Retest wk 12</td></tr>
+      <tr class="gate"><td class="dy">M4 Peak</td><td>14-17</td><td>Race-specific. Max mileage. MP training.</td><td>Running only</td><td>68-72 km</td><td>Maintenance only</td><td>Maint. +100</td><td>Retest wk 16</td></tr>
+      <tr class="dl"><td class="dy">M5 Taper</td><td>18-20</td><td>Taper, carb load, race day.</td><td>Reduced running</td><td>10-45 km</td><td>None</td><td>Race nutrition</td><td>Race day</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="sub">Full 20-Week Weekly Schedule</div>
+  <div class="tw"><table>
+    <thead><tr><th>Wk</th><th>Meso</th><th>Vol / Cardio</th><th>Long Session</th><th>Key Run/Cardio</th><th>Strength</th><th>Rehab Focus</th><th>Nutrition</th></tr></thead>
+    <tbody>
+      <tr><td colspan="8" style="background:var(--cream);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--muted);padding:5px 11px">MESO 1 — FOUNDATION / REHABILITATION (NO RUNNING)</td></tr>
+      <tr><td class="dy">1</td><td>M1</td><td>3x30min cardio</td><td>40min uphill walk</td><td>Uphill walk 15% incline</td><td>Neural activation A</td><td>Ankle DF + 90/90 daily</td><td>-300 kcal</td></tr>
+      <tr><td class="dy">2</td><td>M1</td><td>3x35min cardio</td><td>45min uphill walk</td><td>Cross trainer 40min</td><td>Neural activation A+B</td><td>Glute med activation cues</td><td>-300 kcal</td></tr>
+      <tr><td class="dy">3</td><td>M1</td><td>4x30min cardio</td><td>50min uphill walk</td><td>Assault bike 20min intervals</td><td>Neural activation A+B</td><td>SL calf eccentric programme</td><td>-300 kcal</td></tr>
+      <tr class="dl"><td class="dy">4↓</td><td>M1</td><td>2x20min cardio</td><td>30min easy walk</td><td>Deload — walk only</td><td>Deload — mobility</td><td>RETEST WEEK — all assessments</td><td>-300 kcal</td></tr>
+      <tr><td colspan="8" style="background:var(--cream);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--muted);padding:5px 11px">MESO 2 — BASE BUILD (RUNNING RE-INTRODUCED — GATE DEPENDENT)</td></tr>
+      <tr class="gate"><td class="dy">5</td><td>M2</td><td>30 km run</td><td>14 km easy</td><td>Easy run only — gate check</td><td>Loaded SL strength A</td><td>Glute med under load</td><td>-250 kcal</td></tr>
+      <tr><td class="dy">6</td><td>M2</td><td>34 km run</td><td>16 km easy</td><td>4x strides + easy run</td><td>Strength A+B</td><td>Clamshell progressions</td><td>-250 kcal</td></tr>
+      <tr><td class="dy">7</td><td>M2</td><td>38 km run</td><td>18 km easy</td><td>25min easy tempo</td><td>Strength A+B</td><td>Hip IR under load</td><td>-250 kcal</td></tr>
+      <tr class="dl"><td class="dy">8↓</td><td>M2</td><td>24 km run</td><td>12 km easy</td><td>Deload — all easy</td><td>Deload — rehab</td><td>RETEST WEEK</td><td>-250 kcal</td></tr>
+      <tr><td colspan="8" style="background:var(--cream);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--muted);padding:5px 11px">MESO 3 — DEVELOPMENT</td></tr>
+      <tr><td class="dy">9</td><td>M3</td><td>46 km</td><td>23 km</td><td>5 km tempo @ 5:20/km</td><td>Strength C</td><td>Hip abductor under running load</td><td>Maintenance</td></tr>
+      <tr><td class="dy">10</td><td>M3</td><td>52 km</td><td>26 km</td><td>6x800m intervals</td><td>Strength C</td><td>SL calf target 20 reps</td><td>Maintenance</td></tr>
+      <tr><td class="dy">11</td><td>M3</td><td>58 km</td><td>29 km</td><td>8 km @ MP ()</td><td>Strength C</td><td>Gel practice starts</td><td>Maint +50</td></tr>
+      <tr class="dl"><td class="dy">12↓</td><td>M3</td><td>36 km</td><td>18 km</td><td>Deload — easy only</td><td>Deload</td><td>RETEST WEEK</td><td>Maintenance</td></tr>
+      <tr><td class="dy">13</td><td>M3</td><td>62 km</td><td>32 km</td><td>10 km tempo</td><td>Strength C light</td><td>Post-LR ice protocol</td><td>Maint +100</td></tr>
+      <tr><td colspan="8" style="background:var(--cream);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--muted);padding:5px 11px">MESO 4 — PEAK</td></tr>
+      <tr class="gate"><td class="dy">14</td><td>M4</td><td>66 km</td><td>34 km</td><td>2x6km @ MP</td><td>Maintenance</td><td>Gel every long run</td><td>Maint +100</td></tr>
+      <tr><td class="dy">15</td><td>M4</td><td>70 km</td><td>36 km</td><td>14 km @ MP</td><td>Maintenance</td><td>Race rehearsal nutrition</td><td>Maint +100</td></tr>
+      <tr><td class="dy">16</td><td>M4</td><td>72 km</td><td>38 km PEAK</td><td>3x5km @ MP</td><td>Maintenance</td><td>Ice knee post every LR</td><td>Maint +100</td></tr>
+      <tr class="dl"><td class="dy">17↓</td><td>M4</td><td>46 km</td><td>22 km</td><td>Deload</td><td>Rest</td><td>RETEST WEEK — final screen</td><td>Maintenance</td></tr>
+      <tr><td colspan="8" style="background:var(--cream);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--muted);padding:5px 11px">MESO 5 — TAPER</td></tr>
+      <tr><td class="dy">18</td><td>M5</td><td>42 km</td><td>20 km easy</td><td>10 km @ MP</td><td>None</td><td>Compression + ice protocol</td><td>Maintenance</td></tr>
+      <tr><td class="dy">19</td><td>M5</td><td>26 km</td><td>12 km easy</td><td>5 km @ MP + strides</td><td>None</td><td>Race kit prep</td><td>Carb load</td></tr>
+      <tr class="race"><td>20</td><td>M5</td><td>Race</td><td>—</td><td>NY MARATHON — Target 3:59:59</td><td>None</td><td>Race day protocol</td><td>Race fuelling</td></tr>
+    </tbody>
+  </table></div>
+</div>
+
+<!-- ═══ MESO 1 ═══ -->
+<div
+</div>
+
+<div id="page-meso1" class="page">
+id="meso1" class="pnl">
+  <div class="meso">
+    <div class="meso-hd m1">
+      <div><div class="meso-title">Meso 1 — Foundation & Rehabilitation</div><div class="meso-sub">Weeks 1-4 · No Running · Glute Neurological Re-Education</div></div>
+      <div class="meso-pills"><span class="pill">No Running</span><span class="pill">Glute Activation Priority</span><span class="pill">-400 kcal deficit</span><span class="pill">Retest Wk 4</span></div>
+    </div>
+    <div class="meso-body">
+      <div class="meso-grid">
+        <div class="meso-stat"><div class="ms-lbl">Cardio Mode</div><div class="ms-val">Walk / Cross Trainer / Assault Bike</div></div>
+        <div class="meso-stat"><div class="ms-lbl">Running Volume</div><div class="ms-val">Zero km</div></div>
+        <div class="meso-stat"><div class="ms-lbl">Strength Emphasis</div><div class="ms-val">Neuromuscular activation</div></div>
+        <div class="meso-stat"><div class="ms-lbl">Primary Clinical Goal</div><div class="ms-val">L glute med neurological activation</div></div>
+        <div class="meso-stat"><div class="ms-lbl">Secondary Goals</div><div class="ms-val">L calf: 10→15 reps. R hip stability. Ankle DF.</div></div>
+        <div class="meso-stat"><div class="ms-lbl">Load Philosophy</div><div class="ms-val">Bodyweight only until L glute fires reliably</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="al r"><div class="al-i">⚕</div><div><strong>Why no running in Meso 1:</strong> Active left ITB/knee pain + quad dominance + neurologically inhibited left glute med = running loads will further entrench the compensation pattern and increase tissue load. The body will run with TFL and quad dominant, not glute dominant. We must establish correct neuromuscular patterns in controlled environments before adding the complexity and speed of running gait. Uphill walking is ideal: higher glute demand, low impact, no lateral knee shear.</div></div>
+
+  <div class="sub">Cardio Prescription — Meso 1</div>
+  <div class="cg">
+    <div class="card lt"><span class="bdg t">Primary — Uphill Walking</span><h4>Incline 8-15% · RPE 4-5</h4><p>Treadmill incline walking. Start at 8%, build to 15% by week 3. 30-50 min sessions. Drives posterior chain demand without knee shear. Excellent glute activation under load. 3x/week.</p></div>
+    <div class="card lb"><span class="bdg b">Secondary — Cross Trainer</span><h4>Elliptical · RPE 4-5</h4><p>Low impact, full ROM, no lateral knee force. 30-40 min steady state or intervals. Good aerobic base builder. Cue: push through heel — don't pull with quads. 2x/week max.</p></div>
+    <div class="card la"><span class="bdg a">Optional — Assault Bike</span><h4>Monitor Knee Response</h4><p>Only if lateral knee pain does not increase during or 24hrs after session. Upper body dominant drive initially. Assess after first session. If knee pain VAS increases: remove from programme and use cross trainer instead.</p></div>
+    <div class="card lr"><span class="bdg r">Excluded — Running</span><h4>No Running Meso 1</h4><p>Running reintroduced in Meso 2 only if gate criteria are met at week 4 retest. Any running in Meso 1 risks entrenching quad/TFL dominance pattern further and aggravating ITB irritation.</p></div>
+  </div>
+
+  <div class="sub">Weekly Cardio Layout — Meso 1</div>
+  <div class="wk-grid">
+    <div class="wk-card">
+      <div class="wk-hd" style="background:#f0ede9"><div class="wk-n">Week 1</div><div class="wk-type" style="color:var(--muted)">Establish baseline</div></div>
+      <div class="wk-body">
+        <div class="wk-day"><div class="wk-day-lbl">Mon</div><div class="wk-day-con"><span class="tg rs">REST</span> or gentle walk + full rehab routine</div></div>
+        <div class="wk-day"><div class="wk-day-lbl">Tue</div><div class="wk-day-con"><span class="tg cr">WALK</span> Treadmill 8% incline 30 min RPE 4 + Strength A</div></div>
+        <div class="wk-day"><div class="wk-day-lbl">Wed</div><div class="wk-day-con"><span class="tg wk">X-TRAIN</span> Cross trainer 30 min steady + Rehab</div></div>
+        <div class="wk-day"><div class="wk-day-lbl">Thu</div><div class="wk-day-con"><span class="tg cr">WALK</span> Incline 10% 30 min + Strength B</div></div>
+        <div class="wk-day"><div class="wk-day-lbl">Fri</div><div class="wk-day-con"><span class="tg rs">REST</span> Mobility + ankle DF work</div></div>
+        <div class="wk-day"><div class="wk-day-lbl">Sat</div><div class="wk-day-con"><span class="tg cr">WALK</span> Outdoor or treadmill 40 min incline — longest session</div></div>
+        <div class="wk-day"><div class="wk-day-lbl">Sun</div><div class="wk-day-con"><span class="tg rs">REST</span> Full foam roll + stretch</div></div>
+      </div>
+    </div>
+    <div class="wk-card">
+      <div class="wk-hd" style="background:#f0ede9"><div class="wk-n">Week 2</div><div class="wk-type" style="color:var(--muted)">Build volume slightly</div></div>
+      <div class="wk-body">
+        <div class="wk-day"><div class="wk-day-lbl">Mon</div><div class="wk-day-con"><span class="tg rs">REST</span> + rehab routine</div></div>
+        <div class="wk-day"><div class="wk-day-lbl">Tue</div><div class="wk-day-con"><span class="tg cr">WALK</span> 10% incline 35 min + Strength A</div></div>
+        <div class="wk-day"><div class="wk-day-lbl">Wed</div><div class="wk-day-con"><span class="tg wk">X-TRAIN</span> 35 min + intervals: 4x3 min at RPE 6</div></div>
+        <div class="wk-day"><div class="wk-day-lbl">Thu</div><div class="wk-day-con"><span class="tg cr">WALK</span> 12% incline 35 min + Strength B</div></div>
+        <div class="wk-day"><div class="wk-day-lbl">Fri</div><div class="wk-day-con"><span class="tg rs">REST</span> Mobility</div></div>
+        <div class="wk-day"><div class="wk-day-lbl">Sat</div><div class="wk-day-con"><span class="tg cr">WALK</span> 45 min outdoor hilly route or treadmill 12-15%</div></div>
+        <div class="wk-day"><div class="wk-day-lbl">Sun</div><div class="wk-day-con"><span class="tg rs">REST</span> Foam roll + hip IR stretch</div></div>
+      </div>
+    </div>
+    <div class="wk-card">
+      <div class="wk-hd" style="background:#f0ede9"><div class="wk-n">Week 3</div><div class="wk-type" style="color:var(--muted)">Peak Meso 1 volume</div></div>
+      <div class="wk-body">
+        <div class="wk-day"><div class="wk-day-lbl">Mon</div><div class="wk-day-con"><span class="tg rs">REST</span> + full rehab</div></div>
+        <div class="wk-day"><div class="wk-day-lbl">Tue</div><div class="wk-day-con"><span class="tg cr">WALK</span> 15% incline 35 min + Strength A</div></div>
+        <div class="wk-day"><div class="wk-day-lbl">Wed</div><div class="wk-day-con"><span class="tg la">BIKE</span> Assault bike 20 min: 30s hard / 90s easy x8 (if knee OK) or cross trainer 40 min</div></div>
+        <div class="wk-day"><div class="wk-day-lbl">Thu</div><div class="wk-day-con"><span class="tg cr">WALK</span> 15% incline 40 min + Strength B</div></div>
+        <div class="wk-day"><div class="wk-day-lbl">Fri</div><div class="wk-day-con"><span class="tg rs">REST</span> Mobility</div></div>
+        <div class="wk-day"><div class="wk-day-lbl">Sat</div><div class="wk-day-con"><span class="tg cr">WALK</span> 50 min — hilly outdoor route. Longest session of Meso 1.</div></div>
+        <div class="wk-day"><div class="wk-day-lbl">Sun</div><div class="wk-day-con"><span class="tg rs">REST</span> Full body mobility</div></div>
+      </div>
+    </div>
+    <div class="wk-card">
+      <div class="wk-hd" style="background:#e4edf6"><div class="wk-n" style="color:#185fa5">Week 4 ↓</div><div class="wk-type" style="color:#185fa5">DELOAD + RETEST</div></div>
+      <div class="wk-body">
+        <div class="wk-day"><div class="wk-day-lbl">Mon</div><div class="wk-day-con">Full rest</div></div>
+        <div class="wk-day"><div class="wk-day-lbl">Tue</div><div class="wk-day-con">30 min easy walk + light rehab</div></div>
+        <div class="wk-day"><div class="wk-day-lbl">Wed</div><div class="wk-day-con">20 min cross trainer easy</div></div>
+        <div class="wk-day"><div class="wk-day-lbl">Thu</div><div class="wk-day-con">Mobility session only</div></div>
+        <div class="wk-day"><div class="wk-day-lbl">Fri</div><div class="wk-day-con" style="color:var(--red);font-weight:600">FULL RETEST — All assessment benchmarks</div></div>
+        <div class="wk-day"><div class="wk-day-lbl">Sat</div><div class="wk-day-con">20 min easy walk</div></div>
+        <div class="wk-day"><div class="wk-day-lbl">Sun</div><div class="wk-day-con">Rest</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sub">Strength — Session A: Neural Activation + Posterior Chain</div>
+  <div class="str-blk">
+    <div class="str-hd"><h4>Session A — Glute Med Re-Education + Posterior Chain</h4><span>Tuesday · Meso 1 · Weeks 1-4</span></div>
+    <div class="str-body">
+      <span class="ssl r">Warm-Up / Activation — 12 min (this IS the work in Meso 1)</span>
+      <div class="exhd"><div>Exercise</div><div>Sets x Reps</div><div>Tempo</div><div>Coaching Note</div></div>
+      <div class="exr"><div><div class="exn">Ankle DF wall drill — L focus <span class="bdg r">Daily Rx</span></div><div class="exm">Heel stays flat. Track distance weekly.</div></div><div class="exs">2 x 15</div><div class="ext">Slow</div><div class="exno">5 cm from wall. Knee tracks 2nd toe. Hold 1 sec end range. Track wall-to-toe distance. Most important daily drill for ankle DF improvement.</div></div>
+      <div class="exr"><div><div class="exn">90/90 hip IR rotation <span class="bdg g">Key drill</span></div></div><div class="exs">2 x 8/side</div><div class="ext">2 sec hold</div><div class="exno">Drive front shin toward floor. Never force. Breathe in. Note L vs R difference each week.</div></div>
+      <div class="exr"><div><div class="exn">Supine glute med activation — bent knee fall out <span class="bdg r">Inhibition Rx</span></div><div class="exm">Priority: feel L outer glute, NOT front of hip</div></div><div class="exs">2 x 10/side</div><div class="ext">Slow</div><div class="exno">Lying on back. Feet flat. Let knee fall OUT to side. Feel outer glute fire before returning. This is proprioceptive — the cue IS the exercise. Reset if Casey feels quad or hip flexor.</div></div>
+      <div class="exr"><div><div class="exn">Side-lying hip abduction — L leg on top, NO load <span class="bdg r">Neural only</span></div><div class="exm">NO band. NO weight. Pure neuromuscular cue. L side only.</div></div><div class="exs">3 x 10 L</div><div class="ext">Slow + hold 2s</div><div class="exno">L side-lying. Neutral hip, no forward tilt. Lift top leg to hip height — STOP if Casey cannot feel outer glute. Coach palpates glute med to verify firing. If TFL fires instead: reduce ROM, cue "push heel away not up." This is the most important exercise of the entire Meso 1 block.</div></div>
+      <div class="exr"><div><div class="exn">Glute bridge bilateral with band — VAS check pre-exercise</div></div><div class="exs">3 x 12</div><div class="ext">2-2-2</div><div class="exno">Mini band above knees. Push out against band. Drive through heels. Hold 2 sec top. If lateral knee VAS increases: remove band, do without. Squeeze L glute specifically at top.</div></div>
+      <span class="ssl g">Main Work — Posterior Chain (All Bodyweight Meso 1)</span>
+      <div class="exhd"><div>Exercise</div><div>Sets x Reps</div><div>Tempo</div><div>Coaching Note</div></div>
+      <div class="exr"><div><div class="exn">Romanian Deadlift — bilateral, bodyweight only</div></div><div class="exs">3 x 12</div><div class="ext">3-1-1</div><div class="exno">Hip hinge, push hips back, neutral spine. Feel hamstrings and GLUTES load, not lower back. No load until movement pattern is clean and L glute is felt.</div></div>
+      <div class="exr"><div><div class="exn">Glute bridge isometric hold — bilateral <span class="bdg a">Retest exercise</span></div></div><div class="exs">3 x max hold</div><div class="ext">Hold</div><div class="exno">Target: beat 36 sec L, 38 sec R by week 4 retest. Full hip extension. Squeeze. Both feet flat. Record time each week. This is one of the gate criteria.</div></div>
+      <div class="exr"><div><div class="exn">Split squat isometric hold — L leg forward <span class="bdg a">Retest exercise</span></div><div class="exm">Bodyweight only. Feel L glute, not L quad.</div></div><div class="exs">3 x max hold</div><div class="ext">Hold</div><div class="exno">L leg forward. Knee 90 degrees. Lower until shin is vertical. Hold — drive through front heel. If Casey feels quad: coach cue "push the floor away with your heel." Record hold time. Target: 25+ sec by retest. This may start very short — that is fine.</div></div>
+      <div class="exr"><div><div class="exn">Split squat isometric hold — R leg forward <span class="bdg r">Priority exercise</span></div><div class="exm">Right hip collapses at 8 sec. R is the priority this meso.</div></div><div class="exs">3 x max hold</div><div class="ext">Hold</div><div class="exno">R leg forward. Hold as long as possible. Watch for hip adduction/drop (R hip collapse). Coach cues: tall, hips level, back knee heavy. Record time every session. Target: 20+ sec by retest. Expect significant week-on-week improvement here.</div></div>
+      <div class="exr"><div><div class="exn">Lateral step-up — bodyweight, 15 cm step</div></div><div class="exs">3 x 10/side</div><div class="ext">Controlled</div><div class="exno">Drive through heel of working leg. Feel glute drive — not quad pull. Lower 3 sec. Both sides. Note: L will feel quad dominant initially. Coach palpates to give feedback. This is a teaching tool as much as a strength tool.</div></div>
+      <span class="ssl p">Core — TFL Safe</span>
+      <div class="exhd"><div>Exercise</div><div>Sets x Reps</div><div>Tempo</div><div>Coaching Note</div></div>
+      <div class="exr"><div><div class="exn">Dead bug</div></div><div class="exs">3 x 8/side</div><div class="ext">4 sec lower</div><div class="exno">Lower back flat. Opposite arm and leg. Breathe out on extension. No deviation.</div></div>
+      <div class="exr"><div><div class="exn">Right side plank — from knee <span class="bdg r">Right only</span></div><div class="exm">NO left side plank Meso 1.</div></div><div class="exs">3 x 20-30 sec</div><div class="ext">Hold</div><div class="exno">Right side only. From knee week 1-2. Attempt from feet week 3-4.</div></div>
+      <div class="exr"><div><div class="exn">Bird dog — both sides with emphasis on L hip extension</div></div><div class="exs">3 x 10/side</div><div class="ext">3 sec hold</div><div class="exno">Neutral spine. Hold extension — feel L glute on L arm/R leg extension. No hip rotation. Consistent cue: squeeze L glute before moving.</div></div>
+      <span class="ssl a">L Calf Eccentric Programme — End of Every Session</span>
+      <div class="exhd"><div>Exercise</div><div>Sets x Reps</div><div>Tempo</div><div>Coaching Note</div></div>
+      <div class="exr"><div><div class="exn">SL calf raise eccentric — L leg <span class="bdg r">Retest exercise</span></div><div class="exm">Target: 10 → 15 reps by week 4 retest.</div></div><div class="exs">4 x max (to fail)</div><div class="ext">1-0-3</div><div class="exno">Rise on both feet, lower on L foot only. 3 second eccentric. Use step edge. This will be difficult initially — 10 reps is the baseline. Record each session. If heel pain increases: raise platform height or reduce sets. This is critical for ankle stability before running is reintroduced.</div></div>
+      <div class="exr"><div><div class="exn">SL calf raise — R leg (for comparison)</div></div><div class="exs">2 x 15</div><div class="ext">1-0-3</div><div class="exno">Maintain R side. Note if R also improves across Meso 1.</div></div>
+    </div>
+  </div>
+
+  <div class="sub">Strength — Session B: Hip Stability + Upper Body</div>
+  <div class="str-blk">
+    <div class="str-hd"><h4>Session B — Hip Stability + Single Leg Control</h4><span>Thursday · Meso 1 · Weeks 1-4</span></div>
+    <div class="str-body">
+      <span class="ssl r">Warm-Up — 10 min</span>
+      <div class="exhd"><div>Exercise</div><div>Sets x Reps</div><div>Tempo</div><div>Coaching Note</div></div>
+      <div class="exr"><div><div class="exn">Ankle DF wall drill — L focus <span class="bdg r">Non-negotiable</span></div></div><div class="exs">2 x 15</div><div class="ext">Slow</div><div class="exno">Same as Session A. Track wall-to-toe distance weekly.</div></div>
+      <div class="exr"><div><div class="exn">Hip IR pigeon stretch (modified)</div></div><div class="exs">1 x 60s/side</div><div class="ext">Passive</div><div class="exno">Figure-4 or modified pigeon. Breathe. Note L vs R. This is where hip IR improvement compounds.</div></div>
+      <div class="exr"><div><div class="exn">Hip CAR (controlled articular rotation)</div></div><div class="exs">2 x 5/side</div><div class="ext">Slow</div><div class="exno">Full hip circle. Flex, abduct, extend, adduct. Trains full available hip range before session.</div></div>
+      <div class="exr"><div><div class="exn">Clamshell — hip below 45 degrees, NO band Meso 1 <span class="bdg r">Neurological only</span></div><div class="exm">No resistance until L glute med fires reliably.</div></div><div class="exs">3 x 15/side</div><div class="ext">2s hold top</div><div class="exno">No band initially. Feel the outer glute. Coach palpates. If TFL fires (front of hip): reduce hip angle further, cue "push heel away." Add lightest band only when glute med is confirmed firing in week 3-4.</div></div>
+      <span class="ssl g">Main Work</span>
+      <div class="exhd"><div>Exercise</div><div>Sets x Reps</div><div>Tempo</div><div>Coaching Note</div></div>
+      <div class="exr"><div><div class="exn">Reverse lunge — bodyweight, slow eccentric</div></div><div class="exs">3 x 10/side</div><div class="ext">3-1-2</div><div class="exno">Step back. Drive through FRONT heel on return. Feel front glute — not front quad. If Casey feels quad strongly: cue "lean forward slightly from hip, push heel into ground." Both sides.</div></div>
+      <div class="exr"><div><div class="exn">Single leg glute bridge — L and R separately</div></div><div class="exs">3 x 12/side</div><div class="ext">2-2-2</div><div class="exno">One foot flat, other extended. Drive through working heel. Full hip extension. L: do you feel L glute or L hamstring only? Note L vs R quality of contraction every session.</div></div>
+      <div class="exr"><div><div class="exn">Standing hip abduction — cable or very light band <span class="bdg r">Glute med cue</span></div><div class="exm">If front-of-hip activation on L: stop and reset. Reduce load.</div></div><div class="exs">3 x 12/side</div><div class="ext">2-1-2</div><div class="exno">Hip neutral. No pelvis hike. Drive from outer glute. Lean very slightly to opposite side. L: feel outer glute ONLY. If TFL: reduce load or range. This is the key exercise for L glute med re-education under load.</div></div>
+      <div class="exr"><div><div class="exn">Lateral step-down — eccentric, 15 cm step</div></div><div class="exs">3 x 8/side</div><div class="ext">3 sec lower</div><div class="exno">Stand on step. Lower opposite foot slowly. Control hip drop. Feel lateral glute of standing leg working. Monitor lateral knee pain closely. If knee pain increases: reduce height or remove exercise.</div></div>
+      <div class="exr"><div><div class="exn">SL calf eccentric — L focus (end of session)</div></div><div class="exs">3 x max</div><div class="ext">1-0-3</div><div class="exno">Same protocol as Session A. Record reps. Building toward 15 reps L by retest.</div></div>
+      <div class="exr"><div><div class="exn">Bent over row — light</div></div><div class="exs">3 x 12</div><div class="ext">2-1-2</div><div class="exno">Postural. Retract shoulder blades. Counteracts forward lean from any cross training. Low load — energy is for the activation work.</div></div>
+      <span class="ssl p">Core + Cool-Down</span>
+      <div class="exhd"><div>Exercise</div><div>Sets x Reps</div><div>Tempo</div><div>Coaching Note</div></div>
+      <div class="exr"><div><div class="exn">Dead bug</div></div><div class="exs">2 x 8/side</div><div class="ext">4 sec lower</div><div class="exno">Lower back flat. Breathe. Same as Session A.</div></div>
+      <div class="exr"><div><div class="exn">Pallof press</div></div><div class="exs">3 x 10/side</div><div class="ext">2 sec hold</div><div class="exno">Anti-rotation. Pelvis stability pattern for running prep. Cable or band at chest height.</div></div>
+      <div class="exr"><div><div class="exn">90/90 hip + soleus stretch</div></div><div class="exs">60s/side</div><div class="ext">Passive</div><div class="exno">End every session. Hip IR and ankle DF baked into cool-down. Non-negotiable.</div></div>
+    </div>
+  </div>
+
+  <div class="gate-box">
+    <div class="gate-title">End of Meso 1 — Week 4 Retest Gate Criteria</div>
+    <div class="gate-grid">
+      <div class="gate-item"><div class="gi-test">Glute Bridge Hold L</div><div class="gi-tgt">Need: 45+ sec</div><div class="gi-curr">Baseline: 36 sec</div></div>
+      <div class="gate-item"><div class="gi-test">Glute Bridge Hold R</div><div class="gi-tgt">Need: 45+ sec</div><div class="gi-curr">Baseline: 38 sec</div></div>
+      <div class="gate-item"><div class="gi-test">Split Squat Hold L</div><div class="gi-tgt">Need: 25+ sec</div><div class="gi-curr">Baseline: 18 sec</div></div>
+      <div class="gate-item"><div class="gi-test">Split Squat Hold R</div><div class="gi-tgt">Need: 20+ sec</div><div class="gi-curr">Baseline: 8 sec</div></div>
+      <div class="gate-item"><div class="gi-test">SL Calf Raise L</div><div class="gi-tgt">Need: 15 reps</div><div class="gi-curr">Baseline: 10 reps</div></div>
+      <div class="gate-item"><div class="gi-test">L Glute Med Feel</div><div class="gi-tgt">Casey feels L outer glute in SL drills</div><div class="gi-curr">Currently: no glute feel, quad dominant</div></div>
+      <div class="gate-item"><div class="gi-test">Lateral Knee VAS</div><div class="gi-tgt">0-1/10 at rest and walking</div><div class="gi-curr">Currently: pain present</div></div>
+      <div class="gate-item"><div class="gi-test">Ankle DF L</div><div class="gi-tgt">2+ cm improvement from baseline</div><div class="gi-curr">Measure at start of wk 1</div></div>
+    </div>
+    <p style="font-size:12px;color:var(--muted);margin-top:10px">If gate criteria NOT met: extend Meso 1 by 1-2 weeks before running loads are introduced. Do not rush this. Running before the glute fires will re-entrench the problem.</p>
+  </div>
+</div>
+
+<!-- ═══ MESO 2 ═══ -->
+<div
+</div>
+
+<div id="page-meso2" class="page">
+id="meso2" class="pnl">
+  <div class="meso">
+    <div class="meso-hd m2">
+      <div><div class="meso-title">Meso 2 — Base Build</div><div class="meso-sub">Weeks 5-8 · Running Returns · Glute Loading Under Gait</div></div>
+      <div class="meso-pills"><span class="pill">Running Re-enters</span><span class="pill">30-42 km/week</span><span class="pill">Glute loading</span><span class="pill">-250 kcal deficit</span><span class="pill">Retest Wk 8</span></div>
+    </div>
+    <div class="meso-body">
+      <div class="meso-grid">
+        <div class="meso-stat"><div class="ms-lbl">Cardio Mode</div><div class="ms-val">Running (gate-dependent) + walking</div></div>
+        <div class="meso-stat"><div class="ms-lbl">Weekly Running Vol</div><div class="ms-val">30 km → 42 km (easy runs only)</div></div>
+        <div class="meso-stat"><div class="ms-lbl">Strength Emphasis</div><div class="ms-val">Loaded single-leg glute dominance</div></div>
+        <div class="meso-stat"><div class="ms-lbl">Run Intensity</div><div class="ms-val">Easy only — RPE 3-4 all runs Meso 2</div></div>
+        <div class="meso-stat"><div class="ms-lbl">Key Cue</div><div class="ms-val">Feel glute push-off every stride</div></div>
+        <div class="meso-stat"><div class="ms-lbl">Cadence</div><div class="ms-val">170-175 spm from first run back</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="al a"><div class="al-i">&#9888;</div><div><strong>Running Re-introduction Protocol:</strong> First run back is 20-30 min easy on flat terrain only. Assess lateral knee pain during and 24hrs after. If VAS increases above 2: return to cross training for another week. If VAS stays 0-1: continue building. All Meso 2 running is easy RPE 3-4. No tempo, no intervals. Cadence cued at 170+ spm to reduce quad loading per stride. Running style cue: "push the ground away behind you" (glute focus) not "lift the knee" (quad/TFL focus).</div></div>
+  <div class="sub">Meso 2 Strength — Loaded Single Leg Focus</div>
+  <div class="str-blk">
+    <div class="str-hd"><h4>Meso 2 Strength — Progressive Loading, Glute-Dominant</h4><span>Weeks 5-8 · 2 Sessions/Week</span></div>
+    <div class="str-body">
+      <span class="ssl g">Main Lifts (progressed from Meso 1)</span>
+      <div class="exhd"><div>Exercise</div><div>Sets x Reps</div><div>Tempo</div><div>Coaching Note</div></div>
+      <div class="exr"><div><div class="exn">Romanian Deadlift — add load progressively <span class="bdg b">Main lift</span></div></div><div class="exs">3 x 10</div><div class="ext">3-1-1</div><div class="exno">Start 8-12 kg DBs. Increase when form clean and L glute felt. P3+: single leg RDL. Hip hinge. Bar close to legs. Feel L glute specifically.</div></div>
+      <div class="exr"><div><div class="exn">Hip Thrust — loaded <span class="bdg b">Main lift</span></div></div><div class="exs">3 x 12</div><div class="ext">2-2-1</div><div class="exno">Add load this meso. Upper back on bench. Drive through heels. Full extension. Squeeze L glute at top — compare to R. Does not load TFL.</div></div>
+      <div class="exr"><div><div class="exn">Split Squat — bodyweight then light load <span class="bdg a">Progress from Meso 1 holds</span></div><div class="exm">L: watch for quad dominance. Cue: heel drive, forward lean.</div></div><div class="exs">3 x 8-10/side</div><div class="ext">3-1-1</div><div class="exno">Meso 1: static holds. Meso 2: full reps. Add weight only when L glute is felt driving. If quad dominant on L: return to slower tempo and reduce load.</div></div>
+      <div class="exr"><div><div class="exn">Clamshell — add lightest band <span class="bdg t">Progressed</span></div></div><div class="exs">3 x 15/side</div><div class="ext">2-1-2</div><div class="exno">First use of band. Lightest available. Hip below 45 degrees. L glute med must be felt. If TFL fires: remove band, return to unloaded.</div></div>
+      <div class="exr"><div><div class="exn">Standing hip abduction — light load <span class="bdg g">Glute med cue</span></div></div><div class="exs">3 x 15/side</div><div class="ext">2-1-2</div><div class="exno">Build load from Meso 1. L: is glute med firing yet? This should be improving week on week. Front-of-hip feeling = reduce immediately.</div></div>
+      <div class="exr"><div><div class="exn">Nordic Hamstring Curl — introduced Meso 2</div></div><div class="exs">2 x 5-6</div><div class="ext">4 sec lower</div><div class="exno">Eccentric focus. Resist the fall. Hamstring protection before running volumes increase. Start very conservatively — this is challenging.</div></div>
+      <div class="exr"><div><div class="exn">SL Calf Raise L — maintain 15 rep target</div></div><div class="exs">4 x 15 L</div><div class="ext">1-0-3</div><div class="exno">Maintain gate target. Building toward 20 reps by Meso 3. Eccentric focus. Step edge. If running causes calf fatigue — monitor and adjust.</div></div>
+    </div>
+  </div>
+  <div class="gate-box">
+    <div class="gate-title">End of Meso 2 — Week 8 Retest Gate Criteria</div>
+    <div class="gate-grid">
+      <div class="gate-item"><div class="gi-test">Glute Bridge Hold L</div><div class="gi-tgt">Need: 55+ sec</div><div class="gi-curr">Meso 1 target: 45 sec</div></div>
+      <div class="gate-item"><div class="gi-test">Split Squat Hold R</div><div class="gi-tgt">Need: 30+ sec</div><div class="gi-curr">Meso 1 target: 20 sec</div></div>
+      <div class="gate-item"><div class="gi-test">SL Calf Raise L</div><div class="gi-tgt">Need: 18-20 reps</div><div class="gi-curr">Meso 1 target: 15 reps</div></div>
+      <div class="gate-item"><div class="gi-test">L Glute Feel During Run</div><div class="gi-tgt">Casey feels glute push-off during easy run</div><div class="gi-curr">Currently: quad dominant running pattern</div></div>
+      <div class="gate-item"><div class="gi-test">Running Lateral Knee VAS</div><div class="gi-tgt">0-2/10 during running</div><div class="gi-curr">Baseline: pain on walking</div></div>
+      <div class="gate-item"><div class="gi-test">Split squat full reps L</div><div class="gi-tgt">3 x 10 with 6-8 kg — L glute felt</div><div class="gi-curr">Meso 1: bodyweight holds only</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MESO 3 ═══ -->
+<div
+</div>
+
+<div id="page-meso3" class="page">
+id="meso3" class="pnl">
+  <div class="meso">
+    <div class="meso-hd m3">
+      <div><div class="meso-title">Meso 3 — Development</div><div class="meso-sub">Weeks 9-13 · Tempo + Long Run Build · Power Endurance Strength</div></div>
+      <div class="meso-pills"><span class="pill">Running primary</span><span class="pill">46-65 km/week</span><span class="pill">Tempo introduced</span><span class="pill">Maintenance calories</span><span class="pill">Retest Wk 12</span></div>
+    </div>
+    <div class="meso-body">
+      <div class="meso-grid">
+        <div class="meso-stat"><div class="ms-lbl">Weekly km</div><div class="ms-val">46 → 65 km</div></div>
+        <div class="meso-stat"><div class="ms-lbl">Long Run Peak</div><div class="ms-val">32 km (week 13)</div></div>
+        <div class="meso-stat"><div class="ms-lbl">Key Sessions</div><div class="ms-val">Tempo runs + 800m intervals</div></div>
+        <div class="meso-stat"><div class="ms-lbl">Tempo Pace</div><div class="ms-val">5:15-5:25/km</div></div>
+        <div class="meso-stat"><div class="ms-lbl">Strength</div><div class="ms-val">Power endurance — heavier compound</div></div>
+        <div class="meso-stat"><div class="ms-lbl">Nutrition</div><div class="ms-val">Maintenance — no deficit</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="al g"><div class="al-i">&#9654;</div><div><strong>Meso 3 Shift:</strong> Running is now the primary training stimulus. Glute med should be firing reliably by this point (confirmed at Meso 2 retest). Strength shifts from neurological re-education to power endurance — heavier loads, lower reps, plyometric elements introduced. First tempo runs are short (25-30 min) and built carefully. Long runs now carry gel practice from week 9. L knee monitored carefully as mileage rises — ice after every long run &gt;20 km.</div></div>
+  <div class="sub">Meso 3 Strength — Power Endurance</div>
+  <div class="str-blk">
+    <div class="str-hd"><h4>Meso 3 Strength — Power Endurance + Running-Specific</h4><span>Weeks 9-13 · 2 sessions → 1 session by wk 13</span></div>
+    <div class="str-body">
+      <span class="ssl g">Main Lifts — Heavier, Lower Reps</span>
+      <div class="exhd"><div>Exercise</div><div>Sets x Reps</div><div>Tempo</div><div>Coaching Note</div></div>
+      <div class="exr"><div><div class="exn">Single Leg RDL — loaded <span class="bdg b">Main lift</span></div></div><div class="exs">3 x 8/side</div><div class="ext">3-1-1</div><div class="exno">Progressed from bilateral RDL. 10-14 kg DBs. L glute must drive the hip extension. Note any L vs R load difference — adjust if significant asymmetry remains.</div></div>
+      <div class="exr"><div><div class="exn">Bulgarian Split Squat — loaded</div></div><div class="exs">3 x 8/side</div><div class="ext">3-1-1</div><div class="exno">Rear foot elevated. Drive through front heel. L: watch for quad dominance still. R: watch for hip drop/adduction. Both legs challenge hip stability in running-specific range.</div></div>
+      <div class="exr"><div><div class="exn">Hip Thrust — heavy <span class="bdg b">Main lift</span></div></div><div class="exs">3 x 10</div><div class="ext">2-1-1</div><div class="exno">Barbell or heavy DBs. Full hip extension. Glute drive. Compare L vs R power output.</div></div>
+      <div class="exr"><div><div class="exn">Nordic Hamstring Curl — build volume</div></div><div class="exs">3 x 6-8</div><div class="ext">4 sec lower</div><div class="exno">Build from Meso 2. Key for hamstring protection at race pace. Eccentric strength is the goal.</div></div>
+      <div class="exr"><div><div class="exn">SL Calf Raise L — target 20+ reps</div></div><div class="exs">3 x 20 L / 3x20 R</div><div class="ext">1-0-3</div><div class="exno">Maintaining and building. If L hits 20 consistently: add small load (hold DB) or progress to weighted calf raise.</div></div>
+      <div class="exr"><div><div class="exn">Lateral step-down — eccentric, increase height</div></div><div class="exs">3 x 10/side</div><div class="ext">3 sec</div><div class="exno">Increase step height to 20-25 cm. Hip must stay level. Glute med controls the descent. This directly mimics single leg loading during running stance phase.</div></div>
+      <span class="ssl p">Plyometric Intro — Week 10+</span>
+      <div class="exhd"><div>Exercise</div><div>Sets x Reps</div><div>Tempo</div><div>Coaching Note</div></div>
+      <div class="exr"><div><div class="exn">Single leg hop — L focus</div><div class="exm">Only if lateral knee VAS 0-1. Remove if pain increases.</div></div><div class="exs">3 x 6/side</div><div class="ext">Land soft</div><div class="exno">Short hop, soft landing. L: land in glute-dominant position — not quad slam. Cue: "land tall, push through heel." Monitor knee. Plyometrics help develop running power and tissue resilience.</div></div>
+      <div class="exr"><div><div class="exn">Bounding — straight line</div></div><div class="exs">4 x 20m</div><div class="ext">Explosive</div><div class="exno">Exaggerated running stride. Feel glute drive at push-off. Low volume. Great for running economy and glute power carryover to running gait.</div></div>
+    </div>
+  </div>
+  <div class="gate-box">
+    <div class="gate-title">End of Meso 3 — Week 12 Retest Gate Criteria</div>
+    <div class="gate-grid">
+      <div class="gate-item"><div class="gi-test">SL Calf Raise L</div><div class="gi-tgt">Need: 20+ reps</div><div class="gi-curr">Meso 2 target: 18-20 reps</div></div>
+      <div class="gate-item"><div class="gi-test">Split Squat Hold R</div><div class="gi-tgt">Need: 40+ sec</div><div class="gi-curr">Meso 2 target: 30 sec</div></div>
+      <div class="gate-item"><div class="gi-test">Running VAS L knee</div><div class="gi-tgt">0-2/10 at 30+ km long run</div><div class="gi-curr">Meso 2: 0-2 at easy runs</div></div>
+      <div class="gate-item"><div class="gi-test">Bulgarian split squat</div><div class="gi-tgt">3x8 at 10+ kg, L glute felt</div><div class="gi-curr">Meso 2: basic split squat loaded</div></div>
+      <div class="gate-item"><div class="gi-test">L side plank</div><div class="gi-tgt">Attempt full L side plank pain-free</div><div class="gi-curr">Excluded since Meso 1</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MESO 4 ═══ -->
+<div
+</div>
+
+<div id="page-meso4" class="page">
+id="meso4" class="pnl">
+  <div class="meso">
+    <div class="meso-hd m4">
+      <div><div class="meso-title">Meso 4 — Peak</div><div class="meso-sub">Weeks 14-17 · Maximum Mileage · Race-Pace Specificity</div></div>
+      <div class="meso-pills"><span class="pill">66-72 km/week</span><span class="pill">MP training</span><span class="pill">Strength maintenance only</span><span class="pill">Gel practice every LR</span><span class="pill">Retest Wk 17</span></div>
+    </div>
+    <div class="meso-body">
+      <div class="meso-grid">
+        <div class="meso-stat"><div class="ms-lbl">Weekly km</div><div class="ms-val">66 → 72 km (peak wk 16)</div></div>
+        <div class="meso-stat"><div class="ms-lbl">Long Run Peak</div><div class="ms-val">38 km (week 16)</div></div>
+        <div class="meso-stat"><div class="ms-lbl">Key Sessions</div><div class="ms-val">MP tempo: 2x6km, 14km, 16km</div></div>
+        <div class="meso-stat"><div class="ms-lbl">Marathon Pace</div><div class="ms-val"> — 80% of tempo work</div></div>
+        <div class="meso-stat"><div class="ms-lbl">Strength</div><div class="ms-val">Maintenance only — 1 session/week</div></div>
+        <div class="meso-stat"><div class="ms-lbl">Nutrition</div><div class="ms-val">Maintenance + 100 kcal. No deficit.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="al r"><div class="al-i">&#9673;</div><div><strong>Meso 4 Clinical Priority:</strong> L knee must be ice-compressed after every long run. VAS monitored every session. Strength drops to 1 session per week — maintenance only, nothing new. If L knee pain VAS creeps above 3 during any run: reduce mileage 20% that week immediately. This is peak physical stress — injury now would devastate the marathon goal. Protect the knee while building fitness.</div></div>
+  <div class="sub">Meso 4 Sample Week (Peak — Week 15-16)</div>
+  <div class="tw"><table>
+    <thead><tr><th>Day</th><th>Session</th><th>Volume</th><th>Pace / Intensity</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td class="dy">Monday</td><td><span class="tg rs">REST</span> or <span class="tg rh">REHAB</span></td><td>—</td><td>—</td><td>Full rest. Ankle DF + 90/90 drills. Foam roll TFL. Ice L knee if sore.</td></tr>
+      <tr><td class="dy">Tuesday</td><td><span class="tg ez">EASY</span> + <span class="tg st">STRENGTH</span></td><td>10-12 km</td><td>6:30-7:00/km</td><td>Morning easy run. Evening: 1 maintenance strength session. Separate by 4+ hrs.</td></tr>
+      <tr><td class="dy">Wednesday</td><td><span class="tg tm">TEMPO — MP</span></td><td>14-16 km total</td><td> for MP sections</td><td>2 km WU + 2x6km at MP (5 min jog recovery) + 2 km CD. Or 14 km continuous at MP. Key session.</td></tr>
+      <tr><td class="dy">Thursday</td><td><span class="tg ez">EASY</span></td><td>8-10 km</td><td>6:30-7:00/km</td><td>Easy recovery. Mobility in evening. Note L knee response from Wednesday MP run.</td></tr>
+      <tr><td class="dy">Friday</td><td><span class="tg ez">EASY</span> + strides</td><td>10 km</td><td>Easy + 6 strides</td><td>20 sec strides at 5K effort. Full recovery between. Leg prep before long run.</td></tr>
+      <tr><td class="dy">Saturday</td><td><span class="tg wk">LONG RUN</span></td><td>36-38 km</td><td>6:15-6:45/km</td><td>All easy. Gel every 40-45 min from km 14. Final 4 km at MP feel. Ice + compress L knee immediately after.</td></tr>
+      <tr><td class="dy">Sunday</td><td><span class="tg ez">EASY RECOVERY</span></td><td>10-12 km</td><td>7:00+/km</td><td>Very easy. Full foam roll + mobility. Back-to-back long + easy builds fatigue resistance for race day.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="sub">Meso 4 Maintenance Strength Session (1x per week)</div>
+  <div class="str-blk">
+    <div class="str-hd"><h4>Maintenance Session — No New Stimuli</h4><span>Weeks 14-17 · 1 session/week only</span></div>
+    <div class="str-body">
+      <span class="ssl g">Keep it short — 35-40 min total</span>
+      <div class="exhd"><div>Exercise</div><div>Sets x Reps</div><div>Tempo</div><div>Coaching Note</div></div>
+      <div class="exr"><div><div class="exn">SL Glute bridge / Hip thrust</div></div><div class="exs">2 x 10/side</div><div class="ext">2-1-1</div><div class="exno">Maintain. Moderate load. Feel L glute still firing — confirm pattern not regressing under fatigue.</div></div>
+      <div class="exr"><div><div class="exn">SL RDL — light-moderate</div></div><div class="exs">2 x 8/side</div><div class="ext">3-1-1</div><div class="exno">Maintain pattern. No increase in load. Fatigue from running takes priority — this is just maintenance.</div></div>
+      <div class="exr"><div><div class="exn">SL Calf raise L</div></div><div class="exs">3 x 20 L</div><div class="ext">1-0-3</div><div class="exno">Maintain calf strength. Non-negotiable even in peak — ankle stability must be maintained at high mileage.</div></div>
+      <div class="exr"><div><div class="exn">Standing hip abduction — moderate load</div></div><div class="exs">2 x 12/side</div><div class="ext">2-1-2</div><div class="exno">Maintain glute med. Feel L outer glute. TFL management continues throughout peak.</div></div>
+      <div class="exr"><div><div class="exn">Dead bug + Bird dog</div></div><div class="exs">2 x 8/side each</div><div class="ext">Controlled</div><div class="exno">Core maintenance. Pelvic stability during running at 70+ km/week.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MESO 5 TAPER ═══ -->
+<div
+</div>
+
+<div id="page-meso5" class="page">
+id="meso5" class="pnl">
+  <div class="meso">
+    <div class="meso-hd m5">
+      <div><div class="meso-title">Meso 5 — Peak/Taper</div><div class="meso-sub">Weeks 18-20 · Volume Drops · Intensity Maintained · Race Day</div></div>
+      <div class="meso-pills"><span class="pill">Vol -40% wk 18</span><span class="pill">Vol -60% wk 19</span><span class="pill">Carb load wk 20</span><span class="pill">No strength</span><span class="pill">Trust the work</span></div>
+    </div>
+    <div class="meso-body">
+      <div class="meso-grid">
+        <div class="meso-stat"><div class="ms-lbl">Week 18 Volume</div><div class="ms-val">42 km — with 10 km MP run</div></div>
+        <div class="meso-stat"><div class="ms-lbl">Week 19 Volume</div><div class="ms-val">26 km — with 5 km MP + strides</div></div>
+        <div class="meso-stat"><div class="ms-lbl">Race Week Vol</div><div class="ms-val">10 km total incl race</div></div>
+        <div class="meso-stat"><div class="ms-lbl">Strength</div><div class="ms-val">None weeks 19-20. Short session wk 18 only.</div></div>
+        <div class="meso-stat"><div class="ms-lbl">Key Rule</div><div class="ms-val">Intensity maintained. Volume slashed.</div></div>
+        <div class="meso-stat"><div class="ms-lbl">Nutrition wk 20</div><div class="ms-val">8-10g carb/kg day before race</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="al b"><div class="al-i">&#9651;</div><div><strong>Taper mindset:</strong> Casey will feel terrible during taper. Heavy legs, anxiety, taper madness. This is completely normal and means the training has worked. Do NOT add extra training sessions. Do NOT test anything new. Legs will feel fresh on race morning — not during taper. Trust the process entirely.</div></div>
+  <div class="sub">Taper Week Breakdown</div>
+  <div class="tw"><table>
+    <thead><tr><th>Day</th><th>Week 18</th><th>Week 19</th><th>Race Week (Wk 20)</th></tr></thead>
+    <tbody>
+      <tr><td class="dy">Monday</td><td>Rest + mobility</td><td>Rest + mobility</td><td>Rest. Walk 20 min. Stay off feet.</td></tr>
+      <tr><td class="dy">Tuesday</td><td>Easy 10 km + short strength</td><td>Easy 8 km</td><td>Easy 20 min jog. Shake out.</td></tr>
+      <tr><td class="dy">Wednesday</td><td>10 km MP run ()</td><td>5 km @ MP + 4 strides</td><td>10 min easy jog + strides. Race prep.</td></tr>
+      <tr><td class="dy">Thursday</td><td>Easy 8 km</td><td>Easy 6 km</td><td>Rest. Feet up. Race kit laid out.</td></tr>
+      <tr><td class="dy">Friday</td><td>Easy 8 km</td><td>Easy 4 km</td><td>Rest. Carb-load dinner. Bed early.</td></tr>
+      <tr><td class="dy">Saturday</td><td>Long run — 20 km easy</td><td>Easy 6 km</td><td>RACE DAY — NY MARATHON</td></tr>
+      <tr><td class="dy">Sunday</td><td>Easy 6 km</td><td>Rest</td><td>Recovery. Celebrate.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="sub">Race Week Nutrition Protocol</div>
+  <div class="cg">
+    <div class="card lb"><span class="bdg b">3 Days Out — Mon/Tue/Wed</span><h4>Maintenance + Carb Increase</h4><p>Gradually increase carbs. Reduce fat and fibre. 60-65% carbs. Keep protein at 130g. Stay hydrated. No new foods.</p></div>
+    <div class="card la"><span class="bdg a">Day Before — Friday</span><h4>Full Carb Load</h4><p>8-10g carbs/kg bodyweight (~520-650g). Plain pasta, rice, banana, honey. No cream, no alcohol, no high-fat. Dinner at 6pm. Bed by 9:30pm. Sleep is the priority.</p></div>
+    <div class="card lg"><span class="bdg g">Race Morning — 3 hrs out</span><h4>Pre-Race Meal</h4><p>Porridge + banana + honey + coffee. ~2-3g carb/kg bodyweight. 500ml water over 2 hrs. 1 gel 45 min before gun. Practised in training from week 9.</p></div>
+    <div class="card lr"><span class="bdg r">During Race</span><h4>5-Gel Strategy</h4><p>Gel at km 10, 20, 27, 32, 37. Always with water. Never on an empty stomach. 500ml water/hour minimum. Electrolyte tab every hour. Same brands Casey has trained with.</p></div>
+  </div>
+</div>
+
+<!-- ═══ NUTRITION ═══ -->
+<div
+</div>
+
 <div id="page-nutrition" class="page">
-  <div class="topbar"><div class="page-title">Nutrition <span>Plan</span></div></div>
-  <div id="nut-content"></div>
+id="nutrition" class="pnl">
+  <div class="sec g">Nutrition — Full Programme</div>
+  <div class="al a"><div class="al-i">&#9881;</div><div><strong>Dual Goal Strategy:</strong> 73 kg → 65-70 kg AND sub-4:00 marathon. These are compatible with phased approach: caloric deficit P1-P2 when intensity is low, transition to maintenance from Meso 3 when mileage demands it. Never deficit in peak mileage weeks. Performance before aesthetics from week 9 onwards.</div></div>
+  <div class="sub">Phased Caloric Targets</div>
+  <div class="cg">
+    <div class="card lb"><span class="bdg b">Meso 1-2 · Weeks 1-8</span><h4>Moderate Deficit</h4><p>~1,900-2,100 kcal/day. Deficit -250-300 kcal. Cardio energy expenditure is lower (walking vs running) so deficit is sustainable. Target 0.2-0.3 kg/week loss.</p></div>
+    <div class="card la"><span class="bdg a">Meso 3 · Weeks 9-13</span><h4>Maintenance</h4><p>~2,300-2,500 kcal. Weight may plateau — this is correct. Running mileage increases energy demand significantly. Trying to deficit at 50+ km/week risks injury and hormonal disruption.</p></div>
+    <div class="card lr"><span class="bdg r">Meso 4 · Weeks 14-17</span><h4>Performance +100</h4><p>~2,400-2,600 kcal. Small surplus. Highest mileage in programme. Fuel the adaptation. Weight is irrelevant during peak. Performance is everything.</p></div>
+    <div class="card lg"><span class="bdg g">Meso 5 · Weeks 18-20</span><h4>Taper + Carb Load</h4><p>Wk 18-19: maintenance. Race week: structured carb load. Day before race: 8-10g carb/kg (~520-650g). Race morning: 2-3g carb/kg. Race-day nutrition is performance nutrition.</p></div>
+  </div>
+  <div class="sub">Macro Targets by Phase</div>
+  <div class="prog-wrap">
+    <div class="prog-lbl">Meso 1-2 · Deficit (~1,950 kcal) · Protein 1.8-2.0g/kg</div>
+    <div class="prog-bar"><div class="bc" style="width:50%">50% Carb · 244g</div><div class="bp" style="width:28%">28% Protein · 137g</div><div class="bf" style="width:22%">22% Fat · 48g</div></div>
+    <div class="prog-lbl">Meso 3-4 · Performance (~2,450 kcal) · Protein 2.0-2.2g/kg</div>
+    <div class="prog-bar"><div class="bc" style="width:55%">55% Carb · 337g</div><div class="bp" style="width:25%">25% Protein · 153g</div><div class="bf" style="width:20%">20% Fat · 54g</div></div>
+    <div class="prog-lbl">Race Week (~2,600 kcal) · Carb load</div>
+    <div class="prog-bar"><div class="bc" style="width:65%">65% Carb · 423g</div><div class="bp" style="width:20%">20% Protein · 130g</div><div class="bf" style="width:15%">15% Fat · 43g</div></div>
+  </div>
+  <div class="sub">Protein Priority — All Phases</div>
+  <div class="cg">
+    <div class="card lr"><span class="bdg r">Target</span><h4>1.8-2.2g/kg bodyweight</h4><p>~131-161g/day at 73kg. Distribute across 4-5 meals. High protein preserves muscle during caloric deficit and supports tissue repair — critical given TFL/ITB injury history.</p></div>
+    <div class="card lg"><span class="bdg g">Timing</span><h4>Post-Session Priority</h4><p>30-40g protein within 45 min of any session &gt;60 min. Pre-bed protein (casein/Greek yogurt) for overnight muscle protein synthesis. Every meal should contain a protein source.</p></div>
+    <div class="card la"><span class="bdg a">Iron</span><h4>Female Runner Priority</h4><p>High mileage increases iron demand. Red meat 2x/wk or lentils/spinach daily. Vitamin C with non-haem iron sources. Ferritin blood test recommended week 8. Low ferritin = fatigue and poor adaptation.</p></div>
+    <div class="card lb"><span class="bdg b">Hydration</span><h4>2.5-3.5L/day</h4><p>Pale yellow urine = adequate. Add 500ml per hour of training. Electrolyte tab post any session &gt;60 min. Salt food to taste during high mileage weeks. Tart cherry juice before bed — supports recovery.</p></div>
+  </div>
+  <div class="sub">Evidence-Based Supplements</div>
+  <div class="tw"><table>
+    <thead><tr><th>Supplement</th><th>Dose</th><th>Timing</th><th>Evidence</th><th>Why for Casey specifically</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Vitamin D3</strong></td><td>2,000 IU/day</td><td>Morning</td><td><span class="bdg g">Strong</span></td><td>Bone density, immune function. Essential for high mileage runners esp. Oct-Apr.</td></tr>
+      <tr><td><strong>Omega-3 EPA+DHA</strong></td><td>1-2g/day</td><td>With food</td><td><span class="bdg g">Strong</span></td><td>Anti-inflammatory — directly relevant to active ITB irritation and TFL management throughout training.</td></tr>
+      <tr><td><strong>Magnesium glycinate</strong></td><td>300 mg</td><td>Before bed</td><td><span class="bdg a">Moderate</span></td><td>Sleep quality + muscle recovery. Critical during high training stress. Neuromuscular function.</td></tr>
+      <tr><td><strong>Collagen + Vit C</strong></td><td>15g + 50mg Vit C</td><td>Pre-training</td><td><span class="bdg a">Moderate</span></td><td>Tendon and connective tissue repair. Priority given ITB irritation and history of lateral knee load.</td></tr>
+      <tr><td><strong>Beetroot / nitrate</strong></td><td>400mg nitrate</td><td>3 hrs before key run</td><td><span class="bdg g">Good</span></td><td>VO2 efficiency. Introduce in Meso 3 for tempo and long runs. Race week mandatory.</td></tr>
+      <tr><td><strong>Caffeine</strong></td><td>3-6 mg/kg</td><td>45 min pre-race</td><td><span class="bdg g">Strong</span></td><td>Ergogenic. Practise in long runs from Meso 3. Same dose race day. Avoid if anxiety-prone.</td></tr>
+      <tr><td><strong>Creatine</strong></td><td>5g/day</td><td>Anytime</td><td><span class="bdg g">Strong</span></td><td>Meso 1-2 strength phases only. Supports lean muscle development during rehab and early loading phases.</td></tr>
+    </tbody>
+  </table></div>
 </div>
 
-<!-- EDITOR -->
-<div id="page-editor" class="page">
+<!-- ═══ RACE STRATEGY ═══ -->
+<div
+</div>
+
+<div id="page-race" class="page">
+id="race" class="pnl">
+  <div class="sec a">Race Strategy — Weight Loss Programme</div>
+  <div class="al g"><div class="al-i">&#9733;</div><div><strong>Sub-4:00 Plan:</strong> Target  (8:40/mile). NY is hilly — Verrazano, Queensboro, rolling hills throughout. Run the first half at 5:45-5:50/km (conservative). Bank time from km 30+ when others fade. Most sub-4 fails happen in Brooklyn from going out too fast. Casey's strength work on glute stability will pay off on Queensboro hill — she will hold form when others break down.</div></div>
+  <div class="sub">Kilometre-by-Kilometre Pacing</div>
+  <div class="tw"><table>
+    <thead><tr><th>Segment</th><th>Distance</th><th>Target Pace</th><th>Effort</th><th>Tactical Note</th></tr></thead>
+    <tbody>
+      <tr><td class="dy">Staten Island</td><td>km 0-5</td><td>5:50-6:00/km</td><td>Easy RPE 4</td><td>Busy, crowded. Run YOUR race. Verrazano uphill — shorten stride, relax. Ignore crowd pace entirely.</td></tr>
+      <tr><td class="dy">Brooklyn</td><td>km 5-20</td><td>5:43-5:48/km</td><td>Controlled RPE 5</td><td>Best crowd support. Biggest rookie error is going too fast here. Keep lid on. Should feel genuinely easy.</td></tr>
+      <tr><td class="dy">Queensboro Bridge</td><td>km ~25</td><td>6:00-6:10/km</td><td>Manage RPE 5</td><td>Biggest hill. Silence on bridge. Don't panic at slower splits. Casey's hip/glute stability work will hold form here.</td></tr>
+      <tr><td class="dy">1st Avenue</td><td>km 25-32</td><td>5:41-5:46/km</td><td>MP RPE 6-7</td><td>Massive crowd energy. Feed off it — don't race it. Stay disciplined. Gel at km 27.</td></tr>
+      <tr class="flag"><td class="dy">The Bronx</td><td>km 32-36</td><td></td><td>MP RPE 7</td><td>Glycogen depletion zone. Gel at km 32 + 36 mandatory. Expect it to be hard. Trust the programme. This is where all the training lands.</td></tr>
+      <tr class="race"><td>Central Park</td><td>km 36-42.2</td><td>5:35-</td><td>Race it RPE 8+</td><td>Final hill km 40 then downhill. If feeling good — go. Empty the tank after km 41. Cross that line.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="sub">Race Day Nutrition</div>
+  <div class="tw"><table>
+    <thead><tr><th>Timing</th><th>What</th><th>Amount</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td class="dy">Night before — 6pm</td><td>Carb-load dinner</td><td>300g pasta cooked</td><td>Plain tomato sauce only. No cream, fat, alcohol. Bed by 9:30pm.</td></tr>
+      <tr><td class="dy">Race morning — 3hrs out</td><td>Breakfast</td><td>2-3g carb/kg bw</td><td>Porridge + banana + honey + strong coffee. 500ml water. Practised since Meso 3.</td></tr>
+      <tr><td class="dy">60 min before gun</td><td>Top-up</td><td>1 gel or banana</td><td>Sip water only after this. No more solid food. Bag drop done.</td></tr>
+      <tr><td class="dy">km 10</td><td>Gel 1</td><td>1 x 25g carb gel</td><td>With water at station. Never gel without water.</td></tr>
+      <tr><td class="dy">km 20</td><td>Gel 2</td><td>1 x 25g carb gel</td><td>With water. Brooklyn station.</td></tr>
+      <tr><td class="dy">km 27</td><td>Gel 3</td><td>1 x 25g carb gel</td><td>Before Queensboro. Critical timing.</td></tr>
+      <tr class="flag"><td class="dy">km 32</td><td>Gel 4</td><td>1 x 25g carb gel</td><td>Wall zone. Non-negotiable. Backup gel in pocket.</td></tr>
+      <tr class="flag"><td class="dy">km 37</td><td>Gel 5</td><td>1 x 25g carb gel</td><td>Central Park approach. Last push fuel.</td></tr>
+      <tr style="background:#e6f4ed"><td class="dy">Post-race within 30min</td><td>Recovery</td><td>Chocolate milk + banana</td><td>Full meal within 2hrs. No alcohol 48hrs. Compression socks. Celebrate.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="sub">If Lateral Knee Flares During Race</div>
+  <div class="cg">
+    <div class="card lr"><h4>Immediate Response</h4><p>Shorten stride. Increase cadence to 175+. Do not compensate with hip hike — this will worsen TFL load. Lean forward slightly from the hip.</p></div>
+    <div class="card la"><h4>If Pain Reaches 5+/10</h4><p>Brief stop. 30-60 sec TFL stretch. Reassess. Is it getting worse with running or manageable? Make the call: finish smart or protect long-term health.</p></div>
+    <div class="card lg"><h4>What 20 Weeks Builds</h4><p>Casey's glute med strength and hip stability work means her running mechanics will be significantly better than pre-programme. This is her insurance policy against race-day ITB flare.</p></div>
+  </div>
+</div>
+
+
+id="page-editor" class="page">
   <div class="topbar">
     <div>
       <div class="page-title">Programme <span>Editor</span></div>
@@ -369,11 +1103,25 @@ body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);f
   </div>
 </div>
 
+
+<!-- STRAVA DETAIL MODAL -->
+<div class="mov" id="modal-strava-detail">
+  <div class="modal">
+    <div class="modal-hd">
+      <h3 id="strava-detail-title">Activity Detail</h3>
+      <button class="mx" onclick="closeM('modal-strava-detail')">×</button>
+    </div>
+    <div class="modal-body" id="strava-detail-body"></div>
+  </div>
+</div>
+
 <div class="toasts" id="toasts"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="strava.js"></script>
 <script src="app.js"></script>
 <script>
+
 // ── INIT ──────────────────────────────────────────────────────────────────────
 (async () => {
   APP.init();
@@ -388,6 +1136,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);f
   }
   APP.loadProg(); APP.loadCompletion();
   renderAll();
+  renderStravaSection();
+  // Handle redirect back from Strava OAuth
+  if (window.location.search.includes('strava=connected')) {
+    APP.toast('Strava connected successfully! Syncing activities…', 'success');
+    history.replaceState({}, '', window.location.pathname);
+    setTimeout(() => syncStrava(), 500);
+  }
 })();
 
 function renderAll() {
@@ -907,6 +1662,30 @@ function saveBlock() {
 function openM(id) { document.getElementById(id).classList.add('open'); }
 function closeM(id) { document.getElementById(id).classList.remove('open'); }
 document.querySelectorAll('.mov').forEach(m => m.addEventListener('click', e => { if(e.target===m) m.classList.remove('open'); }));
+
+
+// Programme page nav — handles both tracker .page and programme content
+function showProgrammePage(id) {
+  nav(id);
+}
+
+// Old "show" function used by internal programme links
+function show(id, btn) {
+  nav(id);
+}
+
+// Patch nav to also handle programme content pages
+const _baseNav = window.nav;
+window.nav = function(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.ni').forEach(n => n.classList.remove('on'));
+  const p = document.getElementById('page-' + id);
+  if (p) p.classList.add('on');
+  document.querySelectorAll('.ni').forEach(n => {
+    if ((n.getAttribute('onclick')||'').includes("'" + id + "'")) n.classList.add('on');
+  });
+  window.scrollTo(0,0);
+};
 </script>
 </body>
 </html>
