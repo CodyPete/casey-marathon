@@ -334,13 +334,15 @@ tr.flag td{background:#fde8e6!important}
 .ftr{background:var(--cream);border-top:1px solid var(--border);padding:20px 44px;font-size:11.5px;color:var(--muted);text-align:center;line-height:1.7}
 @media(max-width:680px){.hero{padding:32px 18px 26px}.pnl{padding:20px 14px 46px}.exr,.exhd{grid-template-columns:1fr 76px}.ext{display:none}.ftr{padding:16px}}
 
-/* Extra unified styles */
-.pnl { display: none; }
-.pnl.on { display: block; }
+
+/* Unified page system */
+.page { display: none !important; }
+.page.on { display: block !important; }
 </style>
 </head>
 <body>
 <div class="app">
+
 <aside class="sb">
   <div class="sb-logo">
     <div class="sb-logo-name">Casey<br>Training</div>
@@ -352,28 +354,30 @@ tr.flag td{background:#fde8e6!important}
   </div>
   <nav class="sb-nav">
     <div class="nav-sec">Today</div>
-    <div class="ni on" onclick="nav('dashboard')"><span class="ic">◈</span> Dashboard</div>
-    <div class="ni" onclick="nav('cardio')"><span class="ic">♥</span> Cardio Workouts</div>
-    <div class="ni" onclick="nav('strength')"><span class="ic">◉</span> Strength Sessions</div>
-    <div class="ni" onclick="nav('rehab')"><span class="ic">✓</span> Rehab Checklist</div>
+    <div class="ni on" onclick="navTo('dashboard')"><span class="ic">◈</span> Dashboard</div>
+    <div class="ni" onclick="navTo('cardio')"><span class="ic">♥</span> Cardio Workouts</div>
+    <div class="ni" onclick="navTo('strength')"><span class="ic">◉</span> Strength Sessions</div>
+    <div class="ni" onclick="navTo('rehab')"><span class="ic">✓</span> Rehab Checklist</div>
     <div class="nav-sec">Full Programme</div>
-    <div class="ni" onclick="nav('assess')"><span class="ic">◎</span> Assessment</div>
-    <div class="ni" onclick="nav('macro')"><span class="ic">▦</span> Macro Overview</div>
-    <div class="ni" onclick="nav('meso1')"><span class="ic">①</span> Meso 1 — Foundation</div>
-    <div class="ni" onclick="nav('meso2')"><span class="ic">②</span> Meso 2 — Base Build</div>
-    <div class="ni" onclick="nav('meso3')"><span class="ic">③</span> Meso 3 — Development</div>
-    <div class="ni" onclick="nav('meso4')"><span class="ic">④</span> Meso 4 — Peak</div>
-    <div class="ni" onclick="nav('meso5')"><span class="ic">⑤</span> Meso 5 — Taper</div>
-    <div class="ni" onclick="nav('nutrition')"><span class="ic">◑</span> Nutrition Plan</div>
-    <div class="ni" onclick="nav('race')"><span class="ic">★</span> Goals &amp; Strategy</div>
+    <div class="ni" onclick="navTo('assess')"><span class="ic">◎</span> Assessment</div>
+    <div class="ni" onclick="navTo('macro')"><span class="ic">▦</span> Macro Overview</div>
+    <div class="ni" onclick="navTo('meso1')"><span class="ic">①</span> Meso 1 — Foundation</div>
+    <div class="ni" onclick="navTo('meso2')"><span class="ic">②</span> Meso 2 — Base Build</div>
+    <div class="ni" onclick="navTo('meso3')"><span class="ic">③</span> Meso 3 — Development</div>
+    <div class="ni" onclick="navTo('meso4')"><span class="ic">④</span> Meso 4 — Peak</div>
+    <div class="ni" onclick="navTo('meso5')"><span class="ic">⑤</span> Meso 5 — Taper</div>
+    <div class="ni" onclick="navTo('nutrition')"><span class="ic">◑</span> Nutrition Plan</div>
+    <div class="ni" onclick="navTo('race')"><span class="ic">★</span> Goals &amp; Strategy</div>
     <div class="nav-sec" id="coach-sec" style="display:none">Coach</div>
-    <div class="ni" id="editor-link" style="display:none" onclick="nav('editor')"><span class="ic">✎</span> Programme Editor</div>
+    <div class="ni" id="editor-link" style="display:none" onclick="navTo('editor')"><span class="ic">✎</span> Programme Editor</div>
   </nav>
   <div class="sb-foot"><button class="btn-out" onclick="APP.logout()">Sign Out</button></div>
 </aside>
+
 <main class="main">
 
-id="page-dashboard" class="page on">
+<!-- ═══ DASHBOARD ═══ -->
+<div id="page-dashboard" class="page on">
   <div class="topbar">
     <div>
       <div class="page-title">Dashboard</div>
@@ -386,40 +390,35 @@ id="page-dashboard" class="page on">
     <div class="stat g"><div class="stat-lbl">Cardio This Week</div><div class="stat-val" id="st-cardio">—</div><div class="stat-sub">of 3 sessions</div></div>
     <div class="stat r"><div class="stat-lbl">Strength This Week</div><div class="stat-val" id="st-str">—</div><div class="stat-sub">of 2 sessions</div></div>
     <div class="stat a"><div class="stat-lbl">Rehab Today</div><div class="stat-val" id="st-rehab">—</div><div class="stat-sub" id="st-rehab-sub">items</div></div>
-    <div class="stat p"><div class="stat-lbl">HRmax (Tanaka)</div><div class="stat-val">182</div><div class="stat-sub">Age 37 female</div></div>
+    <div class="stat p"><div class="stat-lbl">HRmax (Tanaka)</div><div class="stat-val">182</div><div class="stat-sub">Age 37 · VO2max 41</div></div>
   </div>
-  <div class="sec">Today's Programme</div>
+  <div class="sec">Today's Sessions</div>
   <div id="dash-today"></div>
-  <div class="sec" style="margin-top:20px">Client Profile</div>
+  <div class="sec" style="margin-top:20px">Client Overview</div>
   <div class="cg">
-    <div class="card lr"><h4>Goal</h4><ul><li>Weight: 73kg → 65-70kg</li><li>Rate: 0.3-0.5 kg/week</li><li>Deficit: 300-500 kcal/day</li><li>VO2max 41 — good base for Norwegian</li><li>Protein priority: 1.8-2.2g/kg</li></ul></div>
+    <div class="card lr"><h4>Goal</h4><ul><li>Weight: 73kg → 65-70kg</li><li>Rate: 0.3-0.5 kg/week</li><li>Deficit: 300-400 kcal/day</li><li>VO2max 41 — solid base for Norwegian protocol</li></ul></div>
     <div class="card lg"><h4>HR Zones (HRmax 182)</h4><ul><li>Z1 Recovery: &lt;100 bpm</li><li>Z2 Fat Burn: 100-118 bpm</li><li>Z3 Aerobic: 118-136 bpm</li><li>Z4 Threshold: 136-155 bpm</li><li>Z5 Norwegian: 155-173 bpm</li></ul></div>
-    <div class="card la"><h4>Meso 1 Cardio</h4><ul><li>Day 1+2: 10min walk + 60min 8% 5.5kph</li><li>Day 3: 10min warmup + 5×(2min 50rpm / 2min 20rpm)</li><li>Walk target: Z2 (100-118 bpm)</li><li>Bike work: Z5 (155-164 bpm)</li></ul></div>
-    <div class="card lb"><h4>Strength: 2×/week with Coach</h4><ul><li>Session A: Lower body + posterior chain</li><li>Session B: Upper body + single leg</li><li>RPE 6-7 Meso 1 → 7-8 Meso 2</li><li>Supersets, tri-sets, giant sets</li></ul></div>
+    <div class="card la"><h4>Meso 1 Cardio (Weeks 1-4)</h4><ul><li>Day 1+2: 10min warmup + 60min 8% incline 5.5kph</li><li>Day 3: 10min warmup + 5×(2min 50rpm / 2min 20rpm)</li><li>Walk Z2 target: 100-118 bpm</li><li>Bike work Z5: 155-164 bpm</li></ul></div>
+    <div class="card lb"><h4>Strength: 2×/week with Coach</h4><ul><li>Session A: Lower body + posterior chain</li><li>Session B: Upper body + single leg</li><li>RPE 6-7 Meso 1 → 7-8 Meso 2+</li><li>Supersets, tri-sets, giant sets supported</li></ul></div>
   </div>
 </div>
 
-<!-- CARDIO -->
-<div
-
-id="page-cardio" class="page">
+<!-- ═══ CARDIO ═══ -->
+<div id="page-cardio" class="page">
   <div class="topbar">
     <div>
       <div class="page-title">Cardio <span>Workouts</span></div>
-      <div style="font-size:12px;color:var(--mut)">Tick each block as you complete it · Log actual values if different from prescribed</div>
+      <div style="font-size:12px;color:var(--mut)">Tick each block · Log actual values if different from prescribed</div>
     </div>
     <div class="acts" id="cardio-acts"></div>
   </div>
-  <!-- STRAVA -->
   <div id="strava-section" style="margin-bottom:20px"></div>
   <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--mut);margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid var(--ink)">Prescribed Sessions</div>
   <div id="cardio-content"></div>
 </div>
 
-<!-- STRENGTH -->
-<div
-
-id="page-strength" class="page">
+<!-- ═══ STRENGTH ═══ -->
+<div id="page-strength" class="page">
   <div class="topbar">
     <div>
       <div class="page-title">Strength <span>Sessions</span></div>
@@ -430,28 +429,23 @@ id="page-strength" class="page">
   <div id="str-content"></div>
 </div>
 
-<!-- REHAB -->
-<div
-
-id="page-rehab" class="page">
+<!-- ═══ REHAB ═══ -->
+<div id="page-rehab" class="page">
   <div class="topbar">
     <div>
       <div class="page-title">Rehab <span>Checklist</span></div>
-      <div style="font-size:12px;color:var(--mut)">Tick each item as you complete it · resets daily</div>
+      <div style="font-size:12px;color:var(--mut)">Tick each item · resets daily</div>
     </div>
     <div class="acts"><button class="btn btn-g btn-sm" onclick="resetRehab()">Reset Today</button></div>
   </div>
-  <div class="al g"><div>Daily routine — 15-20 min. Consistency here is what creates lasting change across mesos.</div></div>
+  <div class="al g"><div>Daily routine — 15-20 min. Do these every day.</div></div>
   <div id="rehab-content"></div>
 </div>
 
-<!-- OVERVIEW -->
-<div
-
-
+<!-- ═══ PROGRAMME CONTENT PAGES ═══ -->
 <div id="page-assess" class="page">
-id="assess" class="pnl on">
-  <div class="sec r">Baseline Assessment — Clinical Findings</div>
+  <div class="topbar"><div class="page-title">Assessment <span>&amp; Baseline</span></div></div>
+  <div class="pnl on" style="padding:0;max-width:none"><div class="sec r">Baseline Assessment — Clinical Findings</div>
 
   <div class="al r"><div class="al-i">⚕</div><div><strong>Clinical Interpretation:</strong> The picture is clear. Left glute medius is neurologically inhibited — not just weak. Casey is quad-dominant on the left because the primary hip stabiliser is not firing. The TFL is overcompensating for absent glute med, causing lateral chain overload and ITB irritation. The right split squat collapse (8s vs 18s left) tells us right hip stability is also compromised but differently — likely global hip stabiliser weakness bilateral with left glute med inhibition as the primary driver. The left calf deficit (10 vs 15) feeds directly into the DF restriction and lateral knee loading pattern. This must be corrected before running loads are introduced.</div></div>
 
@@ -512,16 +506,12 @@ id="assess" class="pnl on">
       <div class="gate-item"><div class="gi-test">Lateral Knee VAS</div><div class="gi-tgt">0-1 at rest and walking</div><div class="gi-curr">Currently: pain present</div></div>
       <div class="gate-item"><div class="gi-test">Ankle DF — L</div><div class="gi-tgt">Knee to wall at 8+ cm</div><div class="gi-curr">Measure and record at baseline</div></div>
     </div>
-  </div>
-</div>
-
-<!-- ═══ MACRO OVERVIEW ═══ -->
-<div
+  </div></div>
 </div>
 
 <div id="page-macro" class="page">
-id="macro" class="pnl">
-  <div class="sec a">Macro Programme — 20 Weeks</div>
+  <div class="topbar"><div class="page-title">Macro <span>Overview</span></div></div>
+  <div class="pnl on" style="padding:0;max-width:none"><div class="sec a">Macro Programme — 20 Weeks</div>
 
   <div class="al t"><div class="al-i">&#9881;</div><div><strong>Programme Architecture:</strong> 5 mesocycles, each gated by retest criteria from the previous block. Meso 1 is rehabilitative — no running, glute neurological re-education, cross-training cardio only. Running begins in Meso 2 only when gate criteria are met. Peak mileage reached in Meso 4. Taper in Meso 5. Every cardio, strength, and nutrition decision is tied to Casey's dual goals: sub-4:00 Weight Loss Programme + 65-70 kg bodyweight.</div></div>
 
@@ -529,7 +519,7 @@ id="macro" class="pnl">
   <div class="tw"><table>
     <thead><tr><th>Meso</th><th>Weeks</th><th>Focus</th><th>Cardio Mode</th><th>Weekly Vol</th><th>Strength Goal</th><th>Nutrition</th><th>Gate</th></tr></thead>
     <tbody>
-      <tr><td class="dy">M1 Foundation</td><td>1-4</td><td>Glute neuro re-ed. Rehab. Cardio base.</td><td>Walk/Cross trainer/Bike</td><td>0 km running</td><td>Neural activation — no load</td><td>-400 kcal deficit</td><td>Retest wk 4</td></tr>
+      <tr><td class="dy">M1 Foundation</td><td>1-4</td><td>Glute neuro re-ed. Rehab. Cardio base.</td><td>Walk/Cross trainer/Bike</td><td>0 km running</td><td>Neural activation — no load</td><td>-300 kcal deficit</td><td>Retest wk 4</td></tr>
       <tr class="gate"><td class="dy">M2 Base Build</td><td>5-8</td><td>Running re-introduction. Glute loading. Hip stability.</td><td>Running re-enters</td><td>30-42 km</td><td>Loaded SL strength</td><td>-250 kcal deficit</td><td>Retest wk 8</td></tr>
       <tr><td class="dy">M3 Development</td><td>9-13</td><td>Tempo, long run build, power endurance.</td><td>Running primary</td><td>46-65 km</td><td>Power endurance</td><td>Maintenance</td><td>Retest wk 12</td></tr>
       <tr class="gate"><td class="dy">M4 Peak</td><td>14-17</td><td>Race-specific. Max mileage. MP training.</td><td>Running only</td><td>68-72 km</td><td>Maintenance only</td><td>Maint. +100</td><td>Retest wk 16</td></tr>
@@ -554,7 +544,7 @@ id="macro" class="pnl">
       <tr><td colspan="8" style="background:var(--cream);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--muted);padding:5px 11px">MESO 3 — DEVELOPMENT</td></tr>
       <tr><td class="dy">9</td><td>M3</td><td>46 km</td><td>23 km</td><td>5 km tempo @ 5:20/km</td><td>Strength C</td><td>Hip abductor under running load</td><td>Maintenance</td></tr>
       <tr><td class="dy">10</td><td>M3</td><td>52 km</td><td>26 km</td><td>6x800m intervals</td><td>Strength C</td><td>SL calf target 20 reps</td><td>Maintenance</td></tr>
-      <tr><td class="dy">11</td><td>M3</td><td>58 km</td><td>29 km</td><td>8 km @ MP ()</td><td>Strength C</td><td>Gel practice starts</td><td>Maint +50</td></tr>
+      <tr><td class="dy">11</td><td>M3</td><td>58 km</td><td>29 km</td><td>8 km @ MP (5:41/km)</td><td>Strength C</td><td>Gel practice starts</td><td>Maint +50</td></tr>
       <tr class="dl"><td class="dy">12↓</td><td>M3</td><td>36 km</td><td>18 km</td><td>Deload — easy only</td><td>Deload</td><td>RETEST WEEK</td><td>Maintenance</td></tr>
       <tr><td class="dy">13</td><td>M3</td><td>62 km</td><td>32 km</td><td>10 km tempo</td><td>Strength C light</td><td>Post-LR ice protocol</td><td>Maint +100</td></tr>
       <tr><td colspan="8" style="background:var(--cream);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--muted);padding:5px 11px">MESO 4 — PEAK</td></tr>
@@ -567,19 +557,14 @@ id="macro" class="pnl">
       <tr><td class="dy">19</td><td>M5</td><td>26 km</td><td>12 km easy</td><td>5 km @ MP + strides</td><td>None</td><td>Race kit prep</td><td>Carb load</td></tr>
       <tr class="race"><td>20</td><td>M5</td><td>Race</td><td>—</td><td>NY MARATHON — Target 3:59:59</td><td>None</td><td>Race day protocol</td><td>Race fuelling</td></tr>
     </tbody>
-  </table></div>
-</div>
-
-<!-- ═══ MESO 1 ═══ -->
-<div
+  </table></div></div>
 </div>
 
 <div id="page-meso1" class="page">
-id="meso1" class="pnl">
-  <div class="meso">
+  <div class="pnl on" style="padding:0;max-width:none"><div class="meso">
     <div class="meso-hd m1">
       <div><div class="meso-title">Meso 1 — Foundation & Rehabilitation</div><div class="meso-sub">Weeks 1-4 · No Running · Glute Neurological Re-Education</div></div>
-      <div class="meso-pills"><span class="pill">No Running</span><span class="pill">Glute Activation Priority</span><span class="pill">-400 kcal deficit</span><span class="pill">Retest Wk 4</span></div>
+      <div class="meso-pills"><span class="pill">No Running</span><span class="pill">Glute Activation Priority</span><span class="pill">-300 kcal deficit</span><span class="pill">Retest Wk 4</span></div>
     </div>
     <div class="meso-body">
       <div class="meso-grid">
@@ -724,16 +709,11 @@ id="meso1" class="pnl">
       <div class="gate-item"><div class="gi-test">Ankle DF L</div><div class="gi-tgt">2+ cm improvement from baseline</div><div class="gi-curr">Measure at start of wk 1</div></div>
     </div>
     <p style="font-size:12px;color:var(--muted);margin-top:10px">If gate criteria NOT met: extend Meso 1 by 1-2 weeks before running loads are introduced. Do not rush this. Running before the glute fires will re-entrench the problem.</p>
-  </div>
-</div>
-
-<!-- ═══ MESO 2 ═══ -->
-<div
+  </div></div>
 </div>
 
 <div id="page-meso2" class="page">
-id="meso2" class="pnl">
-  <div class="meso">
+  <div class="pnl on" style="padding:0;max-width:none"><div class="meso">
     <div class="meso-hd m2">
       <div><div class="meso-title">Meso 2 — Base Build</div><div class="meso-sub">Weeks 5-8 · Running Returns · Glute Loading Under Gait</div></div>
       <div class="meso-pills"><span class="pill">Running Re-enters</span><span class="pill">30-42 km/week</span><span class="pill">Glute loading</span><span class="pill">-250 kcal deficit</span><span class="pill">Retest Wk 8</span></div>
@@ -775,16 +755,11 @@ id="meso2" class="pnl">
       <div class="gate-item"><div class="gi-test">Running Lateral Knee VAS</div><div class="gi-tgt">0-2/10 during running</div><div class="gi-curr">Baseline: pain on walking</div></div>
       <div class="gate-item"><div class="gi-test">Split squat full reps L</div><div class="gi-tgt">3 x 10 with 6-8 kg — L glute felt</div><div class="gi-curr">Meso 1: bodyweight holds only</div></div>
     </div>
-  </div>
-</div>
-
-<!-- ═══ MESO 3 ═══ -->
-<div
+  </div></div>
 </div>
 
 <div id="page-meso3" class="page">
-id="meso3" class="pnl">
-  <div class="meso">
+  <div class="pnl on" style="padding:0;max-width:none"><div class="meso">
     <div class="meso-hd m3">
       <div><div class="meso-title">Meso 3 — Development</div><div class="meso-sub">Weeks 9-13 · Tempo + Long Run Build · Power Endurance Strength</div></div>
       <div class="meso-pills"><span class="pill">Running primary</span><span class="pill">46-65 km/week</span><span class="pill">Tempo introduced</span><span class="pill">Maintenance calories</span><span class="pill">Retest Wk 12</span></div>
@@ -828,16 +803,11 @@ id="meso3" class="pnl">
       <div class="gate-item"><div class="gi-test">Bulgarian split squat</div><div class="gi-tgt">3x8 at 10+ kg, L glute felt</div><div class="gi-curr">Meso 2: basic split squat loaded</div></div>
       <div class="gate-item"><div class="gi-test">L side plank</div><div class="gi-tgt">Attempt full L side plank pain-free</div><div class="gi-curr">Excluded since Meso 1</div></div>
     </div>
-  </div>
-</div>
-
-<!-- ═══ MESO 4 ═══ -->
-<div
+  </div></div>
 </div>
 
 <div id="page-meso4" class="page">
-id="meso4" class="pnl">
-  <div class="meso">
+  <div class="pnl on" style="padding:0;max-width:none"><div class="meso">
     <div class="meso-hd m4">
       <div><div class="meso-title">Meso 4 — Peak</div><div class="meso-sub">Weeks 14-17 · Maximum Mileage · Race-Pace Specificity</div></div>
       <div class="meso-pills"><span class="pill">66-72 km/week</span><span class="pill">MP training</span><span class="pill">Strength maintenance only</span><span class="pill">Gel practice every LR</span><span class="pill">Retest Wk 17</span></div>
@@ -847,7 +817,7 @@ id="meso4" class="pnl">
         <div class="meso-stat"><div class="ms-lbl">Weekly km</div><div class="ms-val">66 → 72 km (peak wk 16)</div></div>
         <div class="meso-stat"><div class="ms-lbl">Long Run Peak</div><div class="ms-val">38 km (week 16)</div></div>
         <div class="meso-stat"><div class="ms-lbl">Key Sessions</div><div class="ms-val">MP tempo: 2x6km, 14km, 16km</div></div>
-        <div class="meso-stat"><div class="ms-lbl">Marathon Pace</div><div class="ms-val"> — 80% of tempo work</div></div>
+        <div class="meso-stat"><div class="ms-lbl">Marathon Pace</div><div class="ms-val">5:41/km — 80% of tempo work</div></div>
         <div class="meso-stat"><div class="ms-lbl">Strength</div><div class="ms-val">Maintenance only — 1 session/week</div></div>
         <div class="meso-stat"><div class="ms-lbl">Nutrition</div><div class="ms-val">Maintenance + 100 kcal. No deficit.</div></div>
       </div>
@@ -860,7 +830,7 @@ id="meso4" class="pnl">
     <tbody>
       <tr><td class="dy">Monday</td><td><span class="tg rs">REST</span> or <span class="tg rh">REHAB</span></td><td>—</td><td>—</td><td>Full rest. Ankle DF + 90/90 drills. Foam roll TFL. Ice L knee if sore.</td></tr>
       <tr><td class="dy">Tuesday</td><td><span class="tg ez">EASY</span> + <span class="tg st">STRENGTH</span></td><td>10-12 km</td><td>6:30-7:00/km</td><td>Morning easy run. Evening: 1 maintenance strength session. Separate by 4+ hrs.</td></tr>
-      <tr><td class="dy">Wednesday</td><td><span class="tg tm">TEMPO — MP</span></td><td>14-16 km total</td><td> for MP sections</td><td>2 km WU + 2x6km at MP (5 min jog recovery) + 2 km CD. Or 14 km continuous at MP. Key session.</td></tr>
+      <tr><td class="dy">Wednesday</td><td><span class="tg tm">TEMPO — MP</span></td><td>14-16 km total</td><td>5:41/km for MP sections</td><td>2 km WU + 2x6km at MP (5 min jog recovery) + 2 km CD. Or 14 km continuous at MP. Key session.</td></tr>
       <tr><td class="dy">Thursday</td><td><span class="tg ez">EASY</span></td><td>8-10 km</td><td>6:30-7:00/km</td><td>Easy recovery. Mobility in evening. Note L knee response from Wednesday MP run.</td></tr>
       <tr><td class="dy">Friday</td><td><span class="tg ez">EASY</span> + strides</td><td>10 km</td><td>Easy + 6 strides</td><td>20 sec strides at 5K effort. Full recovery between. Leg prep before long run.</td></tr>
       <tr><td class="dy">Saturday</td><td><span class="tg wk">LONG RUN</span></td><td>36-38 km</td><td>6:15-6:45/km</td><td>All easy. Gel every 40-45 min from km 14. Final 4 km at MP feel. Ice + compress L knee immediately after.</td></tr>
@@ -879,18 +849,13 @@ id="meso4" class="pnl">
       <div class="exr"><div><div class="exn">Standing hip abduction — moderate load</div></div><div class="exs">2 x 12/side</div><div class="ext">2-1-2</div><div class="exno">Maintain glute med. Feel L outer glute. TFL management continues throughout peak.</div></div>
       <div class="exr"><div><div class="exn">Dead bug + Bird dog</div></div><div class="exs">2 x 8/side each</div><div class="ext">Controlled</div><div class="exno">Core maintenance. Pelvic stability during running at 70+ km/week.</div></div>
     </div>
-  </div>
-</div>
-
-<!-- ═══ MESO 5 TAPER ═══ -->
-<div
+  </div></div>
 </div>
 
 <div id="page-meso5" class="page">
-id="meso5" class="pnl">
-  <div class="meso">
+  <div class="pnl on" style="padding:0;max-width:none"><div class="meso">
     <div class="meso-hd m5">
-      <div><div class="meso-title">Meso 5 — Peak/Taper</div><div class="meso-sub">Weeks 18-20 · Volume Drops · Intensity Maintained · Race Day</div></div>
+      <div><div class="meso-title">Meso 5 — Taper</div><div class="meso-sub">Weeks 18-20 · Volume Drops · Intensity Maintained · Race Day</div></div>
       <div class="meso-pills"><span class="pill">Vol -40% wk 18</span><span class="pill">Vol -60% wk 19</span><span class="pill">Carb load wk 20</span><span class="pill">No strength</span><span class="pill">Trust the work</span></div>
     </div>
     <div class="meso-body">
@@ -911,7 +876,7 @@ id="meso5" class="pnl">
     <tbody>
       <tr><td class="dy">Monday</td><td>Rest + mobility</td><td>Rest + mobility</td><td>Rest. Walk 20 min. Stay off feet.</td></tr>
       <tr><td class="dy">Tuesday</td><td>Easy 10 km + short strength</td><td>Easy 8 km</td><td>Easy 20 min jog. Shake out.</td></tr>
-      <tr><td class="dy">Wednesday</td><td>10 km MP run ()</td><td>5 km @ MP + 4 strides</td><td>10 min easy jog + strides. Race prep.</td></tr>
+      <tr><td class="dy">Wednesday</td><td>10 km MP run (5:41/km)</td><td>5 km @ MP + 4 strides</td><td>10 min easy jog + strides. Race prep.</td></tr>
       <tr><td class="dy">Thursday</td><td>Easy 8 km</td><td>Easy 6 km</td><td>Rest. Feet up. Race kit laid out.</td></tr>
       <tr><td class="dy">Friday</td><td>Easy 8 km</td><td>Easy 4 km</td><td>Rest. Carb-load dinner. Bed early.</td></tr>
       <tr><td class="dy">Saturday</td><td>Long run — 20 km easy</td><td>Easy 6 km</td><td>RACE DAY — NY MARATHON</td></tr>
@@ -924,16 +889,12 @@ id="meso5" class="pnl">
     <div class="card la"><span class="bdg a">Day Before — Friday</span><h4>Full Carb Load</h4><p>8-10g carbs/kg bodyweight (~520-650g). Plain pasta, rice, banana, honey. No cream, no alcohol, no high-fat. Dinner at 6pm. Bed by 9:30pm. Sleep is the priority.</p></div>
     <div class="card lg"><span class="bdg g">Race Morning — 3 hrs out</span><h4>Pre-Race Meal</h4><p>Porridge + banana + honey + coffee. ~2-3g carb/kg bodyweight. 500ml water over 2 hrs. 1 gel 45 min before gun. Practised in training from week 9.</p></div>
     <div class="card lr"><span class="bdg r">During Race</span><h4>5-Gel Strategy</h4><p>Gel at km 10, 20, 27, 32, 37. Always with water. Never on an empty stomach. 500ml water/hour minimum. Electrolyte tab every hour. Same brands Casey has trained with.</p></div>
-  </div>
-</div>
-
-<!-- ═══ NUTRITION ═══ -->
-<div
+  </div></div>
 </div>
 
 <div id="page-nutrition" class="page">
-id="nutrition" class="pnl">
-  <div class="sec g">Nutrition — Full Programme</div>
+  <div class="topbar"><div class="page-title">Nutrition <span>Plan</span></div></div>
+  <div class="pnl on" style="padding:0;max-width:none"><div class="sec g">Nutrition — Full Programme</div>
   <div class="al a"><div class="al-i">&#9881;</div><div><strong>Dual Goal Strategy:</strong> 73 kg → 65-70 kg AND sub-4:00 marathon. These are compatible with phased approach: caloric deficit P1-P2 when intensity is low, transition to maintenance from Meso 3 when mileage demands it. Never deficit in peak mileage weeks. Performance before aesthetics from week 9 onwards.</div></div>
   <div class="sub">Phased Caloric Targets</div>
   <div class="cg">
@@ -970,17 +931,13 @@ id="nutrition" class="pnl">
       <tr><td><strong>Caffeine</strong></td><td>3-6 mg/kg</td><td>45 min pre-race</td><td><span class="bdg g">Strong</span></td><td>Ergogenic. Practise in long runs from Meso 3. Same dose race day. Avoid if anxiety-prone.</td></tr>
       <tr><td><strong>Creatine</strong></td><td>5g/day</td><td>Anytime</td><td><span class="bdg g">Strong</span></td><td>Meso 1-2 strength phases only. Supports lean muscle development during rehab and early loading phases.</td></tr>
     </tbody>
-  </table></div>
-</div>
-
-<!-- ═══ RACE STRATEGY ═══ -->
-<div
+  </table></div></div>
 </div>
 
 <div id="page-race" class="page">
-id="race" class="pnl">
-  <div class="sec a">Race Strategy — Weight Loss Programme</div>
-  <div class="al g"><div class="al-i">&#9733;</div><div><strong>Sub-4:00 Plan:</strong> Target  (8:40/mile). NY is hilly — Verrazano, Queensboro, rolling hills throughout. Run the first half at 5:45-5:50/km (conservative). Bank time from km 30+ when others fade. Most sub-4 fails happen in Brooklyn from going out too fast. Casey's strength work on glute stability will pay off on Queensboro hill — she will hold form when others break down.</div></div>
+  <div class="topbar"><div class="page-title">Goals <span>&amp; Strategy</span></div></div>
+  <div class="pnl on" style="padding:0;max-width:none"><div class="sec a">Race Strategy — Weight Loss Programme</div>
+  <div class="al g"><div class="al-i">&#9733;</div><div><strong>Sub-4:00 Plan:</strong> Target 5:41/km (8:40/mile). NY is hilly — Verrazano, Queensboro, rolling hills throughout. Run the first half at 5:45-5:50/km (conservative). Bank time from km 30+ when others fade. Most sub-4 fails happen in Brooklyn from going out too fast. Casey's strength work on glute stability will pay off on Queensboro hill — she will hold form when others break down.</div></div>
   <div class="sub">Kilometre-by-Kilometre Pacing</div>
   <div class="tw"><table>
     <thead><tr><th>Segment</th><th>Distance</th><th>Target Pace</th><th>Effort</th><th>Tactical Note</th></tr></thead>
@@ -989,8 +946,8 @@ id="race" class="pnl">
       <tr><td class="dy">Brooklyn</td><td>km 5-20</td><td>5:43-5:48/km</td><td>Controlled RPE 5</td><td>Best crowd support. Biggest rookie error is going too fast here. Keep lid on. Should feel genuinely easy.</td></tr>
       <tr><td class="dy">Queensboro Bridge</td><td>km ~25</td><td>6:00-6:10/km</td><td>Manage RPE 5</td><td>Biggest hill. Silence on bridge. Don't panic at slower splits. Casey's hip/glute stability work will hold form here.</td></tr>
       <tr><td class="dy">1st Avenue</td><td>km 25-32</td><td>5:41-5:46/km</td><td>MP RPE 6-7</td><td>Massive crowd energy. Feed off it — don't race it. Stay disciplined. Gel at km 27.</td></tr>
-      <tr class="flag"><td class="dy">The Bronx</td><td>km 32-36</td><td></td><td>MP RPE 7</td><td>Glycogen depletion zone. Gel at km 32 + 36 mandatory. Expect it to be hard. Trust the programme. This is where all the training lands.</td></tr>
-      <tr class="race"><td>Central Park</td><td>km 36-42.2</td><td>5:35-</td><td>Race it RPE 8+</td><td>Final hill km 40 then downhill. If feeling good — go. Empty the tank after km 41. Cross that line.</td></tr>
+      <tr class="flag"><td class="dy">The Bronx</td><td>km 32-36</td><td>5:41/km</td><td>MP RPE 7</td><td>Glycogen depletion zone. Gel at km 32 + 36 mandatory. Expect it to be hard. Trust the programme. This is where all the training lands.</td></tr>
+      <tr class="race"><td>Central Park</td><td>km 36-42.2</td><td>5:35-5:41/km</td><td>Race it RPE 8+</td><td>Final hill km 40 then downhill. If feeling good — go. Empty the tank after km 41. Cross that line.</td></tr>
     </tbody>
   </table></div>
   <div class="sub">Race Day Nutrition</div>
@@ -1012,20 +969,19 @@ id="race" class="pnl">
   <div class="cg">
     <div class="card lr"><h4>Immediate Response</h4><p>Shorten stride. Increase cadence to 175+. Do not compensate with hip hike — this will worsen TFL load. Lean forward slightly from the hip.</p></div>
     <div class="card la"><h4>If Pain Reaches 5+/10</h4><p>Brief stop. 30-60 sec TFL stretch. Reassess. Is it getting worse with running or manageable? Make the call: finish smart or protect long-term health.</p></div>
-    <div class="card lg"><h4>What 20 Weeks Builds</h4><p>Casey's glute med strength and hip stability work means her running mechanics will be significantly better than pre-programme. This is her insurance policy against race-day ITB flare.</p></div>
-  </div>
+    <div class="card lg"><h4>What 20 Weeks Builds</h4><p>Casey's glute med strength and hip stability work means her running mechanics will be significantly better than pre-programme. This is her insurance policy against race-day ITB flare.</p></div></div>
 </div>
 
-
-id="page-editor" class="page">
+<!-- ═══ COACH EDITOR ═══ -->
+<div id="page-editor" class="page">
   <div class="topbar">
     <div>
       <div class="page-title">Programme <span>Editor</span></div>
-      <div style="font-size:12px;color:var(--mut)">Full coach control · Edit, add, reorder all sessions</div>
+      <div style="font-size:12px;color:var(--mut)">Full coach control · Edit all sessions live</div>
     </div>
     <div class="acts">
       <button class="btn btn-grn" onclick="APP.saveProg()">💾 Save Programme</button>
-      <button class="btn btn-s" onclick="resetProg()">↺ Reset Default</button>
+      <button class="btn btn-s" onclick="resetProg()">↺ Reset</button>
     </div>
   </div>
   <div id="editor-content"></div>
@@ -1103,24 +1059,38 @@ id="page-editor" class="page">
   </div>
 </div>
 
-
-<!-- STRAVA DETAIL MODAL -->
+<!-- Strava detail modal -->
 <div class="mov" id="modal-strava-detail">
   <div class="modal">
-    <div class="modal-hd">
-      <h3 id="strava-detail-title">Activity Detail</h3>
-      <button class="mx" onclick="closeM('modal-strava-detail')">×</button>
-    </div>
+    <div class="modal-hd"><h3 id="strava-detail-title">Activity</h3><button class="mx" onclick="closeM('modal-strava-detail')">×</button></div>
     <div class="modal-body" id="strava-detail-body"></div>
   </div>
 </div>
 
 <div class="toasts" id="toasts"></div>
 
+<!-- SCRIPTS: load order matters -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="strava.js"></script>
 <script src="app.js"></script>
+<script src="strava.js"></script>
 <script>
+
+// ── SINGLE NAV FUNCTION — defined before any onclick fires ────────────────────
+function navTo(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.ni').forEach(n => n.classList.remove('on'));
+  var page = document.getElementById('page-' + id);
+  if (page) page.classList.add('on');
+  document.querySelectorAll('.ni').forEach(n => {
+    if ((n.getAttribute('onclick') || '').indexOf("'" + id + "'") >= 0) n.classList.add('on');
+  });
+  window.scrollTo(0, 0);
+}
+
+// Also define nav() and show() as aliases so any internal links still work
+function nav(id) { navTo(id); }
+function show(id) { navTo(id); }
+
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
 (async () => {
@@ -1136,13 +1106,6 @@ id="page-editor" class="page">
   }
   APP.loadProg(); APP.loadCompletion();
   renderAll();
-  renderStravaSection();
-  // Handle redirect back from Strava OAuth
-  if (window.location.search.includes('strava=connected')) {
-    APP.toast('Strava connected successfully! Syncing activities…', 'success');
-    history.replaceState({}, '', window.location.pathname);
-    setTimeout(() => syncStrava(), 500);
-  }
 })();
 
 function renderAll() {
@@ -1152,7 +1115,7 @@ function renderAll() {
 }
 
 // ── NAV ───────────────────────────────────────────────────────────────────────
-function nav(id) {
+function _nav_unused(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
   document.querySelectorAll('.ni').forEach(n => n.classList.remove('on'));
   document.getElementById('page-' + id).classList.add('on');
@@ -1664,28 +1627,21 @@ function closeM(id) { document.getElementById(id).classList.remove('open'); }
 document.querySelectorAll('.mov').forEach(m => m.addEventListener('click', e => { if(e.target===m) m.classList.remove('open'); }));
 
 
-// Programme page nav — handles both tracker .page and programme content
-function showProgrammePage(id) {
-  nav(id);
-}
-
-// Old "show" function used by internal programme links
-function show(id, btn) {
-  nav(id);
-}
-
-// Patch nav to also handle programme content pages
-const _baseNav = window.nav;
-window.nav = function(id) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
-  document.querySelectorAll('.ni').forEach(n => n.classList.remove('on'));
-  const p = document.getElementById('page-' + id);
-  if (p) p.classList.add('on');
-  document.querySelectorAll('.ni').forEach(n => {
-    if ((n.getAttribute('onclick')||'').includes("'" + id + "'")) n.classList.add('on');
-  });
-  window.scrollTo(0,0);
+// After renderAll, render Strava and handle OAuth return
+var _origRenderAll = renderAll;
+renderAll = function() {
+  _origRenderAll();
+  if (typeof renderStravaSection === 'function') renderStravaSection();
 };
+
+if (window.location.search.indexOf('strava=connected') >= 0) {
+  history.replaceState({}, '', window.location.pathname);
+  setTimeout(function() {
+    APP.toast('Strava connected! Syncing activities…', 'success');
+    if (typeof syncStrava === 'function') syncStrava();
+  }, 800);
+}
+
 </script>
 </body>
 </html>
